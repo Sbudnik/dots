@@ -1,0 +1,50 @@
+#+title sample numbers
+#+BEGIN: clocktable :scope file :maxlevel 2
+#+CAPTION: Clock summary at [2021-02-08 Mon 21:11]
+| Headline         |  Time |
+|------------------+-------|
+| *Total time*       | *15:27* |
+|------------------+-------|
+| <2021-02-08 Mon> |  5:55 |
+| <2021-02-10 Wed> |  9:32 |
+#+END:
+
+
+* bills
+
+| bill  | amount | paid | pend |
+|-------+--------+------+------|
+| Gas   |     75 | X    |      |
+| Car   | 945.50 |      | X    |
+| mortg |   2200 | X    |      |
+| groc  |    245 |      | X    |
+| fuel  |      0 |      |      |
+| util  |    125 | X    |      |
+|       |        |      |      |
+|-------+--------+------+------|
+| Total | 3590.5 |      |      |
+#+TBLFM: @>$2=vsum(@I..@II)
+
+* <2021-02-08 Mon 20:56>
+
+* <2021-02-09 Tue 20:56>
+
+* <2021-02-08 Mon>
+:LOGBOOK:
+CLOCK: [2021-02-08 Mon 14:59]--[2021-02-08 Mon 20:54] =>  5:55
+:END:
+
+* <2021-02-09 Tue>
+* <2021-02-10 Wed>
+:LOGBOOK:
+CLOCK: [2021-02-10 Wed 11:22]--[2021-02-10 Wed 20:54] =>  9:32
+:END:
+
+#+begin_src emacs-lisp
+emacs-lisp code goes here ()
+#+end_src
+
+* <2021-02-11 Thu>
+* <2021-02-12 Fri>
+* <2021-02-13 Sat>
+some stuff here
