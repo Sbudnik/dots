@@ -290,7 +290,6 @@
 * Org Mode
 ** Main Org-mode
 #+begin_src emacs-lisp
-;; Org Mode Configuration ------------------------------------------------------
 
 (defun jwm/org-mode-setup ()
   (org-indent-mode)
