@@ -116,6 +116,7 @@
 
 * Theme config
 #+begin_src emacs-lisp
+  (require 'modus-themes)
   (use-package doom-modeline
     :init (doom-modeline-mode 1)
     :custom ((doom-modeline-height 20)))
@@ -147,7 +148,7 @@
                 (with-selected-frame frame (hrs/apply-theme-drk))))
   (hrs/apply-theme-drk))
 
-  (setq jwm/themes '(doom-one-light doom-one doom-acario-light doom-zenburn))
+  (setq jwm/themes '(doom-one-light doom-one doom-acario-light doom-zenburn modus-vivendi modus-operandi doom-molokai doom-vibrant doom-dark+ doom-dracula doom-fairy-floss doom-gruvbox doom-material doom-nord doom-nord-light doom-nova doom-opera doom-opera-light doom-palenight doom-snazzy doom-sourcerer doom-spacegrey doom-tomorrow-night doom-tomorrow-day))
   (setq jwm/themes-index 0)
 
   (defun jwm/cycle-theme ()
@@ -228,6 +229,28 @@
   :config
   (setq which-key-idle-delay 0.3))
 
+
+#+end_src
+* Projectile Magit
+#+begin_src emacs-lisp
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  ;; NOTE: Set this to the folder where you keep your Git repos!
+  (when (file-directory-p "c:/users/jwmosty/AppData/Roaming/GAS_Asc")
+    (setq projectile-project-search-path '("c:/users/jwmosty/AppData/Roaming/GAS_Asc")))
+  (setq projectile-switch-project-action #'projectile-dired))
+
+(use-package counsel-projectile
+  :config (counsel-projectile-mode))
+
+(use-package magit
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
 #+end_src
 * Org Mode
@@ -543,28 +566,6 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
   :ensure t
   :config
   (dashboard-setup-startup-hook))
-
-#+end_src
-* Projectile Magit
-#+begin_src emacs-lisp
-(use-package projectile
-  :diminish projectile-mode
-  :config (projectile-mode)
-  :custom ((projectile-completion-system 'ivy))
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
-  :init
-  ;; NOTE: Set this to the folder where you keep your Git repos!
-  (when (file-directory-p "~/Projects/Code")
-    (setq projectile-project-search-path '("~/Projects/Code")))
-  (setq projectile-switch-project-action #'projectile-dired))
-
-(use-package counsel-projectile
-  :config (counsel-projectile-mode))
-
-(use-package magit
-  :custom
-  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
 #+end_src
 * Treemacs
