@@ -1,5 +1,5 @@
 ;; begin file
-(set-language-environment "UTF-8")
+
 (require 'package)
 (require 'org)
 
@@ -19,16 +19,61 @@
 
 (setq load-prefer-newer t)
 
-(use-package all-the-icons)
+;; Make ESC quit prompts
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+(use-package diminish)
 
-;; May need to adjust this font size for the system
-(defvar jwm/default-font-size 145)
+(setq user-full-name "John Mosty"
+      user-mail-address "dubs.mosty@gmail.com"
+      calendar-latitude 30.32
+      calendar-longitude -97.71
+      calendar-location-name "Austin, TX")
 
-(set-face-attribute 'default nil :font "Inconsolata" :height jwm/default-font-size)
-;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "Bahnschrift" :height 145)
-;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "Inconsolata" :height 150 :weight 'regular)
+(column-number-mode)
+(global-display-line-numbers-mode t)
+;; Disable line numbers for some modes
+(dolist (mode '(org-mode-hook
+               term-mode-hook
+               shell-mode-hook
+               eshell-mode-hook))
+ (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+(defun hrs/kill-current-buffer ()
+  "Kill the current buffer without prompting."
+  (interactive)
+  (kill-buffer (current-buffer)))
+
+(global-set-key (kbd "C-x k") 'hrs/kill-current-buffer)
+
+(defun hrs/split-window-below-and-switch ()
+  "Split the window horizontally, then switch to the new pane."
+  (interactive)
+  (split-window-below)
+  (balance-windows)
+  (other-window 1))
+
+(defun hrs/split-window-right-and-switch ()
+  "Split the window vertically, then switch to the new pane."
+  (interactive)
+  (split-window-right)
+  (balance-windows)
+  (other-window 1))
+(global-set-key (kbd "<f5>") 'org-capture)
+(global-set-key (kbd "C-x 2") 'hrs/split-window-below-and-switch)
+(global-set-key (kbd "C-x 3") 'hrs/split-window-right-and-switch)
+(global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
+(global-set-key (kbd "C-c j") 'org-journal-new-entry)
+
+(use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook))
+
+(setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+(setq dashboard-banner-logo-title "Welcome to the Mac")
+(setq dashboard-center-content nil)
+(setq dashboard-set-heading-icons t)
+(setq dashboard-set-file-icons t)
 
 (use-package evil
   :init
@@ -62,13 +107,13 @@
   :ensure nil
   :commands (dired dired-jump)
   :bind (("C-x C-j" . dired-jump))
-  :custom ((dired-listing-switches "-agho --group-directories-first"))
+;;  :custom ((dired-listing-switches "-agho --group-directories-first"))
   :config
   (evil-collection-define-key 'normal 'dired-mode-map
     "h" 'dired-single-up-directory
     "l" 'dired-single-buffer))
 
- (add-hook 'dired-mode-hook
+(add-hook 'dired-mode-hook
       (lambda ()
         (dired-hide-details-mode)))
 
@@ -90,11 +135,10 @@
   (evil-collection-define-key 'normal 'dired-mode-map
     "H" 'dired-hide-dotfiles-mode))
 
-  (use-package doom-modeline
-    :init (doom-modeline-mode 1)
-    :custom ((doom-modeline-height 20)))
-  (setq doom-modeline-icon (display-graphic-p))
-  (setq doom-modeline-window-width-limit fill-column)
+(use-package all-the-icons)
+(use-package doom-modeline
+  :init (doom-modeline-mode 1)
+  :custom ((doom-modeline-height 18)))
 
 (use-package helpful
   :custom
@@ -161,7 +205,6 @@
   (visual-line-mode 1))
 
 (defun jwm/org-font-setup ()
-  ;; Replace list hyphen with dot
   ;; Set faces for heading levels
 (dolist (face '((org-level-1 . 1.2)
                 (org-level-2 . 1.1)
@@ -171,26 +214,22 @@
                 (org-level-6 . 1.1)
                 (org-level-7 . 1.1)
                 (org-level-8 . 1.1)))
-  (set-face-attribute (car face) nil :font "Bahnschrift" :weight 'regular :height (cdr face)))
+  (set-face-attribute (car face) nil :font "Arial" :weight 'regular :height (cdr face)))
 
 ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-(set-face-attribute 'org-block nil :foreground nil :font "Inconsolata" :height 145)
-
-(set-face-attribute 'fixed-pitch nil :font "Inconsolata" :height 145)
-(set-face-attribute 'org-code nil   :font "Inconsolata" :height 145)
-(set-face-attribute 'org-table nil   :font "Inconsolata" :height 145)
-(set-face-attribute 'org-verbatim nil :font "Inconsolata" :height 145)
+(set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+(set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
+(set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
 (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
 (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-(set-face-attribute 'org-checkbox nil :font "Inconsolata" :height 145))
+(set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
 
 (use-package org
   :hook (org-mode . jwm/org-mode-setup)
   :config
-  (setq org-ellipsis " ▾")
+  (setq org-ellipsis "...")
   (jwm/org-font-setup))
-
-(add-hook 'before-save-hook 'time-stamp)
 
 (require 'org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
@@ -256,9 +295,6 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 
 (set-window-scroll-bars (minibuffer-window) nil nil)
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
-(add-to-list 'default-frame-alist '(width  . 90))
-(add-to-list 'default-frame-alist '(height . 70))
-(add-to-list 'default-frame-alist '(font . "Monospace-10"))
 
 (setq org-capture-templates
       '(("j" "Journal entry" plain (function org-journal-find-location)
@@ -269,84 +305,75 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 	("T" "Tasks with ClipBoard" entry (file+headline "" "Tasks")
          "*** TODO %?\n%U\n   %^C" :prepend t)))
 
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((emacs-lisp . t)
-   (python . t)
-   (js . t)))
-
-(setq org-confirm-babel-evaluate nil)
-(require 'org-tempo)
-
-(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-(add-to-list 'org-structure-template-alist '("js" . "src js"))
-(add-to-list 'org-structure-template-alist '("py" . "src python"))
-
-(setq org-journal-dir "~/org/journal/")
-(setq org-journal-date-format "%A, %d %B %Y")
-(use-package org-journal)
-
-(defun org-journal-find-location ()
-  ;; Open today's journal, but specify a non-nil prefix argument in order to
-  ;; inhibit inserting the heading; org-capture will insert the heading.
-  (org-journal-new-entry t)
-  (unless (eq org-journal-file-type 'daily)
-    (org-narrow-to-subtree))
-  (goto-char (point-max)))
-
-(defvar org-journal--date-location-scheduled-time nil)
-
-(defun org-journal-date-location (&optional scheduled-time)
-  (let ((scheduled-time (or scheduled-time (org-read-date nil nil nil "Date:"))))
-    (setq org-journal--date-location-scheduled-time scheduled-time)
-    (org-journal-new-entry t (org-time-string-to-time scheduled-time))
-    (unless (eq org-journal-file-type 'daily)
-      (org-narrow-to-subtree))
-    (goto-char (point-max))))
-
-(use-package hide-mode-line)
-
-(defun jwm/presentation-setup ()
-  ;; Hide the mode line
-  (hide-mode-line-mode 1)
-
-  ;; Display images inline
-  (org-display-inline-images) ;; Can also use org-startup-with-inline-images
-
-  ;; Scale the text.  The next line is for basic scaling:
-  (setq text-scale-mode-amount 3)
-  (text-scale-mode 1)
-  (blink-cursor-mode -1))
-
-  ;; This option is more advanced, allows you to scale other faces too
-  ;; (setq-local face-remapping-alist '((default (:height 2.0) variable-pitch)
-  ;;                                    (org-verbatim (:height 1.75) org-verbatim)
-  ;;                                    (org-block (:height 1.25) org-block))))
-
-(defun jwm/presentation-end ()
-  ;; Show the mode line again
-  (hide-mode-line-mode 0)
-
-  ;; Turn off text scale mode (or use the next line if you didn't use text-scale-mode)
- (text-scale-mode 0)
- (blink-cursor-mode 1))
-
-  ;; If you use face-remapping-alist, this clears the scaling:
-  ;; (setq-local face-remapping-alist '((default variable-pitch default))))
-
-(use-package org-tree-slide
-  :hook ((org-tree-slide-play . jwm/presentation-setup)
-         (org-tree-slide-stop . jwm/presentation-end))
-  :custom
-  (org-tree-slide-slide-in-effect t)
-  (org-tree-slide-activate-message "Presentation started")
-  (org-tree-slide-deactivate-message "Presentation finished")
-  (org-tree-slide-header t)
-  (org-tree-slide-breadcrumbs " //  ")
-  (org-image-actual-width nil))
-
-(use-package company)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(org-agenda-export-html-style
+   "<style type=\\\"text/css\\\">
+  html {
+	font-size: 12pt;
+  }
+  .title { text-align: center; }
+  .todo  { color: red; }
+  .done { color: green; }
+  .timestamp { color: grey }
+  .timestamp-kwd { color: CadetBlue }
+  .tag { background-color:lightblue; font-weight:normal }
+  .target { background-color: lavender; }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: consolas, monospace;
+  }
+  table { border-collapse: collapse; }
+  td, th {
+	vertical-align: top;
+	<!--border: 1pt solid #ADB9CC;-->
+  }
+</style>")
+ '(org-agenda-files
+   '("~/org/habits.org" "~/org/notes.org"))
+ '(org-agenda-include-diary t)
+ '(org-agenda-show-all-dates t)
+ '(org-agenda-skip-deadline-if-done t)
+ '(org-agenda-skip-scheduled-if-done t)
+ '(org-agenda-skip-timestamp-if-done t)
+ '(org-agenda-start-on-weekday nil)
+ '(org-agenda-start-with-follow-mode t)
+ '(org-agenda-sticky t)
+ '(org-agenda-tags-todo-honor-ignore-options nil)
+ '(org-capture-templates t)
+ '(org-clock-into-drawer "LOGBOOK")
+ '(org-closed-keep-when-no-todo nil)
+ '(org-enforce-todo-checkbox-dependencies t)
+ '(org-enforce-todo-dependencies t)
+ '(org-hide-emphasis-markers t)
+ '(org-log-done 'time)
+ '(org-log-done-with-time t)
+ '(org-log-into-drawer t)
+ '(org-return-follows-link t)
+ '(org-special-ctrl-a/e t)
+ '(org-special-ctrl-k t)
+ '(org-todo-keywords '((type "TODO(t)" "STARTED(s!)" "DONE(d!)")))
+ '(org-todo-state-tags-triggers nil)
+ '(org-use-fast-todo-selection 'auto)
+ '(pdf-view-midnight-colors (cons "#f8f8f2" "#282a36"))
+ '(rustic-ansi-faces
+   ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "#8CD0D3" "#DC8CC3" "#93E0E3" "#DCDCDC"])
+ '(tab-bar-mode t)
+ '(tool-bar-mode nil)
+ '(vc-annotate-background nil)
+ '(vc-annotate-background-mode nil))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+)
 (global-company-mode)
 (global-set-key (kbd "M-/") 'company-complete-common)
 
