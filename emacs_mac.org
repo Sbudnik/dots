@@ -92,6 +92,17 @@
 (global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
 (global-hl-line-mode)
 (global-set-key (kbd "C-c j") 'org-journal-new-entry)
+
+(set-window-scroll-bars (minibuffer-window) nil nil)
+(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+
+(setq scroll-conservatively 100)
+(setq kill-whole-line t)
+(setq kill-read-only-ok t)
+(setq require-final-newline t)
+(setq echo-keystrokes 0.1)
+(setq focus-follows-mouse t)
+
 #+end_src
 ** Dashboard
 #+begin_src emacs-lisp
@@ -202,6 +213,7 @@
 (if (daemonp)
     (add-hook 'after-make-frame-functions
               (lambda (frame)
+              (setq doom-modeline-icon t)
                 (with-selected-frame frame (hrs/apply-theme-drk))))
   (hrs/apply-theme-drk))
 
@@ -287,6 +299,12 @@
   (setq which-key-idle-delay 0.3))
 
 #+end_src
+* Magit
+#+begin_src emacs-lisp
+(use-package magit
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+#+end_src
 * Org Mode
 ** Main Org-mode
 #+begin_src emacs-lisp
@@ -334,14 +352,6 @@
 (use-package visual-fill-column
   :hook (org-mode . jwm/org-mode-visual-fill))
 
-(setq scroll-conservatively 100)
-(setq kill-whole-line t)
-(setq kill-read-only-ok t)
-(setq require-final-newline t)
-(setq echo-keystrokes 0.1)
-(setq focus-follows-mouse t)
-(setq frame-title-format '((:eval (projectile-project-name))))
-
 (setq org-default-notes-file (concat org-directory "/notes.org"))
 
  (require 'org-habit)
@@ -384,12 +394,6 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 (define-key global-map "\C-cL" 'org-occur-link-in-agenda-files)
 (global-set-key (kbd "<home>") 'beginning-of-buffer)
 (global-set-key (kbd "M-o") 'other-window)
-
-(set-window-scroll-bars (minibuffer-window) nil nil)
-(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
-(add-to-list 'default-frame-alist '(width  . 90))
-(add-to-list 'default-frame-alist '(height . 70))
-(add-to-list 'default-frame-alist '(font . "Monospace-10"))
 
 (setq org-capture-templates
       '(("j" "Journal entry" plain (function org-journal-find-location)
@@ -457,6 +461,175 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
       (org-narrow-to-subtree))
     (goto-char (point-max))))
 #+end_src
+* Presentation
+#+begin_src emacs-lisp
+(use-package hide-mode-line)
+
+(defun jwm/presentation-setup ()
+  ;; Hide the mode line
+  (hide-mode-line-mode 1)
+
+  ;; Display images inline
+  (org-display-inline-images) ;; Can also use org-startup-with-inline-images
+
+  ;; Scale the text.  The next line is for basic scaling:
+  (setq text-scale-mode-amount 3)
+  (text-scale-mode 1)
+  (blink-cursor-mode -1))
+
+  ;; This option is more advanced, allows you to scale other faces too
+  ;; (setq-local face-remapping-alist '((default (:height 2.0) variable-pitch)
+  ;;                                    (org-verbatim (:height 1.75) org-verbatim)
+  ;;                                    (org-block (:height 1.25) org-block))))
+
+(defun jwm/presentation-end ()
+  ;; Show the mode line again
+  (hide-mode-line-mode 0)
+
+  ;; Turn off text scale mode (or use the next line if you didn't use text-scale-mode)
+ (text-scale-mode 0)
+ (blink-cursor-mode 1))
+
+  ;; If you use face-remapping-alist, this clears the scaling:
+  ;; (setq-local face-remapping-alist '((default variable-pitch default))))
+
+(use-package org-tree-slide
+  :hook ((org-tree-slide-play . jwm/presentation-setup)
+         (org-tree-slide-stop . jwm/presentation-end))
+  :custom
+  (org-tree-slide-slide-in-effect t)
+  (org-tree-slide-activate-message "Presentation started")
+  (org-tree-slide-deactivate-message "Presentation finished")
+  (org-tree-slide-header t)
+  (org-tree-slide-breadcrumbs " //  ")
+  (org-image-actual-width nil))
+#+end_src
+* Spell
+#+begin_src emacs-lisp
+(use-package company)
+(global-company-mode)
+(global-set-key (kbd "M-/") 'company-complete-common)
+
+(setq ispell-program-name "/usr/local/bin/hunspell")
+
+(require 'ispell)
+
+(global-set-key (kbd "<f8>") 'ispell-word)
+(global-set-key (kbd "C-<f8>") 'flyspell-mode)
+
+(use-package flyspell :demand t
+  :config
+  (use-package flyspell-correct-ivy)
+  (defun flyspellCompletion()
+    (flyspell-mode 1)
+    (set (make-local-variable 'company-backends)
+         (copy-tree company-backends))
+    (add-to-list 'company-backends 'company-ispell))
+  (defun flyspell-most-modes()
+    (add-hook 'text-mode-hook 'flyspellCompletion)
+    (add-hook 'prog-mode-hook 'flyspellCompletion)
+    (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
+      (add-hook hook (lambda ()
+                       (flyspell-mode -1)))))
+  (flyspell-most-modes)
+  :bind (:map flyspell-mode-map
+              ("C-." . flyspell-correct-wrapper)))
+
+(use-package undo-tree)
+(global-undo-tree-mode)
+#+end_src
+* Treemacs
+#+begin_src emacs-lisp
+(use-package treemacs
+  :ensure t
+  :defer t
+  :init
+  (with-eval-after-load 'winum
+    (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
+  :config
+  (progn
+    (setq treemacs-collapse-dirs                 (if treemacs-python-executable 3 0)
+          treemacs-deferred-git-apply-delay      0.5
+          treemacs-directory-name-transformer    #'identity
+          treemacs-display-in-side-window        t
+          treemacs-eldoc-display                 t
+          treemacs-file-event-delay              5000
+          treemacs-file-extension-regex          treemacs-last-period-regex-value
+          treemacs-file-follow-delay             0.2
+          treemacs-file-name-transformer         #'identity
+          treemacs-follow-after-init             t
+          treemacs-git-command-pipe              ""
+          treemacs-goto-tag-strategy             'refetch-index
+          treemacs-indentation                   2
+          treemacs-indentation-string            " "
+          treemacs-is-never-other-window         nil
+          treemacs-max-git-entries               5000
+          treemacs-missing-project-action        'ask
+          treemacs-move-forward-on-expand        nil
+          treemacs-no-png-images                 nil
+          treemacs-no-delete-other-windows       t
+          treemacs-project-follow-cleanup        nil
+          treemacs-persist-file                  (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+          treemacs-position                      'left
+          treemacs-read-string-input             'from-child-frame
+          treemacs-recenter-distance             0.1
+          treemacs-recenter-after-file-follow    nil
+          treemacs-recenter-after-tag-follow     nil
+          treemacs-recenter-after-project-jump   'always
+          treemacs-recenter-after-project-expand 'on-distance
+          treemacs-show-cursor                   nil
+          treemacs-show-hidden-files             t
+          treemacs-silent-filewatch              nil
+          treemacs-silent-refresh                nil
+          treemacs-sorting                       'alphabetic-asc
+          treemacs-space-between-root-nodes      t
+          treemacs-tag-follow-cleanup            t
+          treemacs-tag-follow-delay              1.5
+          treemacs-user-mode-line-format         nil
+          treemacs-user-header-line-format       nil
+          treemacs-width                         35
+          treemacs-workspace-switch-cleanup      nil)
+
+    ;; The default width and height of the icons is 22 pixels. If you are
+    ;; using a Hi-DPI display, uncomment this to double the icon size.
+    ;;(treemacs-resize-icons 44)
+
+    (treemacs-follow-mode t)
+    (treemacs-filewatch-mode t)
+    (treemacs-fringe-indicator-mode 'always)
+     (pcase (cons (not (null (executable-find "git")))
+                  (not (null treemacs-python-executable)))
+      (`(t . t)
+       (treemacs-git-mode 'deferred))
+      (`(t . _)
+       (treemacs-git-mode 'simple))))
+  :bind
+  (:map global-map
+        ("M-0"       . treemacs-select-window)
+        ("C-x t 1"   . treemacs-delete-other-windows)
+        ("C-x t t"   . treemacs)
+        ("C-x t B"   . treemacs-bookmark)
+        ("C-x t C-t" . treemacs-find-file)
+        ("C-x t M-t" . treemacs-find-tag)))
+
+(use-package treemacs-evil
+  :after treemacs evil
+  :ensure t)
+
+(use-package treemacs-icons-dired
+  :after treemacs dired
+  :ensure t
+  :config (treemacs-icons-dired-mode))
+
+(use-package treemacs-magit
+  :after treemacs magit
+  :ensure t)
+#+end_src
+* Macros
+#+begin_src emacs-lisp
+(evil-set-register ?d [?i ?* ?  ?\C-c ?. return escape])
+(evil-set-register ?t [?i ?\C-u ?\C-c ?. return escape])
+#+end_src
 * Custom variable
 #+begin_src emacs-lisp
 (custom-set-variables
@@ -500,7 +673,6 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
  '(org-agenda-sticky t)
  '(org-agenda-tags-todo-honor-ignore-options nil)
  '(org-bullets-bullet-list '("►" "▸" "•" "★" "◇" "◇" "◇" "◇") nil nil "Customized with use-package org-bullets")
- '(org-capture-templates t)
  '(org-clock-into-drawer "LOGBOOK")
  '(org-closed-keep-when-no-todo nil)
  '(org-enforce-todo-checkbox-dependencies t)
