@@ -94,7 +94,7 @@ source $ZSH/oh-my-zsh.sh
  if [[ -n $SSH_CONNECTION ]]; then
    export EDITOR='vim'
  else
-   export EDITOR='emacs'
+   export EDITOR='vim'
  fi
 
 # Compilation flags
@@ -114,9 +114,17 @@ source $ZSH/oh-my-zsh.sh
  alias df="df -h"
  alias du="du -h"
  alias grep="grep --color"
- alias ll="ls -l"
- alias la="ls -a"
-source ~/powerlevel10k/powerlevel10k.zsh-theme
+ alias ll='echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************"; ls -l'
+ alias la='echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************";  ls -a'
+ alias l='echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************"; ls -GhF1A'
+ alias lc='clear; echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************"; ls -GhF1A'
+ alias x='exit'
+ alias home='cd ~'
+ alias up='cd ..'
+ alias h='history'
+ alias c='clear'
+ alias mkdir='mkdir -pv'
+ source ~/powerlevel10k/powerlevel10k.zsh-theme
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
