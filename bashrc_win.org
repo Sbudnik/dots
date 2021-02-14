@@ -180,12 +180,12 @@
  alias la='echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************";  ls -a'
  alias l='echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************"; ls -GhF1A'
  alias lc='clear; echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************"; ls -GhF1A'
-  alias x='exit'
-  alias home='cd ~'
-  alias up='cd ..'
-  alias h='history'
-  alias c='clear'
-  alias mkdir='mkdir -pv'
-  alias cd=cd_func
+ alias x='exit'
+ alias home='cd ~'
+ alias up='cd ..'
+ alias h='history'
+ alias c='clear'
+ alias mkdir='mkdir -pv'
+ alias cd=cd_func
 
 #+end_src
