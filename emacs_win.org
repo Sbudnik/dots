@@ -31,7 +31,6 @@
 (sensible-defaults/use-all-keybindings)
 
 (use-package all-the-icons)
-(server-start)
 #+end_src
 * Basic setup
 ** Font setup
@@ -39,12 +38,34 @@
 #+begin_src emacs-lisp
 ;; May need to adjust this font size for the system
 (defvar jwm/default-font-size 145)
+(defun jwm/set-font-faces ()
+   (message "Setting faces")
+   (set-face-attribute 'default nil :font "Inconsolata" :height jwm/default-font-size)
+   ;; Set the fixed pitch face
+   (set-face-attribute 'fixed-pitch nil :font "Bahnschrift" :height 145)
+   ;; Set the variable pitch face
+   (set-face-attribute 'variable-pitch nil :font "Inconsolata" :height 150 :weight 'regular))
 
-(set-face-attribute 'default nil :font "Inconsolata" :height jwm/default-font-size)
-;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "Bahnschrift" :height 145)
-;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "Inconsolata" :height 150 :weight 'regular)
+(if (daemonp)
+        (add-hook 'after-make-frame-functions
+                         (lambda (frame)
+                           (with-selected-frame frame
+                              (jwm/set-font-faces))))
+        (jwm/set-font-faces))
+
+#+end_src
+** UI arrange
+#+begin_src emacs-lisp
+
+(set-window-scroll-bars (minibuffer-window) nil nil)
+(scroll-bar-mode -1)
+(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+(setq scroll-conservatively 100)
+(setq kill-whole-line t)
+(setq kill-read-only-ok t)
+(setq require-final-newline t)
+(setq echo-keystrokes 0.1)
+(setq focus-follows-mouse t)
 
 #+end_src
 * Evil mode
@@ -145,10 +166,11 @@
 (if (daemonp)
     (add-hook 'after-make-frame-functions
               (lambda (frame)
+                (setq doom-modeline-icon t)
                 (with-selected-frame frame (hrs/apply-theme-drk))))
   (hrs/apply-theme-drk))
 
-  (setq jwm/themes '(doom-one-light doom-one doom-acario-light doom-zenburn modus-vivendi modus-operandi doom-molokai doom-vibrant doom-dark+ doom-dracula doom-fairy-floss doom-gruvbox doom-material doom-nord doom-nord-light doom-nova doom-opera doom-opera-light doom-palenight doom-snazzy doom-sourcerer doom-spacegrey doom-tomorrow-night doom-tomorrow-day))
+  (setq jwm/themes '(doom-one-light doom-one doom-acario-light doom-zenburn doom-molokai doom-vibrant doom-dark+ doom-dracula doom-fairy-floss doom-gruvbox doom-material doom-nord doom-nord-light doom-nova doom-opera doom-opera-light doom-palenight doom-snazzy doom-sourcerer doom-spacegrey doom-tomorrow-night doom-tomorrow-day))
   (setq jwm/themes-index 0)
 
   (defun jwm/cycle-theme ()
@@ -256,11 +278,8 @@
 * Org Mode
 ** Main Org-mode
 #+begin_src emacs-lisp
-;; Org Mode Configuration ------------------------------------------------------
-
 (defun jwm/org-mode-setup ()
   (org-indent-mode)
-  (variable-pitch-mode 1)
   (visual-line-mode 1))
 
 (defun jwm/org-font-setup ()
@@ -306,14 +325,6 @@
 (use-package visual-fill-column
   :hook (org-mode . jwm/org-mode-visual-fill))
 
-(setq scroll-conservatively 100)
-(setq kill-whole-line t)
-(setq kill-read-only-ok t)
-(setq require-final-newline t)
-(setq echo-keystrokes 0.1)
-(setq focus-follows-mouse t)
-(setq frame-title-format '((:eval (projectile-project-name))))
-
 (setq org-default-notes-file (concat org-directory "/notes.org"))
 
  (require 'org-habit)
@@ -357,13 +368,6 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 (global-set-key (kbd "<home>") 'beginning-of-buffer)
 (global-set-key (kbd "M-o") 'other-window)
 
-(set-window-scroll-bars (minibuffer-window) nil nil)
-(scroll-bar-mode -1)
-(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
-(add-to-list 'default-frame-alist '(width  . 90))
-(add-to-list 'default-frame-alist '(height . 70))
-(add-to-list 'default-frame-alist '(font . "Monospace-10"))
-
 (setq org-capture-templates
       '(("j" "Journal entry" plain (function org-journal-find-location)
          "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
@@ -373,6 +377,7 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 	("T" "Tasks with ClipBoard" entry (file+headline "" "Tasks")
          "*** TODO %?\n%U\n   %^C" :prepend t)))
 
+(setq org-duration-format 'h:mm)
 #+end_src
 ** Babel and Structure templates
 #+begin_src emacs-lisp
@@ -660,6 +665,21 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 #+begin_src emacs-lisp
 (evil-set-register ?d [?i ?* ?  ?\C-c ?. return escape])
 (evil-set-register ?t [?i ?\C-u ?\C-c ?. return escape])
+
+#+end_src
+* Workspace
+#+begin_src emacs-lisp
+
+(use-package perspective
+   :bind (("C-M-j" . persp-counsel-switch-buffer)
+          ("C-M-k" . persp.switch)
+          ("C-M-n" . persp-next)
+          ("C-x k" . persp-kill-buffer*))
+   :custom
+   (persp-initial-frame-name "main")
+   :config
+   (unless persp-mode
+     (persp-mode 1)))
 
 #+end_src
 * Custom variable
