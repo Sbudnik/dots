@@ -187,5 +187,11 @@
  alias c='clear'
  alias mkdir='mkdir -pv'
  alias cd=cd_func
+ alias gst='git status'
+ alias gaa='git add .'
+ alias gc='git commit -v'
+ alias gpu='git pull'
+ alias gp='git push'
+ alias g='git'
 
 #+end_src
