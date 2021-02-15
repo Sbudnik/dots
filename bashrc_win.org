@@ -1,10 +1,10 @@
 #+title BASHRC Config
-#+PROPERTY: header-args:shell :tangle ~/.bashrc
+#+PROPERTY: header-args:shell :tangle c:/msys64/home/jwmosty/.bashrc
 
 * Main file
 #+begin_src shell
 # ~/.bashrc: executed by bash(1) for interactive shells.
-
+#adding this for test
 # If not running interactively, don't do anything
 [[ "$-" != *i* ]] && return
 
