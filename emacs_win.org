@@ -68,6 +68,10 @@
 (setq focus-follows-mouse t)
 
 #+end_src
+** Backups
+#+begin_src emacs-lisp
+(setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
+#+end_src
 * Evil mode
 #+begin_src emacs-lisp
 (use-package evil
