@@ -31,6 +31,7 @@
 (sensible-defaults/use-all-keybindings)
 
 (use-package all-the-icons)
+(use-package no-littering)
 #+end_src
 * Basic setup
 ** Font setup
