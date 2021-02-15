@@ -177,7 +177,7 @@
  alias dir='ls --color=auto --format=vertical'
  alias vdir='ls --color=auto --format=long'
  alias ll='echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************"; ls -l'
- alias la='echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************";  ls -a'
+ alias la='echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************";  ls -aF'
  alias l='echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************"; ls -GhF1A'
  alias lc='clear; echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************"; ls -GhF1A'
  alias x='exit'
@@ -190,7 +190,7 @@
  alias gst='git status'
  alias gaa='git add .'
  alias gc='git commit -v'
- alias gpu='git pull'
+ alias gup='git pull'
  alias gp='git push'
  alias g='git'
 
