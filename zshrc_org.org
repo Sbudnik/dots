@@ -129,7 +129,7 @@ source $ZSH/oh-my-zsh.sh
  alias du="du -h"
  alias grep="grep --color"
  alias ll='echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************"; ls -l'
- alias la='echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************";  ls -a'
+ alias la='echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************";  ls -aF'
  alias l='echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************"; ls -GhF1A'
  alias lc='clear; echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************"; ls -GhF1A'
  alias x='exit'
