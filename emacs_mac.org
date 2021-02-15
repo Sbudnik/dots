@@ -30,6 +30,7 @@
 (sensible-defaults/use-all-settings)
 (sensible-defaults/use-all-keybindings)
 
+(use-package no-littering)
 #+end_src
 * Basic setup
 ** Font setup
@@ -104,6 +105,11 @@
 (setq focus-follows-mouse t)
 
 #+end_src
+** Backups
+#+begin_src emacs-lisp
+(setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
+#+end_src
+
 ** Dashboard
 #+begin_src emacs-lisp
 
