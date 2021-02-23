@@ -383,6 +383,7 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
          "*** TODO %?\n%U\n   %^C" :prepend t)))
 
 (setq org-duration-format 'h:mm)
+(setq org-confirm-elisp-link-function nil)
 #+end_src
 ** Babel and Structure templates
 #+begin_src emacs-lisp
