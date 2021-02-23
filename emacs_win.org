@@ -370,8 +370,10 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key "\C-cl" 'org-store-link)
 (define-key global-map "\C-cL" 'org-occur-link-in-agenda-files)
-(global-set-key (kbd "<home>") 'beginning-of-buffer)
+(global-set-key (kbd "<home>") 'begsinning-of-buffer)
 (global-set-key (kbd "M-o") 'other-window)
+
+(setq org-agenda-files '("C:/Users/jwmosty/AppData/Roaming/org/"))
 
 (setq org-capture-templates
       '(("j" "Journal entry" plain (function org-journal-find-location)
@@ -686,6 +688,7 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 #+end_src
 * Python
 #+begin_src emacs-lisp
+(setq org-babel-python-command "c:/msys64/usr/bin/python3.8.exe")
 (setq python-shell-interpreter "c:/msys64/usr/bin/python3.8.exe")
 #+end_src
 * Custom variable
