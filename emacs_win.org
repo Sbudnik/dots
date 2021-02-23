@@ -684,6 +684,10 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
      (persp-mode 1)))
 
 #+end_src
+* Python
+#+begin_src emacs-lisp
+(setq python-shell-interpreter "c:/msys64/usr/bin/python3.8.exe")
+#+end_src
 * Custom variable
 #+begin_src emacs-lisp
 (custom-set-variables
