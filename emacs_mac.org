@@ -104,6 +104,11 @@
 (setq echo-keystrokes 0.1)
 (setq focus-follows-mouse t)
 
+(setq split-height-threshold nil)
+(setq split-width-threshold 0)
+(setq org-confirm-elisp-link-function nil)
+
+
 #+end_src
 ** Backups
 #+begin_src emacs-lisp
@@ -630,6 +635,11 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 (use-package treemacs-magit
   :after treemacs magit
   :ensure t)
+#+end_src
+* Python
+#+begin_src emacs-lisp
+(setq python-shell-intrepreter '("/usr/local/bin/python3"))
+(setq org-babel-python-command "/usr/local/bin/python3")
 #+end_src
 * Macros
 #+begin_src emacs-lisp
