@@ -219,7 +219,7 @@
   "Apply my chosen theme and make frames just slightly transparent."
   (interactive)
   (load-theme 'doom-one t)
-  (transparency 90))
+  (transparency 100))
 
 (if (daemonp)
     (add-hook 'after-make-frame-functions
@@ -228,7 +228,7 @@
                 (with-selected-frame frame (hrs/apply-theme-drk))))
   (hrs/apply-theme-drk))
 
-(setq jwm/themes '(doom-one doom-one-light doom-dark+ doom-challenger-deep doom-acario-light doom-tomorrow-day doom-peacock doom-zenburn))
+(setq jwm/themes '(doom-one doom-one-light doom-dark+ doom-challenger-deep doom-acario-light doom-tomorrow-day doom-peacock doom-zenburn doom-gruvbox))
 (setq jwm/themes-index 0)
 
 (defun jwm/cycle-theme ()
