@@ -415,6 +415,8 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 	("T" "Tasks with ClipBoard" entry (file+headline "" "Tasks")
          "*** TODO %?\n%U\n   %^C" :prepend t)))
 
+(use-package org-autolist)
+(add-hook 'org-mode-hook (lambda () (org-autolist-mode)))
 #+end_src
 ** Babel and Structure templates
 #+begin_src emacs-lisp
