@@ -67,6 +67,8 @@
 (setq require-final-newline t)
 (setq echo-keystrokes 0.1)
 (setq focus-follows-mouse t)
+(setq split-height-threshold nil)
+(setq split-width-threshold 0)
 
 #+end_src
 ** Backups
@@ -166,7 +168,7 @@
   "Apply my chosen theme and make frames just slightly transparent."
   (interactive)
   (load-theme 'doom-acario-light t)
-  (transparency 90))
+  (transparency 98))
 
 (if (daemonp)
     (add-hook 'after-make-frame-functions
@@ -373,7 +375,7 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 (global-set-key (kbd "<home>") 'begsinning-of-buffer)
 (global-set-key (kbd "M-o") 'other-window)
 
-(setq org-agenda-files '("C:/Users/jwmosty/AppData/Roaming/org/"))
+(setq org-agenda-files '("d:/My Drive/Org_Files/"))
 
 (setq org-capture-templates
       '(("j" "Journal entry" plain (function org-journal-find-location)
@@ -386,6 +388,9 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 
 (setq org-duration-format 'h:mm)
 (setq org-confirm-elisp-link-function nil)
+
+(use-package org-autolist)
+(add-hook 'org-mode-hook (lambda () (org-autolist-mode)))
 #+end_src
 ** Babel and Structure templates
 #+begin_src emacs-lisp
@@ -690,6 +695,39 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 #+begin_src emacs-lisp
 (setq org-babel-python-command "c:/msys64/usr/bin/python3.8.exe")
 (setq python-shell-interpreter "c:/msys64/usr/bin/python3.8.exe")
+#+end_src
+* eshell
+#+begin_src emacs-lisp
+(defun jwm/configure-eshell ()
+  ;; Save command history when commands are entered
+  (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+
+  ;; Truncate buffer for performance
+  (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+
+  ;; Bind some useful keys for evil-mode
+  (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'counsel-esh-history)
+  (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
+  (evil-normalize-keymaps)
+
+  (setq eshell-history-size         10000
+        eshell-buffer-maximum-lines 10000
+        eshell-hist-ignoredups t
+        eshell-scroll-to-bottom-on-input t))
+
+(use-package eshell-git-prompt)
+
+(use-package eshell
+  :hook (eshell-first-time-mode . jwm/configure-eshell)
+  :config
+
+  (with-eval-after-load 'esh-opt
+    (setq eshell-destroy-buffer-when-process-dies t)
+    (setq eshell-visual-commands '("htop" "zsh" "vim")))
+
+  (eshell-git-prompt-use-theme 'git-radar))
+
+(use-package symon)
 #+end_src
 * Custom variable
 #+begin_src emacs-lisp
