@@ -68,7 +68,7 @@
 (setq echo-keystrokes 0.1)
 (setq focus-follows-mouse t)
 (setq split-height-threshold nil)
-(setq split-width-threshold 0)
+(setq split-width-threshold 100)
 
 #+end_src
 ** Backups
