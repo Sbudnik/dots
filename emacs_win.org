@@ -693,8 +693,8 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 #+end_src
 * Python
 #+begin_src emacs-lisp
-(setq org-babel-python-command "c:/msys64/usr/bin/python3.8.exe")
-(setq python-shell-interpreter "c:/msys64/usr/bin/python3.8.exe")
+(setq org-babel-python-command "c:/Users/jwmosty/AppData/Local/Programs/Python/Python38-32/python.exe")
+(setq python-shell-interpreter "c:/Users/jwmosty/AppData/Local/Programs/Python/Python38-32/python.exe")
 #+end_src
 * eshell
 #+begin_src emacs-lisp
@@ -728,6 +728,7 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
   (eshell-git-prompt-use-theme 'git-radar))
 
 (use-package symon)
+(add-hook 'after-init-hook 'symon-mode)
 #+end_src
 * Custom variable
 #+begin_src emacs-lisp
@@ -758,7 +759,7 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
  '(org-return-follows-link t)
  '(org-special-ctrl-a/e t)
  '(org-special-ctrl-k t)
- '(org-todo-keywords '((type "TODO(t)" "STARTED(s!)" "DONE(d!)")))
+ '(org-todo-keywords '((type "TODO(t)" "DONE(d!)")))
  '(org-todo-state-tags-triggers nil)
  '(org-use-fast-todo-selection 'auto)
  '(package-selected-packages
