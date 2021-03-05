@@ -69,6 +69,7 @@
 (setq focus-follows-mouse t)
 (setq split-height-threshold nil)
 (setq split-width-threshold 100)
+(setq save-interprogram-paste-before-kill t)
 
 #+end_src
 ** Backups
