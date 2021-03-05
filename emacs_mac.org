@@ -108,6 +108,7 @@
 (setq split-width-threshold 0)
 (setq org-confirm-elisp-link-function nil)
 
+(setq save-interprogram-paste-before-kill t)
 
 #+end_src
 ** Backups
@@ -246,19 +247,6 @@
 (global-set-key (kbd "<f12>") 'jwm/cycle-theme)
 
 #+end_src
-* Helpful
-#+begin_src emacs-lisp
-(use-package helpful
-  :custom
-  (counsel-describe-function-function #'helpful-callable)
-  (counsel-describe-variable-function #'helpful-variable)
-  :bind
-  ([remap describe-function] . counsel-describe-function)
-  ([remap describe-command] . helpful-command)
-  ([remap describe-variable] . counsel-describe-variable)
-  ([remap describe-key] . helpful-key))
-
-#+end_src
 * Ivy hydra
 #+begin_src emacs-lisp
 
@@ -271,7 +259,12 @@
   :config
   (ivy-mode 1))
 
-(use-package counsel)
+(use-package counsel
+  :bind
+  (("M-y" . counsel-yank-pop)
+   :map ivy-minibuffer-map
+   ("M-y" . ivy-next-line)))
+
 (use-package swiper)
 (setq ivy-use-virtual-buffers t)
 (setq enable-recursive-minibuffers t)
@@ -308,6 +301,19 @@
   :diminish which-key-mode
   :config
   (setq which-key-idle-delay 0.3))
+
+#+end_src
+* Helpful
+#+begin_src emacs-lisp
+(use-package helpful
+  :custom
+  (counsel-describe-function-function #'helpful-callable)
+  (counsel-describe-variable-function #'helpful-variable)
+  :bind
+  ([remap describe-function] . counsel-describe-function)
+  ([remap describe-command] . helpful-command)
+  ([remap describe-variable] . counsel-describe-variable)
+  ([remap describe-key] . helpful-key))
 
 #+end_src
 * Magit
