@@ -54,6 +54,59 @@
                               (jwm/set-font-faces))))
         (jwm/set-font-faces))
 
+(require 'org-superstar)
+(add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
+(setq inhibit-compacting-font-caches t)
+
+#+end_src
+** Basic UI config
+#+begin_src emacs-lisp
+
+;; Make ESC quit prompts
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+(use-package diminish)
+
+(setq user-full-name "John Mosty"
+      user-mail-address "jwmosty@ascension.org"
+      calendar-latitude 30.32
+      calendar-longitude -97.71
+      calendar-location-name "Austin, TX")
+
+(column-number-mode)
+(global-display-line-numbers-mode t)
+;; Disable line numbers for some modes
+(dolist (mode '(org-mode-hook
+               term-mode-hook
+               shell-mode-hook
+               eshell-mode-hook))
+ (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+(defun hrs/kill-current-buffer ()
+  "Kill the current buffer without prompting."
+  (interactive)
+  (kill-buffer (current-buffer)))
+
+(global-set-key (kbd "C-x k") 'hrs/kill-current-buffer)
+
+(defun hrs/split-window-below-and-switch ()
+  "Split the window horizontally, then switch to the new pane."
+  (interactive)
+  (split-window-below)
+  (balance-windows)
+  (other-window 1))
+
+(defun hrs/split-window-right-and-switch ()
+  "Split the window vertically, then switch to the new pane."
+  (interactive)
+  (split-window-right)
+  (balance-windows)
+  (other-window 1))
+(global-set-key (kbd "<f5>") 'org-capture)
+(global-set-key (kbd "C-x 2") 'hrs/split-window-below-and-switch)
+(global-set-key (kbd "C-x 3") 'hrs/split-window-right-and-switch)
+(global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
+(global-hl-line-mode t)
+(global-set-key (kbd "C-c j") 'org-journal-new-entry)
 #+end_src
 ** UI arrange
 #+begin_src emacs-lisp
@@ -145,55 +198,70 @@
 
 * Theme config
 #+begin_src emacs-lisp
-  (require 'modus-themes)
-  (use-package doom-modeline
-    :init (doom-modeline-mode 1)
-    :custom ((doom-modeline-height 20)))
-  (setq doom-modeline-icon (display-graphic-p))
-  (setq doom-modeline-window-width-limit fill-column)
+    (use-package doom-modeline
+      :init (doom-modeline-mode 1)
+      :custom ((doom-modeline-height 20)))
+    ;; (setq doom-modeline-icon (display-graphic-p))
+    (setq doom-modeline-window-width-limit fill-column)
 
-  (use-package doom-themes
-    :config
-    ;; Global settings (defaults)
-    (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-          doom-themes-enable-italic t) ; if nil, italics is universally disabled
-    ;; Enable flashing mode-line on errors
-    (doom-themes-visual-bell-config))
+    (use-package modus-themes
+      :ensure                         ; omit this to use the built-in themes
+      :init
+      ;; Add all your customizations prior to loading the themes
+      (setq modus-themes-slanted-constructs t
+            modus-themes-bold-constructs nil
+            modus-themes-intense-hl-line t
+            modus-themes-subtle-line-numbers t)
 
-  (defun transparency (value)
-    "Sets the transparency of the frame window. 0=transparent/100=opaque."
-    (interactive "nTransparency Value 0 - 100 opaque:")
-    (set-frame-parameter (selected-frame) 'alpha value))
+      ;; Load the theme files before enabling a theme (else you get an error).
+      (modus-themes-load-themes)
+      :config
+      ;; Load the theme of your choice:
+      (modus-themes-load-operandi);; OR (modus-themes-load-vivendi)
+      :bind ("<f12>" . modus-themes-toggle))
 
-(defun hrs/apply-theme-drk ()
-  "Apply my chosen theme and make frames just slightly transparent."
-  (interactive)
-  (load-theme 'doom-acario-light t)
-  (transparency 98))
+   ;;  (use-package doom-themes
+  ;;     :config
+  ;;     ;; Global settings (defaults)
+  ;;     (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+  ;;           doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  ;;     ;; Enable flashing mode-line on errors
+  ;;     (doom-themes-visual-bell-config))
 
-(if (daemonp)
-    (add-hook 'after-make-frame-functions
-              (lambda (frame)
-                (setq doom-modeline-icon t)
-                (with-selected-frame frame (hrs/apply-theme-drk))))
-  (hrs/apply-theme-drk))
+  ;;   (defun transparency (value)
+  ;;     "Sets the transparency of the frame window. 0=transparent/100=opaque."
+  ;;     (interactive "nTransparency Value 0 - 100 opaque:")
+  ;;     (set-frame-parameter (selected-frame) 'alpha value))
 
-  (setq jwm/themes '(doom-one-light doom-one doom-acario-light doom-zenburn doom-molokai doom-vibrant doom-dark+ doom-dracula doom-fairy-floss doom-gruvbox doom-material doom-nord doom-nord-light doom-nova doom-opera doom-opera-light doom-palenight doom-snazzy doom-sourcerer doom-spacegrey doom-tomorrow-night doom-tomorrow-day))
-  (setq jwm/themes-index 0)
+  ;; (defun hrs/apply-theme-drk ()
+  ;;   "Apply my chosen theme and make frames just slightly transparent."
+  ;;   (interactive)
+  ;;   (load-theme 'doom-acario-light t)
+  ;;   (transparency 98))
 
-  (defun jwm/cycle-theme ()
-    (interactive)
-    (setq jwm/themes-index (% (1+ jwm/themes-index) (length jwm/themes)))
-    (jwm/load-indexed-theme))
+  ;; (if (daemonp)
+  ;;     (add-hook 'after-make-frame-functions
+  ;;               (lambda (frame)
+  ;;                 (setq doom-modeline-icon t)
+  ;;                 (with-selected-frame frame (hrs/apply-theme-drk))))
+  ;;   (hrs/apply-theme-drk))
 
-  (defun jwm/load-indexed-theme ()
-    (jwm/try-load-theme (nth jwm/themes-index jwm/themes)))
+  ;;   (setq jwm/themes '(doom-one-light doom-one doom-acario-light doom-zenburn doom-molokai doom-vibrant doom-dark+ doom-dracula doom-fairy-floss doom-gruvbox doom-material doom-nord doom-nord-light doom-nova doom-opera doom-opera-light doom-palenight doom-snazzy doom-sourcerer doom-spacegrey doom-tomorrow-night doom-tomorrow-day))
+  ;;   (setq jwm/themes-index 0)
 
-  (defun jwm/try-load-theme (theme)
-    (if (ignore-errors (load-theme theme :no-confirm))
-        (mapcar #'disable-theme (remove theme custom-enabled-themes))
-      (message "Theme '%s' loaded" theme)))
-  (global-set-key (kbd "<f12>") 'jwm/cycle-theme)
+  ;;   (defun jwm/cycle-theme ()
+  ;;     (interactive)
+  ;;     (setq jwm/themes-index (% (1+ jwm/themes-index) (length jwm/themes)))
+  ;;     (jwm/load-indexed-theme))
+
+  ;;   (defun jwm/load-indexed-theme ()
+  ;;     (jwm/try-load-theme (nth jwm/themes-index jwm/themes)))
+
+  ;;   (defun jwm/try-load-theme (theme)
+  ;;     (if (ignore-errors (load-theme theme :no-confirm))
+  ;;         (mapcar #'disable-theme (remove theme custom-enabled-themes))
+  ;;       (message "Theme '%s' loaded" theme)))
+  ;;   (global-set-key (kbd "<f12>") 'jwm/cycle-theme)
 
 #+end_src
 * Ivy hydra
@@ -322,13 +390,13 @@
 (use-package org
   :hook (org-mode . jwm/org-mode-setup)
   :config
-  (setq org-ellipsis " ▾")
+  (setq org-ellipsis "...")
   (jwm/org-font-setup))
 
 (add-hook 'before-save-hook 'time-stamp)
 
-(require 'org-bullets)
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+;;(require 'org-bullets)
+;;(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
 (defun jwm/org-mode-visual-fill ()
   (setq visual-fill-column-width 100
@@ -530,55 +598,6 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
               ("C-." . flyspell-correct-wrapper)))
 
 #+end_src
-** Basic UI config
-#+begin_src emacs-lisp
-
-;; Make ESC quit prompts
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-(use-package diminish)
-
-(setq user-full-name "John Mosty"
-      user-mail-address "jwmosty@ascension.org"
-      calendar-latitude 30.32
-      calendar-longitude -97.71
-      calendar-location-name "Austin, TX")
-
-(column-number-mode)
-(global-display-line-numbers-mode t)
-;; Disable line numbers for some modes
-(dolist (mode '(org-mode-hook
-               term-mode-hook
-               shell-mode-hook
-               eshell-mode-hook))
- (add-hook mode (lambda () (display-line-numbers-mode 0))))
-
-(defun hrs/kill-current-buffer ()
-  "Kill the current buffer without prompting."
-  (interactive)
-  (kill-buffer (current-buffer)))
-
-(global-set-key (kbd "C-x k") 'hrs/kill-current-buffer)
-
-(defun hrs/split-window-below-and-switch ()
-  "Split the window horizontally, then switch to the new pane."
-  (interactive)
-  (split-window-below)
-  (balance-windows)
-  (other-window 1))
-
-(defun hrs/split-window-right-and-switch ()
-  "Split the window vertically, then switch to the new pane."
-  (interactive)
-  (split-window-right)
-  (balance-windows)
-  (other-window 1))
-(global-set-key (kbd "<f5>") 'org-capture)
-(global-set-key (kbd "C-x 2") 'hrs/split-window-below-and-switch)
-(global-set-key (kbd "C-x 3") 'hrs/split-window-right-and-switch)
-(global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
-(global-hl-line-mode)
-(global-set-key (kbd "C-c j") 'org-journal-new-entry)
-#+end_src
 ** Dashboard
 #+begin_src emacs-lisp
 
@@ -738,49 +757,49 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 #+end_src
 * Custom variable
 #+begin_src emacs-lisp
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(org-agenda-include-diary t)
- '(org-agenda-show-all-dates t)
- '(org-agenda-skip-deadline-if-done t)
- '(org-agenda-skip-scheduled-if-done t)
- '(org-agenda-skip-timestamp-if-done t)
- '(org-agenda-start-on-weekday nil)
- '(org-agenda-start-with-follow-mode t)
- '(org-agenda-sticky t)
- '(org-agenda-tags-todo-honor-ignore-options nil)
- '(org-bullets-bullet-list '("►" "▸" "•" "★" "◇" "◇" "◇" "◇") nil nil "Customized with use-package org-bullets")
- '(org-capture-templates t)
- '(org-clock-into-drawer "LOGBOOK")
- '(org-closed-keep-when-no-todo nil)
- '(org-enforce-todo-checkbox-dependencies t)
- '(org-enforce-todo-dependencies t)
- '(org-hide-emphasis-markers t)
- '(org-log-done 'time)
- '(org-log-done-with-time t)
- '(org-log-into-drawer t)
- '(org-return-follows-link t)
- '(org-special-ctrl-a/e t)
- '(org-special-ctrl-k t)
- '(org-todo-keywords '((type "TODO(t)" "DONE(d!)")))
- '(org-todo-state-tags-triggers nil)
- '(org-use-fast-todo-selection 'auto)
- '(package-selected-packages
-   '(doom-themes-visual-bell-config doom-themes doom-modeline calfw-org calfw phi-search-dired helpful which-key-posframe all-the-icons-ivy-rich ivy-rich which-key avy diminish ivy dashboard org-bullets use-package evil-visual-mark-mode))
- '(pdf-view-midnight-colors (cons "#f8f8f2" "#282a36"))
- '(rustic-ansi-faces
-   ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "#8CD0D3" "#DC8CC3" "#93E0E3" "#DCDCDC"])
- '(tab-bar-mode t)
- '(tool-bar-mode nil)
- '(vc-annotate-background nil)
- '(vc-annotate-background-mode nil))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+  (custom-set-variables
+   ;; custom-set-variables was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(org-agenda-include-diary t)
+   '(org-agenda-show-all-dates t)
+   '(org-agenda-skip-deadline-if-done t)
+   '(org-agenda-skip-scheduled-if-done t)
+   '(org-agenda-skip-timestamp-if-done t)
+   '(org-agenda-start-on-weekday nil)
+   '(org-agenda-start-with-follow-mode t)
+   '(org-agenda-sticky t)
+   '(org-agenda-tags-todo-honor-ignore-options nil)
+   ;; '(org-bullets-bullet-list '("►" "▸" "•" "★" "◇" "◇" "◇" "◇") nil nil "Customized with use-package org-bullets")
+   '(org-capture-templates t)
+   '(org-clock-into-drawer "LOGBOOK")
+   '(org-closed-keep-when-no-todo nil)
+   '(org-enforce-todo-checkbox-dependencies t)
+   '(org-enforce-todo-dependencies t)
+   '(org-hide-emphasis-markers t)
+   '(org-log-done 'time)
+   '(org-log-done-with-time t)
+   '(org-log-into-drawer t)
+   '(org-return-follows-link t)
+   '(org-special-ctrl-a/e t)
+   '(org-special-ctrl-k t)
+   '(org-todo-keywords '((type "TODO(t)" "DONE(d!)")))
+   '(org-todo-state-tags-triggers nil)
+   '(org-use-fast-todo-selection 'auto)
+   '(package-selected-packages
+     '(doom-themes-visual-bell-config doom-themes doom-modeline calfw-org calfw phi-search-dired helpful which-key-posframe all-the-icons-ivy-rich ivy-rich which-key avy diminish ivy dashboard org-bullets use-package evil-visual-mark-mode))
+   '(pdf-view-midnight-colors (cons "#f8f8f2" "#282a36"))
+   '(rustic-ansi-faces
+     ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "#8CD0D3" "#DC8CC3" "#93E0E3" "#DCDCDC"])
+   '(tab-bar-mode t)
+   '(tool-bar-mode nil)
+   '(vc-annotate-background nil)
+   '(vc-annotate-background-mode nil))
+  (custom-set-faces
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   )
 #+end_src
