@@ -45,6 +45,7 @@
 ;; Set the variable pitch face
 (set-face-attribute 'variable-pitch nil :font "Inconsolata" :height 150 :weight 'regular)
 
+(global-hl-line-mode t)
 #+end_src
 ** Basic UI config
 #+begin_src emacs-lisp
@@ -91,7 +92,6 @@
 (global-set-key (kbd "C-x 2") 'hrs/split-window-below-and-switch)
 (global-set-key (kbd "C-x 3") 'hrs/split-window-right-and-switch)
 (global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
-(global-hl-line-mode)
 (global-set-key (kbd "C-c j") 'org-journal-new-entry)
 
 (set-window-scroll-bars (minibuffer-window) nil nil)
@@ -198,53 +198,68 @@
 #+end_src
 * Theme config
 #+begin_src emacs-lisp
-(use-package all-the-icons)
-(use-package doom-modeline
-  :init (doom-modeline-mode 1)
-  :custom ((doom-modeline-height 18)))
+  (use-package all-the-icons)
+  (use-package doom-modeline
+    :init (doom-modeline-mode 1)
+    :custom ((doom-modeline-height 18)))
 
-(use-package doom-themes
-  :config
-  ;; Global settings (defaults)
-  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-        doom-themes-enable-italic t) ; if nil, italics is universally disabled
-  ;; Enable flashing mode-line on errors
-  (doom-themes-visual-bell-config))
+  (use-package modus-themes
+    :ensure                         ; omit this to use the built-in themes
+    :init
+    ;; Add all your customizations prior to loading the themes
+    (setq modus-themes-slanted-constructs t
+          modus-themes-bold-constructs nil
+          modus-themes-intense-hl-line t)
 
-(defun transparency (value)
-  "Sets the transparency of the frame window. 0=transparent/100=opaque."
-  (interactive "nTransparency Value 0 - 100 opaque:")
-  (set-frame-parameter (selected-frame) 'alpha value))
+    ;; Load the theme files before enabling a theme (else you get an error).
+    (modus-themes-load-themes)
+    :config
+    ;; Load the theme of your choice:
+    (modus-themes-load-operandi);; OR (modus-themes-load-vivendi)
+    :bind ("<f7>" . modus-themes-toggle))
 
-(defun hrs/apply-theme-drk ()
-  "Apply my chosen theme and make frames just slightly transparent."
-  (interactive)
-  (load-theme 'doom-one t)
-  (transparency 100))
+  ;; (use-package doom-themes
+  ;;   :config
+  ;;   ;; Global settings (defaults)
+  ;;   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+  ;;         doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  ;;   ;; Enable flashing mode-line on errors
+  ;;   (doom-themes-visual-bell-config))
 
-(if (daemonp)
-    (add-hook 'after-make-frame-functions
-              (lambda (frame)
-              (setq doom-modeline-icon t)
-                (with-selected-frame frame (hrs/apply-theme-drk))))
-  (hrs/apply-theme-drk))
+  ;; (defun transparency (value)
+  ;;   "Sets the transparency of the frame window. 0=transparent/100=opaque."
+  ;;   (interactive "nTransparency Value 0 - 100 opaque:")
+  ;;   (set-frame-parameter (selected-frame) 'alpha value))
 
-(setq jwm/themes '(doom-one doom-one-light doom-dark+ doom-challenger-deep doom-acario-light doom-tomorrow-day doom-peacock doom-zenburn doom-gruvbox))
-(setq jwm/themes-index 0)
+  ;; (defun hrs/apply-theme-drk ()
+  ;;   "Apply my chosen theme and make frames just slightly transparent."
+  ;;   (interactive)
+  ;;   (load-theme 'doom-one t)
+  ;;   (transparency 100))
 
-(defun jwm/cycle-theme ()
-  (interactive)
-  (setq jwm/themes-index (% (1+ jwm/themes-index) (length jwm/themes)))
-  (jwm/load-indexed-theme))
+  ;; (if (daemonp)
+  ;;     (add-hook 'after-make-frame-functions
+  ;;               (lambda (frame)
+  ;;               (setq doom-modeline-icon t)
+  ;;                 (with-selected-frame frame (hrs/apply-theme-drk))))
+  ;;   (hrs/apply-theme-drk))
 
-(defun jwm/load-indexed-theme ()
-  (jwm/try-load-theme (nth jwm/themes-index jwm/themes)))
+  ;; (setq jwm/themes '(doom-one doom-one-light doom-dark+ doom-challenger-deep doom-acario-light doom-tomorrow-day doom-peacock doom-zenburn doom-gruvbox))
+  ;; (setq jwm/themes-index 0)
 
-(defun jwm/try-load-theme (theme)
-  (if (ignore-errors (load-theme theme :no-confirm))
-      (mapcar #'disable-theme (remove theme custom-enabled-themes))
-    (message "Unable to find theme file for '%s'" theme)))
-(global-set-key (kbd "<f12>") 'jwm/cycle-theme)
+  ;; (defun jwm/cycle-theme ()
+  ;;   (interactive)
+  ;;   (setq jwm/themes-index (% (1+ jwm/themes-index) (length jwm/themes)))
+  ;;   (jwm/load-indexed-theme))
+
+  ;; (defun jwm/load-indexed-theme ()
+  ;;   (jwm/try-load-theme (nth jwm/themes-index jwm/themes)))
+
+  ;; (defun jwm/try-load-theme (theme)
+  ;;   (if (ignore-errors (load-theme theme :no-confirm))
+  ;;       (mapcar #'disable-theme (remove theme custom-enabled-themes))
+  ;;     (message "Unable to find theme file for '%s'" theme)))
+  ;; (global-set-key (kbd "<f12>") 'jwm/cycle-theme)
 
 #+end_src
 * Ivy hydra
@@ -683,37 +698,7 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
     (setq eshell-destroy-buffer-when-process-dies t)
     (setq eshell-visual-commands '("htop" "zsh" "vim")))
 
-  (eshell-git-prompt-use-theme '(defun jwm/configure-eshell ()
-  ;; Save command history when commands are entered
-  (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
-
-  ;; Truncate buffer for performance
-  (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
-
-  ;; Bind some useful keys for evil-mode
-  (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'counsel-esh-history)
-  (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
-  (evil-normalize-keymaps)
-
-  (setq eshell-history-size         10000
-        eshell-buffer-maximum-lines 10000
-        eshell-hist-ignoredups t
-        eshell-scroll-to-bottom-on-input t))
-
-(use-package eshell-git-prompt)
-
-(use-package eshell
-  :hook (eshell-first-time-mode . jwm/configure-eshell)
-  :config
-
-  (with-eval-after-load 'esh-opt
-    (setq eshell-destroy-buffer-when-process-dies t)
-    (setq eshell-visual-commands '("htop" "zsh" "vim")))
-
-    (eshell-git-prompt-use-theme 'powerline))
-
-(use-package symon)
-(add-hook 'after-init-hook 'symon-mode)))
+  (eshell-git-prompt-use-theme 'git-radar))
 
 (use-package symon)
 (add-hook 'after-init-hook 'symon-mode)
