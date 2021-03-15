@@ -36,22 +36,24 @@
 ** Font setup
 - This is a mac setup with fonts
 #+begin_src emacs-lisp
-;; May need to adjust this font size for the system
-(defvar jwm/default-font-size 125)
+  ;; May need to adjust this font size for the system
+  (defvar jwm/default-font-size 125)
 
-(set-face-attribute 'default nil :font "Fira Code" :height jwm/default-font-size)
-;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "Fira Code" :height jwm/default-font-size)
-;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "Arial Light" :height jwm/default-font-size :weight 'regular)
+  (set-face-attribute 'default nil :font "Fira Code" :height jwm/default-font-size)
+  ;; Set the fixed pitch face
+  (set-face-attribute 'fixed-pitch nil :font "Fira Code" :height jwm/default-font-size)
+  ;; Set the variable pitch face
+  (set-face-attribute 'variable-pitch nil :font "Fira Code" :height jwm/default-font-size :weight 'regular)
 
-(global-hl-line-mode t)
+  (global-hl-line-mode t)
 #+end_src
 ** Basic UI config
 #+begin_src emacs-lisp
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 (use-package diminish)
+
+(server-start)
 
 (setq user-full-name "John Mosty"
       user-mail-address "dubs.mosty@gmail.com"
@@ -109,6 +111,9 @@
 (setq org-confirm-elisp-link-function nil)
 
 (setq save-interprogram-paste-before-kill t)
+
+(setq initial-frame-alist
+       '((top . 1) (left . 1) (width . 85) (height . 45)))
 
 #+end_src
 ** Backups
@@ -198,6 +203,7 @@
 #+end_src
 * Theme config
 #+begin_src emacs-lisp
+
   (use-package all-the-icons)
   (use-package doom-modeline
     :init (doom-modeline-mode 1)
@@ -214,7 +220,9 @@
             modus-themes-links 'faint-neutral-underline
             modus-themes-syntax 'faint
             modus-themes-completions 'opinionated
-            modus-themes-org-habit 'simplified)
+            modus-themes-org-habit 'simplified
+            modus-themes-lang-checkers 'subtle-foreground-straight-underline
+            modus-themes-prompts 'subtle-accented)
 
 
     ;; Load the theme files before enabling a theme (else you get an error).
@@ -224,13 +232,13 @@
     (modus-themes-load-operandi);; OR (modus-themes-load-vivendi)
     :bind ("<f12>" . modus-themes-toggle))
 
-  ;; (use-package doom-themes
-  ;;   :config
+   (use-package doom-themes
+     :config
   ;;   ;; Global settings (defaults)
   ;;   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
   ;;         doom-themes-enable-italic t) ; if nil, italics is universally disabled
   ;;   ;; Enable flashing mode-line on errors
-  ;;   (doom-themes-visual-bell-config))
+     (doom-themes-visual-bell-config))
 
   ;; (defun transparency (value)
   ;;   "Sets the transparency of the frame window. 0=transparent/100=opaque."
@@ -362,7 +370,7 @@
                   (org-level-6 . 1.1)
                   (org-level-7 . 1.1)
                   (org-level-8 . 1.1)))
-    (set-face-attribute (car face) nil :font "Arial" :weight 'regular :height (cdr face)))
+    (set-face-attribute (car face) nil :font "Fira Code" :weight 'regular :height (cdr face)))
 
   ;; Ensure that anything that should be fixed-pitch in Org files appears that way
   (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
@@ -444,6 +452,9 @@
 
   (use-package org-autolist)
   (add-hook 'org-mode-hook (lambda () (org-autolist-mode)))
+
+(setq org-agenda-files '("~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org"))
+
 #+end_src
 ** Babel and Structure templates
 #+begin_src emacs-lisp
@@ -745,8 +756,6 @@
 	<!--border: 1pt solid #ADB9CC;-->
   }
 </style>")
- '(org-agenda-files
-   '("~/org/habits.org" "~/org/notes.org"))
  '(org-agenda-include-diary t)
  '(org-agenda-show-all-dates t)
  '(org-agenda-skip-deadline-if-done t)
@@ -756,7 +765,6 @@
  '(org-agenda-start-with-follow-mode t)
  '(org-agenda-sticky t)
  '(org-agenda-tags-todo-honor-ignore-options nil)
- '(org-bullets-bullet-list '("►" "▸" "•" "★" "◇" "◇" "◇" "◇") nil nil "Customized with use-package org-bullets")
  '(org-clock-into-drawer "LOGBOOK")
  '(org-closed-keep-when-no-todo nil)
  '(org-enforce-todo-checkbox-dependencies t)
@@ -768,14 +776,11 @@
  '(org-return-follows-link t)
  '(org-special-ctrl-a/e t)
  '(org-special-ctrl-k t)
- '(org-todo-keywords '((type "TODO(t)" "STARTED(s!)" "DONE(d!)")))
+ '(org-todo-keywords '((type "TODO(t)" "DONE(d!)")))
  '(org-todo-state-tags-triggers nil)
  '(org-use-fast-todo-selection 'auto)
  '(package-selected-packages
    '(modus-themes modus-operandi-theme doom-themes-visual-bell-config doom-themes doom-modeline calfw-org calfw nvm phi-search-dired helpful which-key-posframe all-the-icons-ivy-rich ivy-rich which-key avy diminish ivy dashboard org-bullets use-package helm evil-visual-mark-mode))
- '(pdf-view-midnight-colors (cons "#f8f8f2" "#282a36"))
- '(rustic-ansi-faces
-   ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "#8CD0D3" "#DC8CC3" "#93E0E3" "#DCDCDC"])
  '(tab-bar-mode t)
  '(tool-bar-mode nil)
  '(vc-annotate-background nil)
