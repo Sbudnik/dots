@@ -1,3 +1,10 @@
+#+title ZSHRC Config
+#+PROPERTY: header-args:shell :tangle ~/.zshrc
+
+
+* main file
+#+begin_src shell
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -91,13 +98,10 @@ source $ZSH/oh-my-zsh.sh
  export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
- alias em='/Applications/Emacs.app/Contents/MacOS/bin/emacsclient -n -c'
- alias et='/Applications/Emacs.app/Contents/MacOS/bin/emacsclient -t'
-
  if [[ -n $SSH_CONNECTION ]]; then
    export EDITOR='vim'
  else
-   export EDITOR='et'
+   export EDITOR='vim'
  fi
 
 # Compilation flags
@@ -106,6 +110,10 @@ source $ZSH/oh-my-zsh.sh
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+#+end_src
+* Alias
+#+begin_src shell
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
@@ -130,4 +138,5 @@ source $ZSH/oh-my-zsh.sh
  alias h='history'
  alias c='clear'
  alias mkdir='mkdir -pv'
- alias emacsclient='/Applications/Emacs.app/Contents/MacOS/bin/emacsclient -n -c'
+
+#+end_src
