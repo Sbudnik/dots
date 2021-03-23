@@ -32,6 +32,9 @@
 
 (use-package all-the-icons)
 (use-package no-littering)
+
+(server-mode)
+
 #+end_src
 * Basic setup
 ** Font setup
@@ -54,59 +57,57 @@
                               (jwm/set-font-faces))))
         (jwm/set-font-faces))
 
-(require 'org-superstar)
-(add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
-(setq inhibit-compacting-font-caches t)
-
 #+end_src
 ** Basic UI config
 #+begin_src emacs-lisp
 
-;; Make ESC quit prompts
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-(use-package diminish)
+  ;; Make ESC quit prompts
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+  (use-package diminish)
 
-(setq user-full-name "John Mosty"
-      user-mail-address "jwmosty@ascension.org"
-      calendar-latitude 30.32
-      calendar-longitude -97.71
-      calendar-location-name "Austin, TX")
+  (setq user-full-name "John Mosty"
+        user-mail-address "jwmosty@ascension.org"
+        calendar-latitude 30.32
+        calendar-longitude -97.71
+        calendar-location-name "Austin, TX")
 
-(column-number-mode)
-(global-display-line-numbers-mode t)
-;; Disable line numbers for some modes
-(dolist (mode '(org-mode-hook
-               term-mode-hook
-               shell-mode-hook
-               eshell-mode-hook))
- (add-hook mode (lambda () (display-line-numbers-mode 0))))
+  (column-number-mode)
+  (global-display-line-numbers-mode t)
+  ;; Disable line numbers for some modes
+  (dolist (mode '(org-mode-hook
+                 term-mode-hook
+                 shell-mode-hook
+                 eshell-mode-hook))
+   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-(defun hrs/kill-current-buffer ()
-  "Kill the current buffer without prompting."
-  (interactive)
-  (kill-buffer (current-buffer)))
+  (defun hrs/kill-current-buffer ()
+    "Kill the current buffer without prompting."
+    (interactive)
+    (kill-buffer (current-buffer)))
 
-(global-set-key (kbd "C-x k") 'hrs/kill-current-buffer)
+  (global-set-key (kbd "C-x k") 'hrs/kill-current-buffer)
 
-(defun hrs/split-window-below-and-switch ()
-  "Split the window horizontally, then switch to the new pane."
-  (interactive)
-  (split-window-below)
-  (balance-windows)
-  (other-window 1))
+  (defun hrs/split-window-below-and-switch ()
+    "Split the window horizontally, then switch to the new pane."
+    (interactive)
+    (split-window-below)
+    (balance-windows)
+    (other-window 1))
 
-(defun hrs/split-window-right-and-switch ()
-  "Split the window vertically, then switch to the new pane."
-  (interactive)
-  (split-window-right)
-  (balance-windows)
-  (other-window 1))
-(global-set-key (kbd "<f5>") 'org-capture)
-(global-set-key (kbd "C-x 2") 'hrs/split-window-below-and-switch)
-(global-set-key (kbd "C-x 3") 'hrs/split-window-right-and-switch)
-(global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
-(global-hl-line-mode t)
-(global-set-key (kbd "C-c j") 'org-journal-new-entry)
+  (defun hrs/split-window-right-and-switch ()
+    "Split the window vertically, then switch to the new pane."
+    (interactive)
+    (split-window-right)
+    (balance-windows)
+    (other-window 1))
+  (global-set-key (kbd "<f5>") 'org-capture)
+  (global-set-key (kbd "C-x 2") 'hrs/split-window-below-and-switch)
+  (global-set-key (kbd "C-x 3") 'hrs/split-window-right-and-switch)
+  (global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
+  (global-hl-line-mode t)
+  (global-set-key (kbd "C-c j") 'org-journal-new-entry)
+  (winner-mode)
+  (setq pop-up-windows nil)
 #+end_src
 ** UI arrange
 #+begin_src emacs-lisp
@@ -362,112 +363,121 @@
 * Org Mode
 ** Main Org-mode
 #+begin_src emacs-lisp
-  (defun jwm/org-mode-setup ()
-    (org-indent-mode)
-    (visual-line-mode 1))
+    (defun jwm/org-mode-setup ()
+      (org-indent-mode)
+      (visual-line-mode 1))
 
-  (defun jwm/org-font-setup ()
-    ;; Replace list hyphen with dot
-    ;; Set faces for heading levels
-  (dolist (face '((org-level-1 . 1.2)
-                  (org-level-2 . 1.1)
-                  (org-level-3 . 1.05)
-                  (org-level-4 . 1.0)
-                  (org-level-5 . 1.1)
-                  (org-level-6 . 1.1)
-                  (org-level-7 . 1.1)
-                  (org-level-8 . 1.1)))
-    (set-face-attribute (car face) nil :font "Bahnschrift" :weight 'regular :height (cdr face)))
+    (defun jwm/org-font-setup ()
+      ;; Replace list hyphen with dot
+      ;; Set faces for heading levels
+    (dolist (face '((org-level-1 . 1.2)
+                    (org-level-2 . 1.1)
+                    (org-level-3 . 1.05)
+                    (org-level-4 . 1.0)
+                    (org-level-5 . 1.1)
+                    (org-level-6 . 1.1)
+                    (org-level-7 . 1.1)
+                    (org-level-8 . 1.1)))
+      (set-face-attribute (car face) nil :font "Bahnschrift" :weight 'regular :height (cdr face)))
 
-  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-  (set-face-attribute 'org-block nil :foreground nil :font "Inconsolata" :height 145)
+    ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+    (set-face-attribute 'org-block nil :foreground nil :font "Inconsolata" :height 145)
 
-  (set-face-attribute 'fixed-pitch nil :font "Inconsolata" :height 145)
-  (set-face-attribute 'org-code nil   :font "Inconsolata" :height 145)
-  (set-face-attribute 'org-table nil   :font "Inconsolata" :height 145)
-  (set-face-attribute 'org-verbatim nil :font "Inconsolata" :height 145)
-  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-checkbox nil :font "Inconsolata" :height 145))
+    (set-face-attribute 'fixed-pitch nil :font "Inconsolata" :height 145)
+    (set-face-attribute 'org-code nil   :font "Inconsolata" :height 145)
+    (set-face-attribute 'org-table nil   :font "Inconsolata" :height 145)
+    (set-face-attribute 'org-verbatim nil :font "Inconsolata" :height 145)
+    (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-checkbox nil :font "Inconsolata" :height 145))
 
-  (use-package org
-    :hook (org-mode . jwm/org-mode-setup)
-    :config
-    (setq org-ellipsis "..."))
-    ;; (jwm/org-font-setup))
+    (use-package org
+      :hook (org-mode . jwm/org-mode-setup)
+      :config
+      (setq org-ellipsis "..."))
+      ;; (jwm/org-font-setup))
 
-  (add-hook 'before-save-hook 'time-stamp)
+    (add-hook 'before-save-hook 'time-stamp)
 
-  ;;(require 'org-bullets)
-  ;;(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+    ;;(require 'org-bullets)
+    ;;(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
-  (defun jwm/org-mode-visual-fill ()
-    (setq visual-fill-column-width 100
-          visual-fill-column-center-text t)
-    (visual-fill-column-mode 1))
+  (require 'org-superstar)
+  (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
 
-  (use-package visual-fill-column
-    :hook (org-mode . jwm/org-mode-visual-fill))
+  (setq inhibit-compacting-font-caches t)
 
-  (setq org-default-notes-file (concat org-directory "/notes.org"))
+    (defun jwm/org-mode-visual-fill ()
+      (setq visual-fill-column-width 100
+            visual-fill-column-center-text t)
+      (visual-fill-column-mode 1))
 
-   (require 'org-habit)
-    (add-to-list 'org-modules 'org-habit)
-    (setq org-habit-graph-column 60)
+    (use-package visual-fill-column
+      :hook (org-mode . jwm/org-mode-visual-fill))
 
-  (defun air-org-skip-subtree-if-habit ()
-    "Skip an agenda entry if it has a STYLE property equal to \"habit\"."
-    (let ((subtree-end (save-excursion (org-end-of-subtree t))))
-      (if (string= (org-entry-get nil "STYLE") "habit")
-          subtree-end
-        nil)))
+    (setq org-default-notes-file (concat org-directory "/notes.org"))
 
-  (defun air-org-skip-subtree-if-priority (priority)
-    "Skip an agenda subtree if it has a priority of PRIORITY.
+     (require 'org-habit)
+      (add-to-list 'org-modules 'org-habit)
+      (setq org-habit-graph-column 60)
 
-  PRIORITY may be one of the characters ?A, ?B, or ?C."
-    (let ((subtree-end (save-excursion (org-end-of-subtree t)))
-          (pri-value (* 1000 (- org-lowest-priority priority)))
-          (pri-current (org-get-priority (thing-at-point 'line t))))
-      (if (= pri-value pri-current)
-          subtree-end
-        nil)))
+    (defun air-org-skip-subtree-if-habit ()
+      "Skip an agenda entry if it has a STYLE property equal to \"habit\"."
+      (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+        (if (string= (org-entry-get nil "STYLE") "habit")
+            subtree-end
+          nil)))
 
-  (setq org-agenda-custom-commands
-        '(("d" "Daily agenda and all TODOs"
-           ((tags "PRIORITY=\"A\""
-                  ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                   (org-agenda-overriding-header "High-priority unfinished tasks:")))
-            (agenda "" ((org-agenda-ndays 1)))
-            (alltodo ""
-                     ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
-                                                     (air-org-skip-subtree-if-priority ?A)
-                                                     (org-agenda-skip-if nil '(scheduled deadline))))
-                      (org-agenda-overriding-header "ALL normal priority tasks:"))))
-           ((org-agenda-compact-blocks t)))))
+    (defun air-org-skip-subtree-if-priority (priority)
+      "Skip an agenda subtree if it has a priority of PRIORITY.
 
-  (global-set-key (kbd "C-c a") 'org-agenda)
-  (global-set-key "\C-cl" 'org-store-link)
-  (define-key global-map "\C-cL" 'org-occur-link-in-agenda-files)
-  (global-set-key (kbd "<home>") 'begsinning-of-buffer)
-  (global-set-key (kbd "M-o") 'other-window)
+    PRIORITY may be one of the characters ?A, ?B, or ?C."
+      (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+            (pri-value (* 1000 (- org-lowest-priority priority)))
+            (pri-current (org-get-priority (thing-at-point 'line t))))
+        (if (= pri-value pri-current)
+            subtree-end
+          nil)))
 
-  (setq org-agenda-files '("d:/My Drive/Org_Files/"))
+    (setq org-agenda-custom-commands
+          '(("d" "Daily agenda and all TODOs"
+             ((tags "PRIORITY=\"A\""
+                    ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                     (org-agenda-overriding-header "High-priority unfinished tasks:")))
+              (agenda "" ((org-agenda-ndays 1)))
+              (alltodo ""
+                       ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
+                                                       (air-org-skip-subtree-if-priority ?A)
+                                                       (org-agenda-skip-if nil '(scheduled deadline))))
+                        (org-agenda-overriding-header "ALL normal priority tasks:"))))
+             ((org-agenda-compact-blocks t)))))
 
-  (setq org-capture-templates
-        '(("j" "Journal entry" plain (function org-journal-find-location)
-           "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
-           :jump-to-captured t :immediate-finish t)
-          ("t" "Tasks" entry (file+headline "" "Tasks")
-           "*** TODO %?\n%U\n %a %i" :prepend t)
-          ("T" "Tasks with ClipBoard" entry (file+headline "" "Tasks")
-           "*** TODO %?\n%U\n   %^C" :prepend t)))
+    (global-set-key (kbd "C-c a") 'org-agenda)
+    (global-set-key "\C-cl" 'org-store-link)
+    (define-key global-map "\C-cL" 'org-occur-link-in-agenda-files)
+    (global-set-key (kbd "<home>") 'begsinning-of-buffer)
+    (global-set-key (kbd "M-o") 'other-window)
 
-  (setq org-duration-format 'h:mm)
-  (setq org-confirm-elisp-link-function nil)
+    (setq org-agenda-follow nil)
 
-  (use-package org-autolist)
-  (add-hook 'org-mode-hook (lambda () (org-autolist-mode)))
+    (setq org-agenda-files '("d:/My Drive/Org_Files/" "d:/My Drive/Org_Files/mail_mule" "d:/My Drive/Org_Files/event_investigations"))
+
+    (setq org-capture-templates
+          '(("j" "Journal entry" plain (function org-journal-find-location)
+             "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
+             :jump-to-captured t :immediate-finish t)
+            ("t" "Tasks" entry (file+headline "" "Tasks")
+             "*** TODO %?\n%U\n %a %i" :prepend t)
+            ("T" "Tasks with ClipBoard" entry (file+headline "" "Tasks")
+             "*** TODO %?\n%U\n   %^C" :prepend t)))
+
+    (setq org-duration-format 'h:mm)
+    (setq org-confirm-elisp-link-function nil)
+
+    (use-package org-autolist)
+    (add-hook 'org-mode-hook (lambda () (org-autolist-mode)))
+
+
 #+end_src
 ** Babel and Structure templates
 #+begin_src emacs-lisp
@@ -524,6 +534,20 @@
     (unless (eq org-journal-file-type 'daily)
       (org-narrow-to-subtree))
     (goto-char (point-max))))
+#+end_src
+** LaTeX
+#+begin_src emacs-lisp
+  (require 'ox-latex)
+  (unless (boundp 'org-latex-classes)
+    (setq org-latex-classes nil))
+  (add-to-list 'org-latex-classes
+               `("article"
+                 "\\documentclass{article}"
+                 ("\\section{%s}" . "\\section*{%s}")))
+
+  (require 'ox-html)
+  (require 'ox-extra)
+  (ox-extras-activate '(ignore-headlines))
 #+end_src
 * Presentation
 #+begin_src emacs-lisp
@@ -756,7 +780,7 @@
     (setq eshell-destroy-buffer-when-process-dies t)
     (setq eshell-visual-commands '("htop" "zsh" "vim")))
 
-  (eshell-git-prompt-use-theme 'git-radar))
+  (eshell-git-prompt-use-theme 'robbyrussell))
 
 (use-package symon)
 (add-hook 'after-init-hook 'symon-mode)
@@ -764,6 +788,21 @@
 (defun buffcop (buffer)
   (with-current-buffer buffer
     (buffer-string)))
+#+end_src
+* Popper
+#+begin_src emacs-lisp
+(use-package popper
+  :ensure t
+  :bind (("C-`"   . popper-toggle-latest)
+         ("M-`"   . popper-cycle)
+         ("C-M-`" . popper-toggle-type))
+  :init
+  (setq popper-reference-buffers
+        '("\\*Messages\\*"
+          "Output\\*$"
+          help-mode
+          compilation-mode))
+  (popper-mode +1))
 #+end_src
 * Custom variable
 #+begin_src emacs-lisp
@@ -781,7 +820,6 @@
    '(org-agenda-start-with-follow-mode t)
    '(org-agenda-sticky t)
    '(org-agenda-tags-todo-honor-ignore-options nil)
-   ;; '(org-bullets-bullet-list '("►" "▸" "•" "★" "◇" "◇" "◇" "◇") nil nil "Customized with use-package org-bullets")
    '(org-capture-templates t)
    '(org-clock-into-drawer "LOGBOOK")
    '(org-closed-keep-when-no-todo nil)
