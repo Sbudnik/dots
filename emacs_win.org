@@ -107,7 +107,7 @@
   (global-hl-line-mode t)
   (global-set-key (kbd "C-c j") 'org-journal-new-entry)
   (winner-mode)
-  (setq pop-up-windows t)
+  (setq pop-up-windows nil)
   (setq pop-up-frames nil)
 #+end_src
 ** UI arrange
@@ -459,7 +459,7 @@
     (global-set-key (kbd "<home>") 'begsinning-of-buffer)
     (global-set-key (kbd "M-o") 'other-window)
 
-    (setq org-agenda-follow nil)
+    (setq org-agenda-follow-mode t)
 
     (setq org-agenda-files '("d:/My Drive/Org_Files/" "d:/My Drive/Org_Files/mail_mule" "d:/My Drive/Org_Files/event_investigations"))
 
