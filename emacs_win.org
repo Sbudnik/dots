@@ -1,5 +1,5 @@
 #+title EMACS Config
-#+PROPERTY: header-args:emacs-lisp :tangle ./.emacs
+#+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs
 
 * Packages
 - Need to M-x package-install use-package-ensure, org-bullets, for cold installs
