@@ -107,7 +107,8 @@
   (global-hl-line-mode t)
   (global-set-key (kbd "C-c j") 'org-journal-new-entry)
   (winner-mode)
-  (setq pop-up-windows nil)
+  (setq pop-up-windows t)
+  (setq pop-up-frames nil)
 #+end_src
 ** UI arrange
 #+begin_src emacs-lisp
