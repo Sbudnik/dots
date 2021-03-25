@@ -444,7 +444,7 @@
              ((tags "PRIORITY=\"A\""
                     ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
                      (org-agenda-overriding-header "High-priority unfinished tasks:")))
-              (agenda "" ((org-agenda-ndays 3)))
+              (agenda "" ((org-agenda-ndays 2)))
               (alltodo ""
                        ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
                                                        (air-org-skip-subtree-if-priority ?A)
@@ -723,7 +723,6 @@
   ;; (use-package treemacs-magit
   ;;   :after treemacs magit
   ;;   :ensure t)
-
 #+end_src
 * Macros
 #+begin_src emacs-lisp
