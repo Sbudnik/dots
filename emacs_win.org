@@ -72,10 +72,9 @@
         calendar-location-name "Austin, TX")
 
   (column-number-mode)
-  (global-display-line-numbers-mode t)
+  (setq display-line-numbers 'relative)
   ;; Disable line numbers for some modes
-  (dolist (mode '(org-mode-hook
-                 term-mode-hook
+  (dolist (mode '(term-mode-hook
                  shell-mode-hook
                  eshell-mode-hook))
    (add-hook mode (lambda () (display-line-numbers-mode 0))))
@@ -445,7 +444,7 @@
              ((tags "PRIORITY=\"A\""
                     ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
                      (org-agenda-overriding-header "High-priority unfinished tasks:")))
-              (agenda "" ((org-agenda-ndays 1)))
+              (agenda "" ((org-agenda-ndays 3)))
               (alltodo ""
                        ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
                                                        (air-org-skip-subtree-if-priority ?A)
@@ -792,18 +791,24 @@
 #+end_src
 * Popper
 #+begin_src emacs-lisp
-(use-package popper
-  :ensure t
-  :bind (("C-`"   . popper-toggle-latest)
-         ("M-`"   . popper-cycle)
-         ("C-M-`" . popper-toggle-type))
-  :init
-  (setq popper-reference-buffers
-        '("\\*Messages\\*"
-          "Output\\*$"
-          help-mode
-          compilation-mode))
-  (popper-mode +1))
+      (use-package popper
+        :ensure t
+        :bind (("C-`"   . popper-toggle-latest)
+               ("M-`"   . popper-cycle)
+               ("C-M-`" . popper-toggle-type)
+               ("M-_"   . popper-lower-to-popup)
+               ("M-^"   . popper-raise-popup))
+
+        :init
+        (setq popper-reference-buffers
+              '("\\*Messages\\*"
+                "Output\\*$"
+                "\\*Helpful\\*"
+                help-mode
+                Helpful
+                compilation-mode))
+        (setq popper-display-function #'popper-select-popup-at-bottom)
+        (popper-mode +1))
 #+end_src
 * Custom variable
 #+begin_src emacs-lisp
@@ -813,15 +818,12 @@
    ;; Your init file should contain only one such instance.
    ;; If there is more than one, they won't work right.
    '(org-agenda-include-diary t)
-   '(org-agenda-show-all-dates t)
    '(org-agenda-skip-deadline-if-done t)
    '(org-agenda-skip-scheduled-if-done t)
    '(org-agenda-skip-timestamp-if-done t)
    '(org-agenda-start-on-weekday nil)
-   '(org-agenda-start-with-follow-mode t)
    '(org-agenda-sticky t)
    '(org-agenda-tags-todo-honor-ignore-options nil)
-   '(org-capture-templates t)
    '(org-clock-into-drawer "LOGBOOK")
    '(org-closed-keep-when-no-todo nil)
    '(org-enforce-todo-checkbox-dependencies t)
