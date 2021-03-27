@@ -1,0 +1,308 @@
+;; begin file
+
+(require 'package)
+(require 'org)
+
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
+(add-to-list 'package-archives '("elpa" . "https://elpa.gnu.org/packages/"))
+
+(setq package-enable-at-startup nil)
+(package-initialize)
+
+(require 'use-package-ensure)
+(setq use-package-always-ensure t)
+
+(use-package auto-compile
+  :config (auto-compile-on-load-mode))
+
+(setq load-prefer-newer t)
+
+;; Make ESC quit prompts
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+(use-package diminish)
+(setq global-hl-mode t)
+(setq user-full-name "John Mosty"
+      user-mail-address "dubs.mosty@gmail.com"
+      calendar-latitude 30.32
+      calendar-longitude -97.71
+      calendar-location-name "Austin, TX")
+
+(column-number-mode)
+(global-display-line-numbers-mode t)
+;; Disable line numbers for some modes
+(dolist (mode '(term-mode-hook
+               shell-mode-hook
+               eshell-mode-hook))
+ (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+(defun hrs/kill-current-buffer ()
+  "Kill the current buffer without prompting."
+  (interactive)
+  (kill-buffer (current-buffer)))
+
+(global-set-key (kbd "C-x k") 'hrs/kill-current-buffer)
+
+(defun hrs/split-window-below-and-switch ()
+  "Split the window horizontally, then switch to the new pane."
+  (interactive)
+  (split-window-below)
+  (balance-windows)
+  (other-window 1))
+
+(defun hrs/split-window-right-and-switch ()
+  "Split the window vertically, then switch to the new pane."
+  (interactive)
+  (split-window-right)
+  (balance-windows)
+  (other-window 1))
+(global-set-key (kbd "<f5>") 'org-capture)
+(global-set-key (kbd "C-x 2") 'hrs/split-window-below-and-switch)
+(global-set-key (kbd "C-x 3") 'hrs/split-window-right-and-switch)
+(global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
+(global-set-key (kbd "C-c j") 'org-journal-new-entry)
+
+(use-package evil
+  :init
+  (setq evil-want-abbrev-expand-on-insert-exit nil
+        evil-want-keybinding nil)
+  :config
+  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+  (evil-mode 1))
+
+(use-package evil-collection
+  :after evil
+  :config
+  (setq evil-collection-mode-list
+        '(ag dired magit mu4e which-key))
+  (evil-collection-init))
+
+(use-package evil-surround
+  :config
+  (global-evil-surround-mode 1))
+
+(use-package evil-org
+  :after org
+  :config
+  (add-hook 'org-mode-hook 'evil-org-mode)
+  (add-hook 'evil-org-mode-hook
+            (lambda () (evil-org-set-key-theme)))
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys))
+
+(use-package dired
+  :ensure nil
+  :commands (dired dired-jump)
+  :bind (("C-x C-j" . dired-jump))
+;;  :custom ((dired-listing-switches "-agho --group-directories-first"))
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "h" 'dired-single-up-directory
+    "l" 'dired-single-buffer))
+
+(add-hook 'dired-mode-hook
+      (lambda ()
+        (dired-hide-details-mode)))
+
+(use-package dired-single)
+
+;;(use-package dired-open
+;;  :config
+  ;; Doesn't work as expected!
+  ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
+;;  (setq dired-open-extensions '(("png" . "feh")
+;;                                ("mkv" . "mpv"))))
+
+(use-package dired-hide-dotfiles
+  :hook (dired-mode . dired-hide-dotfiles-mode)
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "H" 'dired-hide-dotfiles-mode))
+
+(use-package helpful
+  :custom
+  (counsel-describe-function-function #'helpful-callable)
+  (counsel-describe-variable-function #'helpful-variable)
+  :bind
+  ([remap describe-function] . counsel-describe-function)
+  ([remap describe-command] . helpful-command)
+  ([remap describe-variable] . counsel-describe-variable)
+  ([remap describe-key] . helpful-key))
+
+(use-package ivy-hydra
+  :defer t
+  :after hydra)
+
+(use-package ivy
+  :diminish
+  :config
+  (ivy-mode 1))
+
+(use-package counsel)
+(use-package swiper)
+(setq ivy-use-virtual-buffers t)
+(setq enable-recursive-minibuffers t)
+;; enable this if you want `swiper' to use it
+;; (setq search-default-mode #'char-fold-to-regexp)
+(global-set-key "\C-s" 'swiper)
+(global-set-key (kbd "C-c C-r") 'ivy-resume)
+(global-set-key (kbd "<f6>") 'ivy-resume)
+(global-set-key (kbd "M-x") 'counsel-M-x)
+(global-set-key (kbd "C-x C-f") 'counsel-find-file)
+(global-set-key (kbd "<f1> f") 'counsel-describe-function)
+(global-set-key (kbd "<f1> v") 'counsel-describe-variable)
+(global-set-key (kbd "<f1> o") 'counsel-describe-symbol)
+(global-set-key (kbd "<f1> l") 'counsel-find-library)
+(global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+(global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+(global-set-key (kbd "C-c k") 'counsel-ag)
+(global-set-key (kbd "C-x l") 'counsel-locate)
+(global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
+(global-set-key (kbd "C-M-j") 'counsel-switch-buffer)
+(define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
+
+(use-package ivy-rich
+ :init
+ (ivy-rich-mode 1))
+
+(use-package avy
+  :diminish
+  :bind*
+  ("C-;" . evil-avy-goto-char-2))
+
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 0.3))
+
+(defun jwm/org-mode-setup ()
+  (org-indent-mode)
+  (variable-pitch-mode 1)
+  (visual-line-mode 1))
+
+(use-package org
+  :hook (org-mode . jwm/org-mode-setup)
+  :config
+  (setq org-ellipsis "..."))
+
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
+(defun jwm/org-mode-visual-fill ()
+  (setq visual-fill-column-width 100
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
+
+(use-package visual-fill-column
+  :hook (org-mode . jwm/org-mode-visual-fill))
+
+(setq scroll-conservatively 100)
+(setq kill-whole-line t)
+(setq kill-read-only-ok t)
+(setq require-final-newline t)
+(setq echo-keystrokes 0.1)
+(setq focus-follows-mouse t)
+(setq frame-title-format '((:eval (projectile-project-name))))
+
+(setq org-default-notes-file (concat org-directory "/notes.org"))
+
+ (require 'org-habit)
+  (add-to-list 'org-modules 'org-habit)
+  (setq org-habit-graph-column 60)
+
+(defun air-org-skip-subtree-if-habit ()
+  "Skip an agenda entry if it has a STYLE property equal to \"habit\"."
+  (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+    (if (string= (org-entry-get nil "STYLE") "habit")
+        subtree-end
+      nil)))
+
+(defun air-org-skip-subtree-if-priority (priority)
+  "Skip an agenda subtree if it has a priority of PRIORITY.
+
+PRIORITY may be one of the characters ?A, ?B, or ?C."
+  (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+        (pri-value (* 1000 (- org-lowest-priority priority)))
+        (pri-current (org-get-priority (thing-at-point 'line t))))
+    (if (= pri-value pri-current)
+        subtree-end
+      nil)))
+
+(setq org-agenda-custom-commands
+      '(("d" "Daily agenda and all TODOs"
+         ((tags "PRIORITY=\"A\""
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                 (org-agenda-overriding-header "High-priority unfinished tasks:")))
+          (agenda "" ((org-agenda-ndays 1)))
+          (alltodo ""
+                   ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
+                                                   (air-org-skip-subtree-if-priority ?A)
+                                                   (org-agenda-skip-if nil '(scheduled deadline))))
+                    (org-agenda-overriding-header "ALL normal priority tasks:"))))
+         ((org-agenda-compact-blocks t)))))
+
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key "\C-cl" 'org-store-link)
+(define-key global-map "\C-cL" 'org-occur-link-in-agenda-files)
+(global-set-key (kbd "<home>") 'beginning-of-buffer)
+(global-set-key (kbd "M-o") 'other-window)
+
+(set-window-scroll-bars (minibuffer-window) nil nil)
+(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+
+(setq org-capture-templates
+      '(("j" "Journal entry" plain (function org-journal-find-location)
+         "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
+         :jump-to-captured t :immediate-finish t)
+	("t" "Tasks" entry (file+headline "" "Tasks")
+         "*** TODO %?\n%U\n %a %i" :prepend t)
+	("T" "Tasks with ClipBoard" entry (file+headline "" "Tasks")
+         "*** TODO %?\n%U\n   %^C" :prepend t)))
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(org-agenda-files (quote ("~/org/habits.org" "~/org/notes.org")))
+ '(org-agenda-include-diary t)
+ '(org-agenda-show-all-dates t)
+ '(org-agenda-skip-deadline-if-done t)
+ '(org-agenda-skip-scheduled-if-done t)
+ '(org-agenda-skip-timestamp-if-done t)
+ '(org-agenda-start-on-weekday nil)
+ '(org-agenda-sticky t)
+ '(org-agenda-tags-todo-honor-ignore-options nil)
+ '(org-capture-templates t t)
+ '(org-clock-into-drawer "LOGBOOK")
+ '(org-closed-keep-when-no-todo nil)
+ '(org-enforce-todo-checkbox-dependencies t)
+ '(org-enforce-todo-dependencies t)
+ '(org-hide-emphasis-markers t)
+ '(org-log-done (quote time))
+ '(org-log-done-with-time t)
+ '(org-log-into-drawer t)
+ '(org-return-follows-link t)
+ '(org-special-ctrl-a/e t)
+ '(org-special-ctrl-k t)
+ '(org-todo-keywords (quote ((type "TODO(t)" "STARTED(s!)" "DONE(d!)"))))
+ '(org-todo-state-tags-triggers nil)
+ '(org-use-fast-todo-selection (quote auto))
+ '(pdf-view-midnight-colors (cons "#f8f8f2" "#282a36"))
+ '(rustic-ansi-faces
+   ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "#8CD0D3" "#DC8CC3" "#93E0E3" "#DCDCDC"])
+ '(tab-bar-mode t)
+ '(tool-bar-mode nil)
+ '(vc-annotate-background nil)
+ '(vc-annotate-background-mode nil))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(counsel--mark-ring-highlight ((t (:underline "cyan"))))
+ '(lazy-highlight ((t (:box (:line-width 2 :color "grey75" :style released-button) :underline t))))
+ '(magit-diff-file-heading-highlight ((t (:underline t))))
+ '(magit-section-highlight ((t (:background "brightblack" :underline nil)))))
