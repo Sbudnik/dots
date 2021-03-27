@@ -119,8 +119,6 @@
 
 (use-package dired-single)
 
-(use-package all-the-icons-dired
-  :hook (dired-mode . all-the-icons-dired-mode))
 
 ;;(use-package dired-open
 ;;  :config
@@ -135,7 +133,6 @@
   (evil-collection-define-key 'normal 'dired-mode-map
     "H" 'dired-hide-dotfiles-mode))
 
-(use-package all-the-icons)
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
   :custom ((doom-modeline-height 18)))
@@ -204,32 +201,10 @@
   (variable-pitch-mode 1)
   (visual-line-mode 1))
 
-(defun jwm/org-font-setup ()
-  ;; Set faces for heading levels
-(dolist (face '((org-level-1 . 1.2)
-                (org-level-2 . 1.1)
-                (org-level-3 . 1.05)
-                (org-level-4 . 1.0)
-                (org-level-5 . 1.1)
-                (org-level-6 . 1.1)
-                (org-level-7 . 1.1)
-                (org-level-8 . 1.1)))
-  (set-face-attribute (car face) nil :font "Arial" :weight 'regular :height (cdr face)))
-
-;; Ensure that anything that should be fixed-pitch in Org files appears that way
-(set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
-(set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
-(set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-(set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-(set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-(set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
-
 (use-package org
   :hook (org-mode . jwm/org-mode-setup)
   :config
-  (setq org-ellipsis "...")
-  (jwm/org-font-setup))
+  (setq org-ellipsis "..."))
 
 (require 'org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
@@ -342,7 +317,6 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
  '(org-agenda-skip-scheduled-if-done t)
  '(org-agenda-skip-timestamp-if-done t)
  '(org-agenda-start-on-weekday nil)
- '(org-agenda-start-with-follow-mode t)
  '(org-agenda-sticky t)
  '(org-agenda-tags-todo-honor-ignore-options nil)
  '(org-capture-templates t)
@@ -357,7 +331,7 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
  '(org-return-follows-link t)
  '(org-special-ctrl-a/e t)
  '(org-special-ctrl-k t)
- '(org-todo-keywords '((type "TODO(t)" "STARTED(s!)" "DONE(d!)")))
+ '(org-todo-keywords '((type "TODO(t)" "DONE(d!)")))
  '(org-todo-state-tags-triggers nil)
  '(org-use-fast-todo-selection 'auto)
  '(pdf-view-midnight-colors (cons "#f8f8f2" "#282a36"))
@@ -551,10 +525,6 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
   :after treemacs evil
   :ensure t)
 
-(use-package treemacs-icons-dired
-  :after treemacs dired
-  :ensure t
-  :config (treemacs-icons-dired-mode))
 
 (use-package treemacs-magit
   :after treemacs magit
@@ -562,74 +532,3 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 
 (evil-set-register ?d [?i ?* ?  ?\C-c ?. return escape])
 (evil-set-register ?t [?i ?\C-u ?\C-c ?. return escape])
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(org-agenda-export-html-style
-   "<style type=\\\"text/css\\\">
-  html {
-	font-size: 12pt;
-  }
-  .title { text-align: center; }
-  .todo  { color: red; }
-  .done { color: green; }
-  .timestamp { color: grey }
-  .timestamp-kwd { color: CadetBlue }
-  .tag { background-color:lightblue; font-weight:normal }
-  .target { background-color: lavender; }
-  pre {
-	border: 1pt solid #AEBDCC;
-	background-color: #F3F5F7;
-	padding: 5pt;
-	font-family: consolas, monospace;
-  }
-  table { border-collapse: collapse; }
-  td, th {
-	vertical-align: top;
-	<!--border: 1pt solid #ADB9CC;-->
-  }
-</style>")
- '(org-agenda-files nil)
- '(org-agenda-include-diary t)
- '(org-agenda-show-all-dates t)
- '(org-agenda-skip-deadline-if-done t)
- '(org-agenda-skip-scheduled-if-done t)
- '(org-agenda-skip-timestamp-if-done t)
- '(org-agenda-start-on-weekday nil)
- '(org-agenda-start-with-follow-mode t)
- '(org-agenda-sticky t)
- '(org-agenda-tags-todo-honor-ignore-options nil)
- '(org-bullets-bullet-list '("►" "▸" "•" "★" "◇" "◇" "◇" "◇") nil nil "Customized with use-package org-bullets")
- '(org-capture-templates t t)
- '(org-clock-into-drawer "LOGBOOK")
- '(org-closed-keep-when-no-todo nil)
- '(org-enforce-todo-checkbox-dependencies t)
- '(org-enforce-todo-dependencies t)
- '(org-hide-emphasis-markers t)
- '(org-log-done 'time)
- '(org-log-done-with-time t)
- '(org-log-into-drawer t)
- '(org-return-follows-link t)
- '(org-special-ctrl-a/e t)
- '(org-special-ctrl-k t)
- '(org-todo-keywords '((type "TODO(t)" "STARTED(s!)" "DONE(d!)")))
- '(org-todo-state-tags-triggers nil)
- '(org-use-fast-todo-selection 'auto)
- '(package-selected-packages
-   '(doom-themes-visual-bell-config doom-themes doom-modeline calfw-org calfw phi-search-dired helpful which-key-posframe all-the-icons-ivy-rich ivy-rich which-key avy diminish ivy dashboard org-bullets use-package evil-visual-mark-mode))
- '(pdf-view-midnight-colors (cons "#f8f8f2" "#282a36"))
- '(rustic-ansi-faces
-   ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "#8CD0D3" "#DC8CC3" "#93E0E3" "#DCDCDC"])
- '(tab-bar-mode t)
- '(tool-bar-mode nil)
- '(vc-annotate-background nil)
- '(vc-annotate-background-mode nil))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
