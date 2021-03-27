@@ -49,71 +49,59 @@
 #+end_src
 ** Basic UI config
 #+begin_src emacs-lisp
-;; Make ESC quit prompts
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-(use-package diminish)
+  ;; Make ESC quit prompts
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+  (use-package diminish)
 
-(server-start)
+  (server-start)
 
-(setq user-full-name "John Mosty"
-      user-mail-address "dubs.mosty@gmail.com"
-      calendar-latitude 30.32
-      calendar-longitude -97.71
-      calendar-location-name "Austin, TX")
+  (setq user-full-name "John Mosty"
+        user-mail-address "dubs.mosty@gmail.com"
+        calendar-latitude 30.32
+        calendar-longitude -97.71
+        calendar-location-name "Austin, TX")
 
-(column-number-mode)
-(global-display-line-numbers-mode 1)
-(setq display-line-numbers-type 'visual)
-;; Disable line numbers for some modes
-(dolist (mode '(term-mode-hook
-                shell-mode-hook
-                eshell-mode-hook))
-(add-hook mode (lambda () (display-line-numbers-mode 0))))
+  (column-number-mode)
+  (global-display-line-numbers-mode 1)
+  (setq display-line-numbers-type 'visual)
+  ;; Disable line numbers for some modes
+  (dolist (mode '(term-mode-hook
+                  shell-mode-hook
+                  eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-(defun hrs/kill-current-buffer ()
-  "Kill the current buffer without prompting."
-  (interactive)
-  (kill-buffer (current-buffer)))
+  (defun hrs/kill-current-buffer ()
+    "Kill the current buffer without prompting."
+    (interactive)
+    (kill-buffer (current-buffer)))
 
-(global-set-key (kbd "C-x k") 'hrs/kill-current-buffer)
+  (global-set-key (kbd "C-x k") 'hrs/kill-current-buffer)
 
-(defun hrs/split-window-below-and-switch ()
-  "Split the window horizontally, then switch to the new pane."
-  (interactive)
-  (split-window-below)
-  (balance-windows)
-  (other-window 1))
 
-(defun hrs/split-window-right-and-switch ()
-  "Split the window vertically, then switch to the new pane."
-  (interactive)
-  (split-window-right)
-  (balance-windows)
-  (other-window 1))
-(global-set-key (kbd "<f5>") 'org-capture)
-(global-set-key (kbd "C-x 2") 'hrs/split-window-below-and-switch)
-(global-set-key (kbd "C-x 3") 'hrs/split-window-right-and-switch)
-(global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
-(global-set-key (kbd "C-c j") 'org-journal-new-entry)
+    (winner-mode)
 
-(set-window-scroll-bars (minibuffer-window) nil nil)
-(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+  (global-set-key (kbd "<f5>") 'org-capture)
+  (global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
+  (global-set-key (kbd "C-c j") 'org-journal-new-entry)
 
-(setq scroll-conservatively 100)
-(setq kill-whole-line t)
-(setq kill-read-only-ok t)
-(setq require-final-newline t)
-(setq echo-keystrokes 0.1)
-(setq focus-follows-mouse t)
+  (set-window-scroll-bars (minibuffer-window) nil nil)
+  (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
-(setq split-height-threshold nil)
-(setq split-width-threshold 0)
-(setq org-confirm-elisp-link-function nil)
+  (setq scroll-conservatively 100)
+  (setq kill-whole-line t)
+  (setq kill-read-only-ok t)
+  (setq require-final-newline t)
+  (setq echo-keystrokes 0.1)
+  (setq focus-follows-mouse t)
 
-(setq save-interprogram-paste-before-kill t)
+  (setq split-height-threshold nil)
+  (setq split-width-threshold 0)
+  (setq org-confirm-elisp-link-function nil)
 
-(setq initial-frame-alist
-       '((top . 1) (left . 1) (width . 85) (height . 45)))
+  (setq save-interprogram-paste-before-kill t)
+
+  (setq initial-frame-alist
+         '((top . 1) (left . 1) (width . 85) (height . 45)))
 
 #+end_src
 ** Backups
@@ -724,6 +712,31 @@
   (with-current-buffer buffer
     (buffer-string)))
 
+#+end_src
+
+* Popper
+#+begin_src emacs-lisp
+  (use-package popper
+    :ensure t
+    :bind (("C-`"   . popper-toggle-latest)
+           ("M-`"   . popper-cycle)
+           ("C-M-`" . popper-toggle-type)
+           ("M-_"   . popper-lower-to-popup)
+           ("M-^"   . popper-raise-popup))
+
+    :init
+    (setq popper-reference-buffers
+          '("^\\*Messages\\*"
+            "^Output\\*"
+            "^\\Calc:"
+            "^\\Warnings\\*"
+            "^\\*helpful\\*"
+            help-mode
+            compilation-mode
+            messages-mode
+            occur-mode))
+    (setq popper-display-function #'popper-select-popup-at-bottom)
+    (popper-mode +1))
 #+end_src
 * Custom variable
 #+begin_src emacs-lisp
