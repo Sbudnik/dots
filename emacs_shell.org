@@ -23,6 +23,11 @@
     :config (auto-compile-on-load-mode))
 
   (setq load-prefer-newer t)
+  
+  (load-file "~/.emacs.d/sensible-defaults.el")
+  (sensible-defaults/use-all-settings)
+  (sensible-defaults/use-all-keybindings)
+
   (use-package no-littering)
   (server-start)
 
