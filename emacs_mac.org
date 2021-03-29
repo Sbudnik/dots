@@ -1,14 +1,7 @@
-<<<<<<< HEAD
 #+TITLE EMACS Mac Config
-#+SETUPFILE: ~/org/org-html-themes/org-themes/src/simple_inline.theme
+#+SETUPFILE: ~/org/org-html-themes/org-themes/src/simple_inline/simple_inline.theme
 #+AUTHOR JWM
 #+EMAIL dubs.m@mac.com
-||||||| 58956b5
-#+title EMACS Config
-=======
-#+title EMACS Config
-#+SETUPFILE: C:\Users\jwmosty\AppData\Roaming\org\org-html-theme\org-themes\src\simple_inline\simple_inline.theme
->>>>>>> origin/main
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs
 
 * Packages
@@ -510,6 +503,21 @@
       (org-narrow-to-subtree))
     (goto-char (point-max))))
 #+end_src
+* LaTeX
+#+begin_src emacs-lisp
+  (require 'ox-latex)
+  (unless (boundp 'org-latex-classes)
+    (setq org-latex-classes nil))
+  (add-to-list 'org-latex-classes
+               `("article"
+                 "\\documentclass{article}"
+                 ("\\section{%s}" . "\\section*{%s}")))
+
+  (require 'ox-html)
+  (require 'ox-extra)
+  (ox-extras-activate '(ignore-headlines))
+#+end_src
+
 * Presentation
 #+begin_src emacs-lisp
 (use-package hide-mode-line)
