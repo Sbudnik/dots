@@ -1,4 +1,5 @@
 #+title EMACS Config
+#+SETUPFILE: C:\Users\jwmosty\AppData\Roaming\org\org-html-theme\org-themes\src\simple_inline\simple_inline.theme
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs
 
 * Packages
@@ -228,13 +229,13 @@
       (modus-themes-load-operandi);; OR (modus-themes-load-vivendi)
       :bind ("<f12>" . modus-themes-toggle))
 
-   ;;  (use-package doom-themes
-  ;;     :config
+    (use-package doom-themes
+       :config
   ;;     ;; Global settings (defaults)
   ;;     (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
   ;;           doom-themes-enable-italic t) ; if nil, italics is universally disabled
   ;;     ;; Enable flashing mode-line on errors
-  ;;     (doom-themes-visual-bell-config))
+       (doom-themes-visual-bell-config))
 
   ;;   (defun transparency (value)
   ;;     "Sets the transparency of the frame window. 0=transparent/100=opaque."

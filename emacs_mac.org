@@ -1,7 +1,14 @@
+<<<<<<< HEAD
 #+TITLE EMACS Mac Config
 #+SETUPFILE: ~/org/org-html-themes/org-themes/src/simple_inline.theme
 #+AUTHOR JWM
 #+EMAIL dubs.m@mac.com
+||||||| 58956b5
+#+title EMACS Config
+=======
+#+title EMACS Config
+#+SETUPFILE: C:\Users\jwmosty\AppData\Roaming\org\org-html-theme\org-themes\src\simple_inline\simple_inline.theme
+>>>>>>> origin/main
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs
 
 * Packages

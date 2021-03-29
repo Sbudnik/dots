@@ -1,4 +1,5 @@
 #+title emacs config for the shell env
+#+SETUPFILE: C:\Users\jwmosty\AppData\Roaming\org\org-html-theme\org-themes\src\simple_inline\simple_inline.theme
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs
 
 * Packages
