@@ -1,4 +1,7 @@
-#+title EMACS Config
+#+TITLE EMACS Mac Config
+#+SETUPFILE: ~/org/org-html-themes/org-themes/src/simple_inline.theme
+#+AUTHOR JWM
+#+EMAIL dubs.m@mac.com
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs
 
 * Packages
@@ -745,30 +748,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-agenda-export-html-style
-   "<style type=\\\"text/css\\\">
-  html {
-	font-size: 12pt;
-  }
-  .title { text-align: center; }
-  .todo  { color: red; }
-  .done { color: green; }
-  .timestamp { color: grey }
-  .timestamp-kwd { color: CadetBlue }
-  .tag { background-color:lightblue; font-weight:normal }
-  .target { background-color: lavender; }
-  pre {
-	border: 1pt solid #AEBDCC;
-	background-color: #F3F5F7;
-	padding: 5pt;
-	font-family: consolas, monospace;
-  }
-  table { border-collapse: collapse; }
-  td, th {
-	vertical-align: top;
-	<!--border: 1pt solid #ADB9CC;-->
-  }
-</style>")
  '(org-agenda-include-diary t)
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-done t)
