@@ -23,7 +23,7 @@
 (setq use-package-always-ensure t)
 
 (use-package auto-compile
-  :config (auto-compile-on-load-mode))
+:config (auto-compile-on-load-mode))
 
 (setq load-prefer-newer t)
 
@@ -33,7 +33,11 @@
 
 (use-package all-the-icons)
 (use-package no-littering)
-
+(use-package benchmark-init
+    :ensure t
+    :config
+    ;; To disable collection of benchmark data after init is done.
+    (add-hook 'after-init-hook 'benchmark-init/deactivate))
 (server-mode)
 
 #+end_src
@@ -91,28 +95,11 @@
 
   (global-set-key (kbd "C-x k") 'hrs/kill-current-buffer)
 
-  (defun hrs/split-window-below-and-switch ()
-    "Split the window horizontally, then switch to the new pane."
-    (interactive)
-    (split-window-below)
-    (balance-windows)
-    (other-window 1))
-
-  (defun hrs/split-window-right-and-switch ()
-    "Split the window vertically, then switch to the new pane."
-    (interactive)
-    (split-window-right)
-    (balance-windows)
-    (other-window 1))
   (global-set-key (kbd "<f5>") 'org-capture)
-  (global-set-key (kbd "C-x 2") 'hrs/split-window-below-and-switch)
-  (global-set-key (kbd "C-x 3") 'hrs/split-window-right-and-switch)
   (global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
   (global-hl-line-mode t)
   (global-set-key (kbd "C-c j") 'org-journal-new-entry)
   (winner-mode)
-  (setq pop-up-windows nil)
-  (setq pop-up-frames nil)
 #+end_src
 ** UI arrange
 #+begin_src emacs-lisp
