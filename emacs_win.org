@@ -473,19 +473,21 @@
 #+end_src
 ** Babel and Structure templates
 #+begin_src emacs-lisp
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((emacs-lisp . t)
-   (python . t)
-   (js . t)))
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (python . t)
+     (js . t)
+     (kotlin . t)))
 
-(setq org-confirm-babel-evaluate nil)
-(require 'org-tempo)
+  (setq org-confirm-babel-evaluate nil)
+  (require 'org-tempo)
 
-(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-(add-to-list 'org-structure-template-alist '("js" . "src js"))
-(add-to-list 'org-structure-template-alist '("py" . "src python"))
+  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("js" . "src js"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python"))
+  (add-to-list 'org-structure-template-alist '("ko" . "src kotlin"))
 
 #+end_src
 ** Calfw
@@ -720,7 +722,7 @@
 #+begin_src emacs-lisp
 (evil-set-register ?d [?i ?* ?  ?\C-c ?. return escape])
 (evil-set-register ?t [?i ?\C-u ?\C-c ?. return escape])
-
+(evil-set-register ?b [?$ ?0 ?i ?+ escape ?A ?+ S-right escape])
 #+end_src
 * Workspace
 #+begin_src emacs-lisp
