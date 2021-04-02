@@ -691,6 +691,7 @@
 #+begin_src emacs-lisp
 (evil-set-register ?d [?i ?* ?  ?\C-c ?. return escape])
 (evil-set-register ?t [?i ?\C-u ?\C-c ?. return escape])
+(evil-set-register ?b [?$ ?0 ?i ?+ escape ?A ?+ S-right escape])
 #+end_src
 * eshell
 #+begin_src emacs-lisp
