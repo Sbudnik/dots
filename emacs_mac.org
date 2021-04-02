@@ -757,6 +757,10 @@
     (setq popper-display-function #'popper-select-popup-at-bottom)
     (popper-mode +1))
 #+end_src
+* JDEE
+#+begin_src emacs-lisp
+(setq jdee-server-dir "~/myJars")
+#+end_src
 * Custom variable
 #+begin_src emacs-lisp
 (custom-set-variables
