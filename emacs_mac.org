@@ -56,8 +56,6 @@
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
   (use-package diminish)
 
-  (server-start)
-
   (setq user-full-name "John Mosty"
         user-mail-address "dubs.mosty@gmail.com"
         calendar-latitude 30.32
