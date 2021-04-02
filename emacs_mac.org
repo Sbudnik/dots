@@ -684,7 +684,7 @@
 # #+end_src
 * Python
 #+begin_src emacs-lisp
-(setq python-shell-intrepreter '("/usr/local/bin/python3"))
+(setq python-shell-interpreter '("/usr/local/bin/python3"))
 (setq org-babel-python-command "/usr/local/bin/python3")
 #+end_src
 * Macros
