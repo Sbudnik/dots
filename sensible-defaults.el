@@ -1,29 +1,3 @@
-;;; sensible-defaults.el --- Reasonable settings for getting started.
-
-;; Author: Harry R. Schwartz <hello@harryrschwartz.com>
-;; Editor JWM additions and deletions as needed
-;; Version: 1.0.0
-;; URL: https://github.com/hrs/sensible-defaults.el/sensible-defaults.el
-
-;; This file is NOT part of GNU Emacs.
-
-;;; License:
-
-;; This program is free software: you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-;;; Code:
-
 ;; Utility functions:
 
 (defun sensible-defaults/comment-or-uncomment-region-or-line ()
@@ -204,21 +178,3 @@ respectively."
   (sensible-defaults/bind-home-and-end-keys)
   (sensible-defaults/bind-keys-to-change-text-size))
 
-;; Non-default settings:
-
-(defun sensible-defaults/backup-to-temp-directory ()
-  "Store backups and auto-saved files in
-TEMPORARY-FILE-DIRECTORY (which defaults to /tmp on Unix),
-instead of in the same directory as the file. This means we're
-still making backups, but not where they'll get in the way.
-
-WARNING: on most Unix-like systems /tmp is volatile, in-memory
-storage, so your backups won't survive if your computer crashes!
-If you're not willing to take this risk, you shouldn't enable
-this setting."
-  (setq backup-directory-alist
-        `((".*" . ,temporary-file-directory)))
-  (setq auto-save-file-name-transforms
-        `((".*" ,temporary-file-directory t))))
-
-;;; sensible-defaults.el ends here
