@@ -452,7 +452,7 @@
 
     (setq org-agenda-follow-mode nil)
 
-    (setq org-agenda-files '("d:/My Drive/Org_Files/"))
+    (setq org-agenda-files (directory-files-recursively "d:/My Drive/Org_Files/" "\\.org$"))
 
     (setq org-capture-templates
           '(("j" "Journal entry" plain (function org-journal-find-location)
