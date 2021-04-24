@@ -680,7 +680,7 @@ the result as a time value."
                 ("C-." . flyspell-correct-wrapper)))
 
 #+end_src
-** Dashboard
+* Dashboard
 #+begin_src emacs-lisp
 
 (use-package dashboard
