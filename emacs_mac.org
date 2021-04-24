@@ -249,7 +249,7 @@
 
   (use-package dired-single)
 
-  (use-package all-the-icons-dired)
+;;  (use-package all-the-icons-dired)
   (add-hook 'dired-mode-hook 'treemacs-icons-dired-mode)
 
   ;;(use-package dired-open
@@ -332,6 +332,24 @@
   ([remap describe-command] . helpful-command)
   ([remap describe-variable] . counsel-describe-variable)
   ([remap describe-key] . helpful-key))
+
+#+end_src
+* Projectile
+#+begin_src emacs-lisp
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  ;; NOTE: Set this to the folder where you keep your Git repos!
+  (when (file-directory-p "c:/users/jwmosty/AppData/Roaming/GAS_Asc")
+    (setq projectile-project-search-path '("c:/users/jwmosty/AppData/Roaming/GAS_Asc")))
+  (setq projectile-switch-project-action #'projectile-dired))
+
+(use-package counsel-projectile
+  :config (counsel-projectile-mode))
 
 #+end_src
 * Magit
@@ -592,8 +610,8 @@
 
 (use-package undo-tree)
 (global-undo-tree-mode)
-+end_src
- * Treemacs
+#+end_src
+* Treemacs
  #+begin_src emacs-lisp
  (use-package treemacs
    :ensure t
@@ -681,10 +699,28 @@
 * Language
 #+begin_src emacs-lisp
 
+  (use-package lsp-mode
+  :init
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-l")
+  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+          (python-mode . lsp)
+          ;; if you want which-key integration
+          (lsp-mode . lsp-enable-which-key-integration))
+  :commands lsp)
+
+  (use-package lsp-ui
+      :hook (lsp-mode . lsp-ui-mode)
+      :custom
+      (lsp-ui-doc-position 'bottom))
+  (use-package lsp-ivy)
+  (use-package lsp-treemacs
+      :after lsp)
+
 #+end_src
 * Python
 #+begin_src emacs-lisp
-(setq python-shell-interpreter '("/usr/local/bin/python3"))
+(setq python-shell-interpreter "/usr/local/bin/python3")
 (setq org-babel-python-command "/usr/local/bin/python3")
 #+end_src
 * Macros
