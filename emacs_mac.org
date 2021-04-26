@@ -53,57 +53,57 @@
 #+end_src
 ** Basic UI config
 #+begin_src emacs-lisp
-  ;; Make ESC quit prompts
-  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-  (use-package diminish)
+    ;; Make ESC quit prompts
+    (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+    (use-package diminish)
 
-  (setq user-full-name "John Mosty"
-        user-mail-address "dubs.mosty@gmail.com"
-        calendar-latitude 30.32
-        calendar-longitude -97.71
-        calendar-location-name "Austin, TX")
+    (setq user-full-name "John Mosty"
+          user-mail-address "dubs.mosty@gmail.com"
+          calendar-latitude 30.32
+          calendar-longitude -97.71
+          calendar-location-name "Austin, TX")
 
-  (column-number-mode)
-  (global-display-line-numbers-mode 1)
-  (setq display-line-numbers-type 'visual)
-  ;; Disable line numbers for some modes
-  (dolist (mode '(term-mode-hook
-                  shell-mode-hook
-                  eshell-mode-hook))
-  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+    (column-number-mode)
+    (global-display-line-numbers-mode 1)
+    (setq display-line-numbers-type 'visual)
+    ;; Disable line numbers for some modes
+    (dolist (mode '(term-mode-hook
+                    shell-mode-hook
+                    eshell-mode-hook))
+    (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-  (defun hrs/kill-current-buffer ()
-    "Kill the current buffer without prompting."
-    (interactive)
-    (kill-buffer (current-buffer)))
+    (defun hrs/kill-current-buffer ()
+      "Kill the current buffer without prompting."
+      (interactive)
+      (kill-buffer (current-buffer)))
 
-  (global-set-key (kbd "C-x k") 'hrs/kill-current-buffer)
+    (global-set-key (kbd "C-x k") 'hrs/kill-current-buffer)
 
 
-(winner-mode)
+  (winner-mode)
+  (server-start)
+    (global-set-key (kbd "<f5>") 'org-capture)
+    (global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
+    (global-set-key (kbd "C-c j") 'org-journal-new-entry)
 
-  (global-set-key (kbd "<f5>") 'org-capture)
-  (global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
-  (global-set-key (kbd "C-c j") 'org-journal-new-entry)
+    (set-window-scroll-bars (minibuffer-window) nil nil)
+    (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
-  (set-window-scroll-bars (minibuffer-window) nil nil)
-  (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+    (setq scroll-conservatively 100)
+    (setq kill-whole-line t)
+    (setq kill-read-only-ok t)
+    (setq require-final-newline t)
+    (setq echo-keystrokes 0.1)
+    (setq focus-follows-mouse t)
 
-  (setq scroll-conservatively 100)
-  (setq kill-whole-line t)
-  (setq kill-read-only-ok t)
-  (setq require-final-newline t)
-  (setq echo-keystrokes 0.1)
-  (setq focus-follows-mouse t)
+    (setq split-height-threshold nil)
+    (setq split-width-threshold 0)
+    (setq org-confirm-elisp-link-function nil)
 
-  (setq split-height-threshold nil)
-  (setq split-width-threshold 0)
-  (setq org-confirm-elisp-link-function nil)
+    (setq save-interprogram-paste-before-kill t)
 
-  (setq save-interprogram-paste-before-kill t)
-
-  (setq initial-frame-alist
-         '((top . 1) (left . 1) (width . 85) (height . 45)))
+    (setq initial-frame-alist
+           '((top . 1) (left . 1) (width . 85) (height . 45)))
 
 #+end_src
 ** Backups
@@ -233,37 +233,37 @@
 #+end_src
 * Dired
 #+begin_src emacs-lisp
-  (use-package dired
-    :ensure nil
-    :commands (dired dired-jump)
-    :bind (("C-x C-j" . dired-jump))
-    :custom ((dired-listing-switches "-agho --group-directories-first"))
-    :config
-    (evil-collection-define-key 'normal 'dired-mode-map
-      "h" 'dired-single-up-directory
-      "l" 'dired-single-buffer))
+     (use-package dired
+       :ensure nil
+       :commands (dired dired-jump)
+       :bind (("C-x C-j" . dired-jump))
+;;       :custom ((dired-listing-switches "-agho --group-directories-first"))
+       :config
+       (evil-collection-define-key 'normal 'dired-mode-map
+         "h" 'dired-single-up-directory
+         "l" 'dired-single-buffer))
 
-  (add-hook 'dired-mode-hook
-        (lambda ()
-          (dired-hide-details-mode)))
+  ;; ;;   (add-hook 'dired-mode-hook
+  ;; ;;         (lambda ()
+  ;; ;;           (dired-hide-details-mode)))
 
-  (use-package dired-single)
+    (use-package dired-single)
 
-;;  (use-package all-the-icons-dired)
-  (add-hook 'dired-mode-hook 'treemacs-icons-dired-mode)
+  ;; ;; (use-package all-the-icons-dired)
+     (add-hook 'dired-mode-hook 'treemacs-icons-dired-mode)
 
-  ;;(use-package dired-open
-  ;;  :config
-    ;; Doesn't work as expected!
-    ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
-  ;;  (setq dired-open-extensions '(("png" . "feh")
-  ;;                                ("mkv" . "mpv"))))
+  ;;   ;;(use-package dired-open
+    ;;  :config
+      ;; Doesn't work as expected!
+      ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
+    ;;  (setq dired-open-extensions '(("png" . "feh")
+    ;;                                ("mkv" . "mpv"))))
 
-  (use-package dired-hide-dotfiles
-    :hook (dired-mode . dired-hide-dotfiles-mode)
-    :config
-    (evil-collection-define-key 'normal 'dired-mode-map
-      "H" 'dired-hide-dotfiles-mode))
+    ;; (use-package dired-hide-dotfiles
+    ;;   :hook (dired-mode . dired-hide-dotfiles-mode)
+    ;;   :config
+    ;;   (evil-collection-define-key 'normal 'dired-mode-map
+    ;;     "H" 'dired-hide-dotfiles-mode))
 #+end_src
 * Ivy hydra Prescient
 #+begin_src emacs-lisp
