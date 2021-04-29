@@ -79,7 +79,7 @@
 
     (global-set-key (kbd "C-x k") 'hrs/kill-current-buffer)
 
-
+ (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
   (winner-mode)
   (server-start)
     (global-set-key (kbd "<f5>") 'org-capture)
