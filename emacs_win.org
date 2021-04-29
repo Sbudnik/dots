@@ -190,6 +190,8 @@
 
   (use-package dired-single)
 
+  (add-to-map "<SPC> d" 'dired)
+
   ;;(use-package dired-open
   ;;  :config
     ;; Doesn't work as expected!
@@ -356,27 +358,28 @@
 #+end_src
 * Projectile Magit
 #+begin_src emacs-lisp
-  (use-package projectile
-    :diminish projectile-mode
-    :config (projectile-mode)
-    :custom ((projectile-completion-system 'ivy))
-    :bind-keymap
-    ("C-c p" . projectile-command-map)
-    :init
-    ;; NOTE: Set this to the folder where you keep your Git repos!
-    (when (file-directory-p "c:/users/jwmosty/AppData/Roaming/GAS_Asc")
-      (setq projectile-project-search-path '("c:/users/jwmosty/AppData/Roaming/GAS_Asc")))
-    (setq projectile-switch-project-action #'projectile-dired))
+    (use-package projectile
+      :diminish projectile-mode
+      :config (projectile-mode)
+      :custom ((projectile-completion-system 'ivy))
+      :bind-keymap
+      ("C-c p" . projectile-command-map)
+      :init
+      ;; NOTE: Set this to the folder where you keep your Git repos!
+      (when (file-directory-p "c:/users/jwmosty/AppData/Roaming/GAS_Asc")
+        (setq projectile-project-search-path '("c:/users/jwmosty/AppData/Roaming/GAS_Asc")))
+      (setq projectile-switch-project-action #'projectile-dired))
 
-  (use-package counsel-projectile
-    :config (counsel-projectile-mode))
+    (use-package counsel-projectile
+      :config (counsel-projectile-mode))
 
-  (use-package magit
-    :custom
-    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+    (use-package magit
+      :custom
+      (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
 
-(global-set-key (kbd "C-c s") 'magit-status)
+  (add-to-map "<SPC> m" 'magit-status)
+
 #+end_src
 * Org Mode
 ** Main Org-mode
