@@ -88,12 +88,7 @@
    (require 'undo-tree)
    (global-undo-tree-mode)
 
-  (defun hrs/kill-current-buffer ()
-    "Kill the current buffer without prompting."
-    (interactive)
-    (kill-buffer (current-buffer)))
 
-  (global-set-key (kbd "C-x k") 'hrs/kill-current-buffer)
 
   (global-set-key (kbd "<f5>") 'org-capture)
   (global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
@@ -169,6 +164,14 @@
   (add-to-map "<SPC> s" 'save-buffer)
   (add-to-map "<SPC> b" 'switch-to-buffer)
 
+  (defun jwm/kill-current-buffer ()
+    "Kill the current buffer without prompting."
+    (interactive)
+    (kill-buffer (current-buffer)))
+
+  (add-to-map "<SPC> k" 'jwm/kill-current-buffer)
+
+  (global-set-key (kbd "C-x k") 'jwm/kill-current-buffer)
 #+end_src
 * Dired
 #+begin_src emacs-lisp
