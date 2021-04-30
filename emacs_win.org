@@ -179,7 +179,7 @@
     :ensure nil
     :commands (dired dired-jump)
     :bind (("C-x C-j" . dired-jump))
-    :custom ((dired-listing-switches "-agho --group-directories-first"))
+    :custom ((dired-listing-switches "-Aht"))
     :config
     (evil-collection-define-key 'normal 'dired-mode-map
       "h" 'dired-single-up-directory
@@ -215,7 +215,7 @@
 #+begin_src emacs-lisp
     (use-package doom-modeline
       :init (doom-modeline-mode 1)
-      :custom ((doom-modeline-height 20)))
+      :custom ((doom-modeline-height 35)))
      (setq doom-modeline-icon (display-graphic-p))
      (setq doom-modeline-window-width-limit fill-column)
 
