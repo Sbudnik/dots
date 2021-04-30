@@ -192,6 +192,7 @@
 
   (add-to-map "<SPC> d" 'dired)
 
+  (add-to-map "<SPC> j" 'dired-jump)
   ;;(use-package dired-open
   ;;  :config
     ;; Doesn't work as expected!
@@ -731,21 +732,6 @@
 (evil-set-register ?d [?i ?* ?  ?\C-c ?. return escape])
 (evil-set-register ?t [?i ?\C-u ?\C-c ?. return escape])
 (evil-set-register ?b [?$ ?0 ?i ?+ escape ?A ?+ S-right escape])
-#+end_src
-* Workspace
-#+begin_src emacs-lisp
-
-(use-package perspective
-   :bind (("C-M-j" . persp-counsel-switch-buffer)
-          ("C-M-k" . persp.switch)
-          ("C-M-n" . persp-next)
-          ("C-x k" . persp-kill-buffer*))
-   :custom
-   (persp-initial-frame-name "main")
-   :config
-   (unless persp-mode
-     (persp-mode 1)))
-
 #+end_src
 * Language
 #+begin_src emacs-lisp
