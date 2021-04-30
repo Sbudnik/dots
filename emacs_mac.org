@@ -156,6 +156,17 @@
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 
+  (defun add-to-map(keys func)
+    "Add a keybinding in evil mode from keys to func."
+    (define-key evil-normal-state-map (kbd keys) func)
+    (define-key evil-motion-state-map (kbd keys) func))
+
+  (add-to-map "<SPC>" nil)
+
+  (add-to-map "<SPC> f" 'find-file)
+  (add-to-map "<SPC> s" 'save-buffer)
+  (add-to-map "<SPC> b" 'switch-to-buffer)
+
 #+end_src
 * Theme config
 #+begin_src emacs-lisp
@@ -249,6 +260,7 @@
 
     (use-package dired-single)
 
+  (add-to-map "<SPC> d" 'dired)
   ;; ;; (use-package all-the-icons-dired)
      (add-hook 'dired-mode-hook 'treemacs-icons-dired-mode)
 
@@ -362,11 +374,11 @@
 #+end_src
 * Magit
 #+begin_src emacs-lisp
-  (use-package magit
-    :custom
-    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+    (use-package magit
+      :custom
+      (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
-(global-set-key (kbd "C-c s") 'magit-status)
+  (add-to-map "<SPC> m" 'magit-status)
 #+end_src
 * Org Mode
 ** Main Org-mode
@@ -700,6 +712,11 @@
   (with-current-buffer buffer
     (buffer-string)))
 
+  (defun eshell/emacs (file)
+      (find-file file))
+
+  (defun eshell/ffo (file)
+      (find-file-other-frame file))
 #+end_src
 * Popper
 #+begin_src emacs-lisp
