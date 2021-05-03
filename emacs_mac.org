@@ -72,12 +72,6 @@
                     eshell-mode-hook))
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-    (defun hrs/kill-current-buffer ()
-      "Kill the current buffer without prompting."
-      (interactive)
-      (kill-buffer (current-buffer)))
-
-    (global-set-key (kbd "C-x k") 'hrs/kill-current-buffer)
 
  (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
   (winner-mode)
@@ -128,45 +122,53 @@
 #+end_src
 * Evil mode
 #+begin_src emacs-lisp
-(use-package evil
-  :init
-  (setq evil-want-abbrev-expand-on-insert-exit nil
-        evil-want-keybinding nil)
-  :config
-  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-  (evil-mode 1))
+  (use-package evil
+    :init
+    (setq evil-want-abbrev-expand-on-insert-exit nil
+          evil-want-keybinding nil)
+    :config
+    (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+    (evil-mode 1))
 
-(use-package evil-collection
-  :after evil
-  :config
-  (setq evil-collection-mode-list
-        '(ag dired magit mu4e which-key))
-  (evil-collection-init))
+  (use-package evil-collection
+    :after evil
+    :config
+    (setq evil-collection-mode-list
+          '(ag dired magit mu4e which-key))
+    (evil-collection-init))
 
-(use-package evil-surround
-  :config
-  (global-evil-surround-mode 1))
+  (use-package evil-surround
+    :config
+    (global-evil-surround-mode 1))
 
-(use-package evil-org
-  :after org
-  :config
-  (add-hook 'org-mode-hook 'evil-org-mode)
-  (add-hook 'evil-org-mode-hook
-            (lambda () (evil-org-set-key-theme)))
-  (require 'evil-org-agenda)
-  (evil-org-agenda-set-keys))
+  (use-package evil-org
+    :after org
+    :config
+    (add-hook 'org-mode-hook 'evil-org-mode)
+    (add-hook 'evil-org-mode-hook
+              (lambda () (evil-org-set-key-theme)))
+    (require 'evil-org-agenda)
+    (evil-org-agenda-set-keys))
 
-  (defun add-to-map(keys func)
-    "Add a keybinding in evil mode from keys to func."
-    (define-key evil-normal-state-map (kbd keys) func)
-    (define-key evil-motion-state-map (kbd keys) func))
+    (defun add-to-map(keys func)
+      "Add a keybinding in evil mode from keys to func."
+      (define-key evil-normal-state-map (kbd keys) func)
+      (define-key evil-motion-state-map (kbd keys) func))
 
-  (add-to-map "<SPC>" nil)
+    (add-to-map "<SPC>" nil)
 
-  (add-to-map "<SPC> f" 'find-file)
-  (add-to-map "<SPC> s" 'save-buffer)
-  (add-to-map "<SPC> b" 'switch-to-buffer)
+    (add-to-map "<SPC> f" 'find-file)
+    (add-to-map "<SPC> s" 'save-buffer)
+    (add-to-map "<SPC> b" 'switch-to-buffer)
 
+
+    (defun jwm/kill-current-buffer ()
+      "Kill the current buffer without prompting."
+      (interactive)
+      (kill-buffer (current-buffer)))
+
+    (global-set-key (kbd "C-x k") 'jwm/kill-current-buffer)
+    (add-to-map "<SPC> k" 'jwm/kill-current-buffer)
 #+end_src
 * Theme config
 #+begin_src emacs-lisp
@@ -248,7 +250,7 @@
          :ensure nil
          :commands (dired dired-jump)
          :bind (("C-x C-j" . dired-jump))
-  ;;       :custom ((dired-listing-switches "-agho --group-directories-first"))
+         :custom ((dired-listing-switches "-lAht"))
          :config
          (evil-collection-define-key 'normal 'dired-mode-map
            "h" 'dired-single-up-directory
