@@ -117,6 +117,12 @@
 
  (mouse-avoidance-mode 'exile)  ;; jump to corner when approached
 
+(defun my-pulse-line (&rest _)
+      "Pulse the current line."
+      (pulse-momentary-highlight-one-line (point)))
+
+(dolist (command '(recenter-top-bottom other-window ace-window my-scroll-down-half my-scroll-up-half))
+  (advice-add command :after #'my-pulse-line))
 #+end_src
 ** Backups
 #+begin_src emacs-lisp
@@ -485,6 +491,7 @@
          (global-set-key (kbd "M-o") 'other-window)
 
          (setq org-agenda-follow-mode nil)
+<<<<<<< HEAD
 
          (setq org-agenda-files (directory-files-recursively "d:/My Drive/Org_Files/" "\\.org$"))
 
@@ -549,6 +556,72 @@
 
      (set-face-attribute 'org-headline-done nil :strike-through t)
 
+=======
+
+         (setq org-agenda-files (directory-files-recursively "d:/My Drive/Org_Files/" "\\.org$"))
+
+       (defun renewOrgBuffer ()
+       (interactive)
+       (setq org-agenda-files (directory-files-recursively "d:/My Drive/Org_Files/" "\\.org$"))
+       (dolist (buffer (buffer-list))
+           (with-current-buffer buffer
+           (when (derived-mode-p 'org-agenda-mode)
+           (org-agenda-maybe-redo))))
+       )
+
+    (add-to-map "<SPC> r" 'renewOrgBuffer)
+
+    ;;   (run-with-idle-timer 3 1000 #'renewOrgBuffer)
+
+         (add-to-list 'auto-mode-alist '("README$" . org-mode))
+
+    (require 'org-web-tools)
+
+  (defun toggle-html-export-on-save ()
+      "Enable or disable export HTML when saving current buffer."
+      (interactive)
+      (when (not (eq major-mode 'org-mode))
+      (error "Not an org-mode file!"))
+      (if (memq 'org-html-export-to-html after-save-hook)
+          (progn (remove-hook 'after-save-hook 'org-html-export-to-html t)
+              (message "Disabled org html export on save"))
+      (add-hook 'after-save-hook 'org-html-export-to-html nil t)
+      (set-buffer-modified-p t)
+      (message "Enabled org html export on save")))
+
+    (defun org-web-tools-insert-link-for-clipboard-url ()
+        "Extend =org-web-tools-inster-link-for-url= to take URL from clipboard or kill-ring"
+        (interactive)
+        (org-web-tools--org-link-for-url (org-web-tools--get-first-url)))
+
+    (defun org-web-tools-insert-link-for-given-url ()
+        "Extend =org-web-tools-inster-link-for-url= to take a user given URL"
+        (interactive)
+        (let ((url (read-string "Link: ")))
+        (org-web-tools--org-link-for-url url)))
+
+         (setq org-capture-templates
+               '(("b" "Bookmark (Clipboard)" entry
+                      (file+headline "~/org/links.org" "INBOX")
+                      "** %(org-web-tools-insert-link-for-clipboard-url)\n:PROPERTIES:\n:TIMESTAMP: %t\n:END:%?\n" :empty-lines 1 :prepend t)
+                  ("B" "Bookmark (Paste)" entry
+                      (file+headline "~/org/links.org" "INBOX")
+                      "** %(org-web-tools-insert-link-for-given-url)\n:PROPERTIES:\n:TIMESTAMP: %t\n:END:%?\n" :empty-lines 1 :prepend t)
+                 ("t" "Tasks" entry (file+headline "" "Tasks")
+                  "*** TODO %?\n%U\n %a %i" :prepend t)
+                 ("T" "Tasks with ClipBoard" entry (file+headline "" "Tasks")
+                  "*** TODO %?\n%U\n   %^C" :prepend t)))
+
+         (setq org-default-notes-file "d:/My Drive/Org_Files/notes.org")
+         (setq org-duration-format 'h:mm)
+         (setq org-confirm-elisp-link-function nil)
+
+         (use-package org-autolist)
+         (add-hook 'org-mode-hook (lambda () (org-autolist-mode)))
+
+     (set-face-attribute 'org-headline-done nil :strike-through t)
+
+>>>>>>> 762c54205b305474c2e597558866bf7342c54226
 
 #+end_src
 ** Babel and Structure templates
@@ -585,6 +658,21 @@
   (require 'ox-html)
   (require 'ox-extra)
   (ox-extras-activate '(ignore-headlines))
+#+end_src
+** Encryption
+#+begin_src emacs-lisp
+
+  (require 'org-crypt)
+  (org-crypt-use-before-save-magic)
+  (setq org-tags-exclude-from-inheritance '("crypt"))
+
+  (setq org-crypt-key nil)
+  ;; GPG key to use for encryption
+  ;; Either the Key ID or set to nil to use symmetric encryption.
+
+  (setq auto-save-default nil)
+
+  (add-to-map "<SPC> u" 'org-decrypt-entry)
 #+end_src
 * Presentation
 #+begin_src emacs-lisp
