@@ -116,6 +116,12 @@
 
   (mouse-avoidance-mode 'exile)  ;; jump to corner when approached
 
+(defun my-pulse-line (&rest _)
+      "Pulse the current line."
+      (pulse-momentary-highlight-one-line (point)))
+
+(dolist (command '(recenter-top-bottom other-window ace-window my-scroll-down-half my-scroll-up-half))
+  (advice-add command :after #'my-pulse-line))
 #+end_src
 ** Backups
 #+begin_src emacs-lisp
@@ -583,6 +589,21 @@
   (require 'ox-html)
   (require 'ox-extra)
   (ox-extras-activate '(ignore-headlines))
+#+end_src
+** Encryption
+#+begin_src emacs-lisp
+
+  (require 'org-crypt)
+  (org-crypt-use-before-save-magic)
+  (setq org-tags-exclude-from-inheritance '("crypt"))
+
+  (setq org-crypt-key nil)
+  ;; GPG key to use for encryption
+  ;; Either the Key ID or set to nil to use symmetric encryption.
+
+  (setq auto-save-default nil)
+
+  (add-to-map "<SPC> u" 'org-decrypt-entry)
 #+end_src
 * Presentation
 #+begin_src emacs-lisp
