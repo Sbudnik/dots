@@ -529,10 +529,10 @@
 
            (setq org-capture-templates
                  '(("b" "Bookmark (Clipboard)" entry
-                        (file+headline "~/org/links.org" "Work Bookmarks")
+                        (file+headline "~/org/links.org" "INBOX")
                         "** %(org-web-tools-insert-link-for-clipboard-url)\n:PROPERTIES:\n:TIMESTAMP: %t\n:END:%?\n" :empty-lines 1 :prepend t)
                     ("B" "Bookmark (Paste)" entry
-                        (file+headline "~/org/links.org" "Work Bookmarks")
+                        (file+headline "~/org/links.org" "INBOX")
                         "** %(org-web-tools-insert-link-for-given-url)\n:PROPERTIES:\n:TIMESTAMP: %t\n:END:%?\n" :empty-lines 1 :prepend t)
                    ("t" "Tasks" entry (file+headline "" "Tasks")
                     "*** TODO %?\n%U\n %a %i" :prepend t)
