@@ -610,6 +610,40 @@
 
     (add-to-map "<SPC> u" 'org-decrypt-entry)
 #+end_src
+* Calculator
+#+begin_src emacs-lisp
+(defun my-calc-line (arg)
+  "Evaluate calc expression in the current line and display the
+result in the echo area by skipping everything after the final
+'=' sign.
+
+With prefix ARG non-nil or repeating command interactively,
+insert the result at the end of line & add a space if necessary
+for delimiting clearing everything after '=' sign if it is here."
+  (interactive "P")
+  (require 'calc)
+  (save-excursion
+    (let (beg end expr result)
+      (beginning-of-line)
+      (setq beg (point))
+      (end-of-line)
+      (search-backward "=" beg t)
+      (setq end (point))
+      (setq expr (buffer-substring-no-properties beg end))
+      (setq result (calc-eval expr))
+      (if (and (null arg) (not (eq 'my-calc-line last-command)))
+          (message "%s = %s" expr result)
+        (end-of-line)
+        (setq end (point))
+        (when (search-backward "=" beg t)
+          (forward-char 1)
+          (delete-region (point) end))
+        (unless (eq (char-before) ?\ )
+          (insert ?\ ))
+        (insert result)))))
+
+    (add-to-map "<SPC> =" 'my-calc-line)
+#+end_src
 * Presentation
 #+begin_src emacs-lisp
 (use-package hide-mode-line)
