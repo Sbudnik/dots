@@ -791,3 +791,8 @@
  ;; If there is more than one, they won't work right.
  )
 #+end_src
+
+
+# Local Variables:
+# eval: (add-hook 'after-save-hook #'org-babel-tangle t t)
+# End:
