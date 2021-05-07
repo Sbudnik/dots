@@ -177,7 +177,7 @@
  alias dir='ls --color=auto --format=vertical'
  alias vdir='ls --color=auto --format=long'
  alias ll='echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************"; ls -l'
- alias la='echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************";  ls -aF'
+ alias la='echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************";  ls -AF'
  alias l='echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************"; ls -GhF1A'
  alias lc='clear; echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************"; ls -GhF1A'
  alias x='exit'
