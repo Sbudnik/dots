@@ -1,12 +1,11 @@
 #+title EMACS Config
 #+SETUPFILE: C:\Users\jwmosty\AppData\Roaming\org\org-html-theme\org-themes\src\simple_inline\simple_inline.theme
-#+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs
-
+#+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el
 * Packages
 - Need to M-x package-install use-package-ensure, org-bullets, for cold installs
 
 #+begin_src emacs-lisp
-;; begin file here
+;; begin file heres
 (set-language-environment "UTF-8")
 (require 'package)
 (require 'org)
