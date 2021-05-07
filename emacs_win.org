@@ -917,6 +917,23 @@ for delimiting clearing everything after '=' sign if it is here."
     (setq popper-display-function #'popper-select-popup-at-bottom)
     (popper-mode +1))
 #+end_src
+* Ledger
+#+begin_src emacs-lisp
+
+  (use-package ledger-mode
+      :ensure t
+      :init
+      (setq ledger-clear-whole-transactions 1)
+      :config
+      (add-to-list 'evil-emacs-state-modes 'ledger-report-mode)
+      :mode "\\.dat//'")
+
+    (add-hook 'ledger-mode-hook
+            (lambda ()
+                (setq-local tab-always-indent 'complete)
+                (setq-local completion-cycle-threshold t)
+                (setq-local ledger-complete-in-steps t)))
+#+end_src
 * Custom variable
 #+begin_src emacs-lisp
   (custom-set-variables
