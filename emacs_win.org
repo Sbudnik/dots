@@ -5,7 +5,7 @@
 - Need to M-x package-install use-package-ensure, org-bullets, for cold installs
 
 #+begin_src emacs-lisp
-;; begin file heres
+;; begin file here
 (set-language-environment "UTF-8")
 (require 'package)
 (require 'org)
@@ -961,8 +961,3 @@ for delimiting clearing everything after '=' sign if it is here."
    ;; If there is more than one, they won't work right.
    )
 #+end_src
-
-
-# Local Variables:
-# eval: (add-hook 'after-save-hook #'org-babel-tangle t t)
-# End:
