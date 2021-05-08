@@ -8,33 +8,34 @@
 - Need to M-x package-install use-package-ensure, org-bullets, for cold installs
 
 #+begin_src emacs-lisp
-;; begin file
+  ;; begin file s
 
-(require 'package)
-(require 'org)
+  (require 'package)
+  (require 'org)
 
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
-(add-to-list 'package-archives '("elpa" . "https://elpa.gnu.org/packages/"))
+  (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
+  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+  (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
+  (add-to-list 'package-archives '("elpa" . "https://elpa.gnu.org/packages/"))
 
-(setq package-enable-at-startup nil)
-(package-initialize)
+  (setq package-enable-at-startup nil)
+  (package-initialize)
 
-(require 'use-package-ensure)
-(setq use-package-always-ensure t)
+  (require 'use-package-ensure)
+  (setq use-package-always-ensure t)
 
-(use-package auto-compile
-  :config (auto-compile-on-load-mode))
+  (use-package auto-compile
+    :config (auto-compile-on-load-mode))
 
-(setq load-prefer-newer t)
+  (setq load-prefer-newer t)
 
-(load-file "~/.emacs.d/sensible-defaults.el")
-(sensible-defaults/use-all-settings)
-(sensible-defaults/use-all-keybindings)
+  (load-file "~/.emacs.d/sensible-defaults.el")
+  (sensible-defaults/use-all-settings)
+  (sensible-defaults/use-all-keybindings)
 
-(use-package all-the-icons)
-(use-package no-littering)
+  (use-package all-the-icons)
+  (use-package no-littering)
+  (add-to-list 'exec-path "/usr/local/bin/")
 #+end_src
 * Basic setup
 ** Font setup
@@ -53,51 +54,58 @@
 #+end_src
 ** Basic UI config
 #+begin_src emacs-lisp
-    ;; Make ESC quit prompts
-    (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-    (use-package diminish)
+      ;; Make ESC quit prompts
+      (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+      (use-package diminish)
 
-    (setq user-full-name "John Mosty"
-          user-mail-address "dubs.mosty@gmail.com"
-          calendar-latitude 30.32
-          calendar-longitude -97.71
-          calendar-location-name "Austin, TX")
+      (setq user-full-name "John Mosty"
+            user-mail-address "dubs.mosty@gmail.com"
+            calendar-latitude 30.32
+            calendar-longitude -97.71
+            calendar-location-name "Austin, TX")
 
-    (column-number-mode)
-    (global-display-line-numbers-mode 1)
-    (setq display-line-numbers-type 'visual)
-    ;; Disable line numbers for some modes
-    (dolist (mode '(term-mode-hook
-                    shell-mode-hook
-                    eshell-mode-hook))
-    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+      (column-number-mode)
+      (global-display-line-numbers-mode 1)
+      (setq display-line-numbers-type 'visual)
+      ;; Disable line numbers for some modes
+      (dolist (mode '(term-mode-hook
+                      shell-mode-hook
+                      eshell-mode-hook))
+      (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 
- (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
-  (winner-mode)
-  (server-start)
-    (global-set-key (kbd "<f5>") 'org-capture)
-    (global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
-    (global-set-key (kbd "C-c j") 'org-journal-new-entry)
+   (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
+    (winner-mode)
+    (server-start)
+      (global-set-key (kbd "<f5>") 'org-capture)
+      (global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
+      (global-set-key (kbd "C-c j") 'org-journal-new-entry)
 
-    (set-window-scroll-bars (minibuffer-window) nil nil)
-    (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+      (set-window-scroll-bars (minibuffer-window) nil nil)
+      (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
-    (setq scroll-conservatively 100)
-    (setq kill-whole-line t)
-    (setq kill-read-only-ok t)
-    (setq require-final-newline t)
-    (setq echo-keystrokes 0.1)
-    (setq focus-follows-mouse t)
+      (setq scroll-conservatively 100)
+      (setq kill-whole-line t)
+      (setq kill-read-only-ok t)
+      (setq require-final-newline t)
+      (setq echo-keystrokes 0.1)
+      (setq focus-follows-mouse t)
 
-    (setq split-height-threshold nil)
-    (setq split-width-threshold 0)
-    (setq org-confirm-elisp-link-function nil)
+      (setq split-height-threshold nil)
+      (setq split-width-threshold 0)
+      (setq org-confirm-elisp-link-function nil)
 
-    (setq save-interprogram-paste-before-kill t)
+      (setq save-interprogram-paste-before-kill t)
 
-    (setq initial-frame-alist
-           '((top . 1) (left . 1) (width . 85) (height . 45)))
+      (setq initial-frame-alist
+             '((top . 1) (left . 1) (width . 85) (height . 45)))
+
+  (defun my-pulse-line (&rest _)
+        "Pulse the current line."
+        (pulse-momentary-highlight-one-line (point)))
+
+  (dolist (command '(recenter-top-bottom other-window ace-window my-scroll-down-half my-scroll-up-half))
+    (advice-add command :after #'my-pulse-line))
 
 #+end_src
 ** Backups
@@ -498,6 +506,7 @@
    '((emacs-lisp . t)
      (python . t)
      (js . t)
+     (ledger . t)
      (kotlin . t)))
 
   (setq org-confirm-babel-evaluate nil)
@@ -510,7 +519,23 @@
   (add-to-list 'org-structure-template-alist '("js" . "src js"))
   (add-to-list 'org-structure-template-alist '("py" . "src python"))
   (add-to-list 'org-structure-template-alist '("ko" . "src kotlin"))
+  (add-to-list 'org-structure-template-alist '("le" . "src ledger"))
 
+#+end_src
+** Encryption
+#+begin_src emacs-lisp
+
+    (require 'org-crypt)
+    (org-crypt-use-before-save-magic)
+    (setq org-tags-exclude-from-inheritance '("crypt"))
+
+    ;; GPG key to use for encryption
+    ;; Either the Key ID or set to nil to use symmetric encryption.
+    ;;(setq org-crypt-key '("0F5CDB0D40E4D8AF93DE2C70D5E19C8A72EAD74F"))
+    (setq org-crypt-key nil)
+    (setq auto-save-default nil)
+
+    (add-to-map "<SPC> u" 'org-decrypt-entry)
 #+end_src
 * LaTeX
 #+begin_src emacs-lisp
@@ -750,6 +775,23 @@
 #+begin_src emacs-lisp
 (setq jdee-server-dir "~/myJars")
 #+end_src
+* Ledger
+#+begin_src emacs-lisp
+
+  (use-package ledger-mode
+      :ensure t
+      :init
+      (setq ledger-clear-whole-transactions 1)
+      :config
+      (add-to-list 'evil-emacs-state-modes 'ledger-report-mode)
+      :mode "\\.dat//'")
+
+    (add-hook 'ledger-mode-hook
+            (lambda ()
+                (setq-local tab-always-indent 'complete)
+                (setq-local completion-cycle-threshold t)
+                (setq-local ledger-complete-in-steps t)))
+#+end_src
 * Custom variable
 #+begin_src emacs-lisp
 (custom-set-variables
@@ -791,8 +833,3 @@
  ;; If there is more than one, they won't work right.
  )
 #+end_src
-
-
-# Local Variables:
-# eval: (add-hook 'after-save-hook #'org-babel-tangle t t)
-# End:
