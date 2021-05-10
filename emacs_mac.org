@@ -8,33 +8,34 @@
 - Need to M-x package-install use-package-ensure, org-bullets, for cold installs
 
 #+begin_src emacs-lisp
-;; begin file
+  ;; begin file s
 
-(require 'package)
-(require 'org)
+  (require 'package)
+  (require 'org)
 
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
-(add-to-list 'package-archives '("elpa" . "https://elpa.gnu.org/packages/"))
+  (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
+  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+  (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
+  (add-to-list 'package-archives '("elpa" . "https://elpa.gnu.org/packages/"))
 
-(setq package-enable-at-startup nil)
-(package-initialize)
+  (setq package-enable-at-startup nil)
+  (package-initialize)
 
-(require 'use-package-ensure)
-(setq use-package-always-ensure t)
+  (require 'use-package-ensure)
+  (setq use-package-always-ensure t)
 
-(use-package auto-compile
-  :config (auto-compile-on-load-mode))
+  (use-package auto-compile
+    :config (auto-compile-on-load-mode))
 
-(setq load-prefer-newer t)
+  (setq load-prefer-newer t)
 
-(load-file "~/.emacs.d/sensible-defaults.el")
-(sensible-defaults/use-all-settings)
-(sensible-defaults/use-all-keybindings)
+  (load-file "~/.emacs.d/sensible-defaults.el")
+  (sensible-defaults/use-all-settings)
+  (sensible-defaults/use-all-keybindings)
 
-(use-package all-the-icons)
-(use-package no-littering)
+  (use-package all-the-icons)
+  (use-package no-littering)
+  (add-to-list 'exec-path "/usr/local/bin/")
 #+end_src
 * Basic setup
 ** Font setup
@@ -53,51 +54,58 @@
 #+end_src
 ** Basic UI config
 #+begin_src emacs-lisp
-    ;; Make ESC quit prompts
-    (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-    (use-package diminish)
+      ;; Make ESC quit prompts
+      (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+      (use-package diminish)
 
-    (setq user-full-name "John Mosty"
-          user-mail-address "dubs.mosty@gmail.com"
-          calendar-latitude 30.32
-          calendar-longitude -97.71
-          calendar-location-name "Austin, TX")
+      (setq user-full-name "John Mosty"
+            user-mail-address "dubs.mosty@gmail.com"
+            calendar-latitude 30.32
+            calendar-longitude -97.71
+            calendar-location-name "Austin, TX")
 
-    (column-number-mode)
-    (global-display-line-numbers-mode 1)
-    (setq display-line-numbers-type 'visual)
-    ;; Disable line numbers for some modes
-    (dolist (mode '(term-mode-hook
-                    shell-mode-hook
-                    eshell-mode-hook))
-    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+      (column-number-mode)
+      (global-display-line-numbers-mode 1)
+      (setq display-line-numbers-type 'visual)
+      ;; Disable line numbers for some modes
+      (dolist (mode '(term-mode-hook
+                      shell-mode-hook
+                      eshell-mode-hook))
+      (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 
- (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
-  (winner-mode)
-  (server-start)
-    (global-set-key (kbd "<f5>") 'org-capture)
-    (global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
-    (global-set-key (kbd "C-c j") 'org-journal-new-entry)
+   (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
+    (winner-mode)
+    (server-start)
+      (global-set-key (kbd "<f5>") 'org-capture)
+      (global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
+      (global-set-key (kbd "C-c j") 'org-journal-new-entry)
 
-    (set-window-scroll-bars (minibuffer-window) nil nil)
-    (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+      (set-window-scroll-bars (minibuffer-window) nil nil)
+      (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
-    (setq scroll-conservatively 100)
-    (setq kill-whole-line t)
-    (setq kill-read-only-ok t)
-    (setq require-final-newline t)
-    (setq echo-keystrokes 0.1)
-    (setq focus-follows-mouse t)
+      (setq scroll-conservatively 100)
+      (setq kill-whole-line t)
+      (setq kill-read-only-ok t)
+      (setq require-final-newline t)
+      (setq echo-keystrokes 0.1)
+      (setq focus-follows-mouse t)
 
-    (setq split-height-threshold nil)
-    (setq split-width-threshold 0)
-    (setq org-confirm-elisp-link-function nil)
+      (setq split-height-threshold nil)
+      (setq split-width-threshold 0)
+      (setq org-confirm-elisp-link-function nil)
 
-    (setq save-interprogram-paste-before-kill t)
+      (setq save-interprogram-paste-before-kill t)
 
-    (setq initial-frame-alist
-           '((top . 1) (left . 1) (width . 85) (height . 45)))
+      (setq initial-frame-alist
+             '((top . 1) (left . 1) (width . 85) (height . 45)))
+
+  (defun my-pulse-line (&rest _)
+        "Pulse the current line."
+        (pulse-momentary-highlight-one-line (point)))
+
+  (dolist (command '(recenter-top-bottom other-window ace-window my-scroll-down-half my-scroll-up-half))
+    (advice-add command :after #'my-pulse-line))
 
 #+end_src
 ** Backups
@@ -498,6 +506,7 @@
    '((emacs-lisp . t)
      (python . t)
      (js . t)
+     (ledger . t)
      (kotlin . t)))
 
   (setq org-confirm-babel-evaluate nil)
@@ -510,7 +519,23 @@
   (add-to-list 'org-structure-template-alist '("js" . "src js"))
   (add-to-list 'org-structure-template-alist '("py" . "src python"))
   (add-to-list 'org-structure-template-alist '("ko" . "src kotlin"))
+  (add-to-list 'org-structure-template-alist '("le" . "src ledger"))
 
+#+end_src
+** Encryption
+#+begin_src emacs-lisp
+
+    (require 'org-crypt)
+    (org-crypt-use-before-save-magic)
+    (setq org-tags-exclude-from-inheritance '("crypt"))
+
+    ;; GPG key to use for encryption
+    ;; Either the Key ID or set to nil to use symmetric encryption.
+    ;;(setq org-crypt-key '("0F5CDB0D40E4D8AF93DE2C70D5E19C8A72EAD74F"))
+    (setq org-crypt-key nil)
+    (setq auto-save-default nil)
+
+    (add-to-map "<SPC> u" 'org-decrypt-entry)
 #+end_src
 * LaTeX
 #+begin_src emacs-lisp
@@ -560,91 +585,6 @@
 (use-package undo-tree)
 (global-undo-tree-mode)
 #+end_src
-* Treemacs
- #+begin_src emacs-lisp
- (use-package treemacs
-   :ensure t
-   :defer t
-   :init
-   (with-eval-after-load 'winum
-     (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
-   :config
-   (progn
-     (setq treemacs-collapse-dirs                 (if treemacs-python-executable 3 0)
-           treemacs-deferred-git-apply-delay      0.5
-           treemacs-directory-name-transformer    #'identity
-           treemacs-display-in-side-window        t
-           treemacs-eldoc-display                 t
-           treemacs-file-event-delay              5000
-           treemacs-file-extension-regex          treemacs-last-period-regex-value
-           treemacs-file-follow-delay             0.2
-           treemacs-file-name-transformer         #'identity
-           treemacs-follow-after-init             t
-           treemacs-git-command-pipe              ""
-           treemacs-goto-tag-strategy             'refetch-index
-           treemacs-indentation                   2
-           treemacs-indentation-string            " "
-           treemacs-is-never-other-window         nil
-           treemacs-max-git-entries               5000
-           treemacs-missing-project-action        'ask
-           treemacs-move-forward-on-expand        nil
-           treemacs-no-png-images                 nil
-           treemacs-no-delete-other-windows       t
-           treemacs-project-follow-cleanup        nil
-           treemacs-persist-file                  (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
-           treemacs-position                      'left
-           treemacs-read-string-input             'from-child-frame
-           treemacs-recenter-distance             0.1
-           treemacs-recenter-after-file-follow    nil
-           treemacs-recenter-after-tag-follow     nil
-           treemacs-recenter-after-project-jump   'always
-           treemacs-recenter-after-project-expand 'on-distance
-           treemacs-show-cursor                   nil
-           treemacs-show-hidden-files             t
-           treemacs-silent-filewatch              nil
-           treemacs-silent-refresh                nil
-           treemacs-sorting                       'alphabetic-asc
-           treemacs-space-between-root-nodes      t
-           treemacs-tag-follow-cleanup            t
-           treemacs-tag-follow-delay              1.5
-           treemacs-user-mode-line-format         nil
-           treemacs-user-header-line-format       nil
-           treemacs-width                         35
-           treemacs-workspace-switch-cleanup      nil)
-     ;; The default width and height of the icons is 22 pixels. If you are
-     ;; using a Hi-DPI display, uncomment this to double the icon size.
-     ;;(treemacs-resize-icons 44)
-     (treemacs-follow-mode t)
-     (treemacs-filewatch-mode t)
-     (treemacs-fringe-indicator-mode 'always)
-      (pcase (cons (not (null (executable-find "git")))
-                   (not (null treemacs-python-executable)))
-       (`(t . t)
-        (treemacs-git-mode 'deferred))
-       (`(t . _)
-        (treemacs-git-mode 'simple))))
-   :bind
-   (:map global-map
-         ("M-0"       . treemacs-select-window)
-         ("C-x t 1"   . treemacs-delete-other-windows)
-         ("C-x t t"   . treemacs)
-         ("C-x t B"   . treemacs-bookmark)
-         ("C-x t C-t" . treemacs-find-file)
-         ("C-x t M-t" . treemacs-find-tag)))
-
- (use-package treemacs-evil
-   :after treemacs evil
-   :ensure t)
-
- (use-package treemacs-icons-dired
-   :after treemacs dired
-   :ensure t
-   :config (treemacs-icons-dired-mode))
-
- (use-package treemacs-magit
-   :after treemacs magit
-   :ensure t)
- #+end_src
 * Language
 #+begin_src emacs-lisp
 
@@ -750,49 +690,66 @@
 #+begin_src emacs-lisp
 (setq jdee-server-dir "~/myJars")
 #+end_src
+* Ledger
+#+begin_src emacs-lisp
+
+    (use-package ledger-mode
+        :ensure t
+        :init
+        (setq ledger-clear-whole-transactions 1)
+        :config
+        (add-to-list 'evil-emacs-state-modes 'ledger-report-mode)
+        :mode "\\.dat//'")
+
+      (add-hook 'ledger-mode-hook
+              (lambda ()
+                  (setq-local tab-always-indent 'complete)
+                  (setq-local completion-cycle-threshold t)
+                  (setq-local ledger-complete-in-steps t)))
+
+    (setq ledger-binary-path "/usr/local/bin/ledger")
+#+end_src
 * Custom variable
 #+begin_src emacs-lisp
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(org-agenda-include-diary t)
- '(org-agenda-skip-deadline-if-done t)
- '(org-agenda-skip-scheduled-if-done t)
- '(org-agenda-skip-timestamp-if-done t)
- '(org-agenda-start-on-weekday nil)
- '(org-agenda-sticky t)
- '(org-agenda-tags-todo-honor-ignore-options nil)
- '(org-clock-into-drawer "LOGBOOK")
- '(org-closed-keep-when-no-todo nil)
- '(org-enforce-todo-checkbox-dependencies t)
- '(org-enforce-todo-dependencies t)
- '(org-hide-emphasis-markers t)
- '(org-log-done 'time)
- '(org-log-done-with-time t)
- '(org-log-into-drawer t)
- '(org-return-follows-link t)
- '(org-special-ctrl-a/e t)
- '(org-special-ctrl-k t)
- '(org-todo-keywords '((type "TODO(t)" "DONE(d!)")))
- '(org-todo-state-tags-triggers nil)
- '(org-use-fast-todo-selection 'auto)
- '(package-selected-packages
-   '(modus-themes modus-operandi-theme doom-themes-visual-bell-config doom-themes doom-modeline calfw-org calfw nvm phi-search-dired helpful which-key-posframe all-the-icons-ivy-rich ivy-rich which-key avy diminish ivy dashboard org-bullets use-package helm evil-visual-mark-mode))
- '(tab-bar-mode t)
- '(tool-bar-mode nil)
- '(vc-annotate-background nil)
- '(vc-annotate-background-mode nil))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+  (custom-set-variables
+   ;; custom-set-variables was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(org-agenda-include-diary t)
+   '(org-agenda-skip-deadline-if-done t)
+   '(org-agenda-skip-scheduled-if-done t)
+   '(org-agenda-skip-timestamp-if-done t)
+   '(org-agenda-start-on-weekday nil)
+   '(org-agenda-sticky t)
+   '(org-agenda-tags-todo-honor-ignore-options nil)
+   '(org-clock-into-drawer "LOGBOOK")
+   '(org-closed-keep-when-no-todo nil)
+   '(org-enforce-todo-checkbox-dependencies t)
+   '(org-enforce-todo-dependencies t)
+   '(org-hide-emphasis-markers t)
+   '(org-log-done 'time)
+   '(org-log-done-with-time t)
+   '(org-log-into-drawer t)
+   '(org-return-follows-link t)
+   '(org-special-ctrl-a/e t)
+   '(org-special-ctrl-k t)
+   '(org-todo-keywords '((type "TODO(t)" "DONE(d!)")))
+   '(org-todo-state-tags-triggers nil)
+   '(org-use-fast-todo-selection 'auto)
+   '(package-selected-packages
+     '(modus-themes modus-operandi-theme doom-themes-visual-bell-config doom-themes doom-modeline calfw-org calfw nvm phi-search-dired helpful which-key-posframe all-the-icons-ivy-rich ivy-rich which-key avy diminish ivy dashboard org-bullets use-package helm evil-visual-mark-mode))
+   '(safe-local-variable-values
+     '((eval add-hook 'after-save-hook #'org-babel-tangle t t)
+       (org-confirm-babel-evaluate)))
+   '(tab-bar-mode t)
+   '(tool-bar-mode nil)
+   '(vc-annotate-background nil)
+   '(vc-annotate-background-mode nil))
+  (custom-set-faces
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   )
 #+end_src
-
-
-# Local Variables:
-# eval: (add-hook 'after-save-hook #'org-babel-tangle t t)
-# End:
