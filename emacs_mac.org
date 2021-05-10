@@ -585,91 +585,6 @@
 (use-package undo-tree)
 (global-undo-tree-mode)
 #+end_src
-* Treemacs
- #+begin_src emacs-lisp
- (use-package treemacs
-   :ensure t
-   :defer t
-   :init
-   (with-eval-after-load 'winum
-     (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
-   :config
-   (progn
-     (setq treemacs-collapse-dirs                 (if treemacs-python-executable 3 0)
-           treemacs-deferred-git-apply-delay      0.5
-           treemacs-directory-name-transformer    #'identity
-           treemacs-display-in-side-window        t
-           treemacs-eldoc-display                 t
-           treemacs-file-event-delay              5000
-           treemacs-file-extension-regex          treemacs-last-period-regex-value
-           treemacs-file-follow-delay             0.2
-           treemacs-file-name-transformer         #'identity
-           treemacs-follow-after-init             t
-           treemacs-git-command-pipe              ""
-           treemacs-goto-tag-strategy             'refetch-index
-           treemacs-indentation                   2
-           treemacs-indentation-string            " "
-           treemacs-is-never-other-window         nil
-           treemacs-max-git-entries               5000
-           treemacs-missing-project-action        'ask
-           treemacs-move-forward-on-expand        nil
-           treemacs-no-png-images                 nil
-           treemacs-no-delete-other-windows       t
-           treemacs-project-follow-cleanup        nil
-           treemacs-persist-file                  (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
-           treemacs-position                      'left
-           treemacs-read-string-input             'from-child-frame
-           treemacs-recenter-distance             0.1
-           treemacs-recenter-after-file-follow    nil
-           treemacs-recenter-after-tag-follow     nil
-           treemacs-recenter-after-project-jump   'always
-           treemacs-recenter-after-project-expand 'on-distance
-           treemacs-show-cursor                   nil
-           treemacs-show-hidden-files             t
-           treemacs-silent-filewatch              nil
-           treemacs-silent-refresh                nil
-           treemacs-sorting                       'alphabetic-asc
-           treemacs-space-between-root-nodes      t
-           treemacs-tag-follow-cleanup            t
-           treemacs-tag-follow-delay              1.5
-           treemacs-user-mode-line-format         nil
-           treemacs-user-header-line-format       nil
-           treemacs-width                         35
-           treemacs-workspace-switch-cleanup      nil)
-     ;; The default width and height of the icons is 22 pixels. If you are
-     ;; using a Hi-DPI display, uncomment this to double the icon size.
-     ;;(treemacs-resize-icons 44)
-     (treemacs-follow-mode t)
-     (treemacs-filewatch-mode t)
-     (treemacs-fringe-indicator-mode 'always)
-      (pcase (cons (not (null (executable-find "git")))
-                   (not (null treemacs-python-executable)))
-       (`(t . t)
-        (treemacs-git-mode 'deferred))
-       (`(t . _)
-        (treemacs-git-mode 'simple))))
-   :bind
-   (:map global-map
-         ("M-0"       . treemacs-select-window)
-         ("C-x t 1"   . treemacs-delete-other-windows)
-         ("C-x t t"   . treemacs)
-         ("C-x t B"   . treemacs-bookmark)
-         ("C-x t C-t" . treemacs-find-file)
-         ("C-x t M-t" . treemacs-find-tag)))
-
- (use-package treemacs-evil
-   :after treemacs evil
-   :ensure t)
-
- (use-package treemacs-icons-dired
-   :after treemacs dired
-   :ensure t
-   :config (treemacs-icons-dired-mode))
-
- (use-package treemacs-magit
-   :after treemacs magit
-   :ensure t)
- #+end_src
 * Language
 #+begin_src emacs-lisp
 
@@ -778,58 +693,63 @@
 * Ledger
 #+begin_src emacs-lisp
 
-  (use-package ledger-mode
-      :ensure t
-      :init
-      (setq ledger-clear-whole-transactions 1)
-      :config
-      (add-to-list 'evil-emacs-state-modes 'ledger-report-mode)
-      :mode "\\.dat//'")
+    (use-package ledger-mode
+        :ensure t
+        :init
+        (setq ledger-clear-whole-transactions 1)
+        :config
+        (add-to-list 'evil-emacs-state-modes 'ledger-report-mode)
+        :mode "\\.dat//'")
 
-    (add-hook 'ledger-mode-hook
-            (lambda ()
-                (setq-local tab-always-indent 'complete)
-                (setq-local completion-cycle-threshold t)
-                (setq-local ledger-complete-in-steps t)))
+      (add-hook 'ledger-mode-hook
+              (lambda ()
+                  (setq-local tab-always-indent 'complete)
+                  (setq-local completion-cycle-threshold t)
+                  (setq-local ledger-complete-in-steps t)))
+
+    (setq ledger-binary-path "/usr/local/bin/ledger")
 #+end_src
 * Custom variable
 #+begin_src emacs-lisp
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(org-agenda-include-diary t)
- '(org-agenda-skip-deadline-if-done t)
- '(org-agenda-skip-scheduled-if-done t)
- '(org-agenda-skip-timestamp-if-done t)
- '(org-agenda-start-on-weekday nil)
- '(org-agenda-sticky t)
- '(org-agenda-tags-todo-honor-ignore-options nil)
- '(org-clock-into-drawer "LOGBOOK")
- '(org-closed-keep-when-no-todo nil)
- '(org-enforce-todo-checkbox-dependencies t)
- '(org-enforce-todo-dependencies t)
- '(org-hide-emphasis-markers t)
- '(org-log-done 'time)
- '(org-log-done-with-time t)
- '(org-log-into-drawer t)
- '(org-return-follows-link t)
- '(org-special-ctrl-a/e t)
- '(org-special-ctrl-k t)
- '(org-todo-keywords '((type "TODO(t)" "DONE(d!)")))
- '(org-todo-state-tags-triggers nil)
- '(org-use-fast-todo-selection 'auto)
- '(package-selected-packages
-   '(modus-themes modus-operandi-theme doom-themes-visual-bell-config doom-themes doom-modeline calfw-org calfw nvm phi-search-dired helpful which-key-posframe all-the-icons-ivy-rich ivy-rich which-key avy diminish ivy dashboard org-bullets use-package helm evil-visual-mark-mode))
- '(tab-bar-mode t)
- '(tool-bar-mode nil)
- '(vc-annotate-background nil)
- '(vc-annotate-background-mode nil))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+  (custom-set-variables
+   ;; custom-set-variables was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(org-agenda-include-diary t)
+   '(org-agenda-skip-deadline-if-done t)
+   '(org-agenda-skip-scheduled-if-done t)
+   '(org-agenda-skip-timestamp-if-done t)
+   '(org-agenda-start-on-weekday nil)
+   '(org-agenda-sticky t)
+   '(org-agenda-tags-todo-honor-ignore-options nil)
+   '(org-clock-into-drawer "LOGBOOK")
+   '(org-closed-keep-when-no-todo nil)
+   '(org-enforce-todo-checkbox-dependencies t)
+   '(org-enforce-todo-dependencies t)
+   '(org-hide-emphasis-markers t)
+   '(org-log-done 'time)
+   '(org-log-done-with-time t)
+   '(org-log-into-drawer t)
+   '(org-return-follows-link t)
+   '(org-special-ctrl-a/e t)
+   '(org-special-ctrl-k t)
+   '(org-todo-keywords '((type "TODO(t)" "DONE(d!)")))
+   '(org-todo-state-tags-triggers nil)
+   '(org-use-fast-todo-selection 'auto)
+   '(package-selected-packages
+     '(modus-themes modus-operandi-theme doom-themes-visual-bell-config doom-themes doom-modeline calfw-org calfw nvm phi-search-dired helpful which-key-posframe all-the-icons-ivy-rich ivy-rich which-key avy diminish ivy dashboard org-bullets use-package helm evil-visual-mark-mode))
+   '(safe-local-variable-values
+     '((eval add-hook 'after-save-hook #'org-babel-tangle t t)
+       (org-confirm-babel-evaluate)))
+   '(tab-bar-mode t)
+   '(tool-bar-mode nil)
+   '(vc-annotate-background nil)
+   '(vc-annotate-background-mode nil))
+  (custom-set-faces
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   )
 #+end_src
