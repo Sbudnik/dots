@@ -582,8 +582,6 @@
   :bind (:map flyspell-mode-map
               ("C-." . flyspell-correct-wrapper)))
 
-(use-package undo-tree)
-(global-undo-tree-mode)
 #+end_src
 * Language
 #+begin_src emacs-lisp
@@ -740,7 +738,8 @@
    '(package-selected-packages
      '(modus-themes modus-operandi-theme doom-themes-visual-bell-config doom-themes doom-modeline calfw-org calfw nvm phi-search-dired helpful which-key-posframe all-the-icons-ivy-rich ivy-rich which-key avy diminish ivy dashboard org-bullets use-package helm evil-visual-mark-mode))
    '(safe-local-variable-values
-     '((eval add-hook 'after-save-hook #'org-babel-tangle t t)
+       '((eval add-hook 'after-save-hook 'org-html-export-to-html t t)
+       (eval add-hook 'after-save-hook #'org-babel-tangle t t)
        (org-confirm-babel-evaluate)))
    '(tab-bar-mode t)
    '(tool-bar-mode nil)
