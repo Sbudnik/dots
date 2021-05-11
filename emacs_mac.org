@@ -559,34 +559,39 @@
 #+end_src
 * Spell
 #+begin_src emacs-lisp
-(use-package company)
-(global-company-mode)
-(global-set-key (kbd "M-/") 'company-complete-common)
 
-(setq ispell-program-name "/usr/local/bin/hunspell")
+  (use-package company
+    :config
+    (setq company-idle-delay 0.1)
+    (setq company-minimum-prefix-length 1)
+    (add-hook 'after-init-hook 'global-company-mode))
 
-(require 'ispell)
+  (global-set-key (kbd "M-/") 'company-complete-common-or-cycle)
 
-(global-set-key (kbd "<f8>") 'ispell-word)
-(global-set-key (kbd "C-<f8>") 'flyspell-mode)
+  (setq ispell-program-name "/usr/local/bin/hunspell")
 
-(use-package flyspell :demand t
-  :config
-  (use-package flyspell-correct-ivy)
-  (defun flyspellCompletion()
-    (flyspell-mode 1)
-    (set (make-local-variable 'company-backends)
-         (copy-tree company-backends))
-    (add-to-list 'company-backends 'company-ispell))
-  (defun flyspell-most-modes()
-    (add-hook 'text-mode-hook 'flyspellCompletion)
-    (add-hook 'prog-mode-hook 'flyspellCompletion)
-    (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
-      (add-hook hook (lambda ()
-                       (flyspell-mode -1)))))
-  (flyspell-most-modes)
-  :bind (:map flyspell-mode-map
-              ("C-." . flyspell-correct-wrapper)))
+  (require 'ispell)
+
+  (global-set-key (kbd "<f8>") 'ispell-word)
+  (global-set-key (kbd "C-<f8>") 'flyspell-mode)
+
+  (use-package flyspell :demand t
+    :config
+    (use-package flyspell-correct-ivy)
+    (defun flyspellCompletion()
+      (flyspell-mode 1)
+      (set (make-local-variable 'company-backends)
+           (copy-tree company-backends))
+      (add-to-list 'company-backends 'company-ispell))
+    (defun flyspell-most-modes()
+      (add-hook 'text-mode-hook 'flyspellCompletion)
+      (add-hook 'prog-mode-hook 'flyspellCompletion)
+      (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
+        (add-hook hook (lambda ()
+                         (flyspell-mode -1)))))
+    (flyspell-most-modes)
+    :bind (:map flyspell-mode-map
+                ("C-." . flyspell-correct-wrapper)))
 
 #+end_src
 * Language
