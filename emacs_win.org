@@ -114,7 +114,7 @@
 #+begin_src emacs-lisp
 
   (set-window-scroll-bars (minibuffer-window) nil nil)
-  (scroll-bar-mode -1)
+  (setq scroll-bar-mode nil)
   (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
   (setq scroll-conservatively 100)
   (setq kill-whole-line t)
