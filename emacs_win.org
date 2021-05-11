@@ -701,9 +701,16 @@ for delimiting clearing everything after '=' sign if it is here."
 * Spell
 #+begin_src emacs-lisp
 
-  (use-package company)
-  (add-hook 'after-init-hook 'global-company-mode)
-  (global-set-key (kbd "M-/") 'company-complete-common)
+  (use-package company
+    :config
+    (setq company-idle-delay 0.1)
+    (setq company-global-modes '(not org-mode markdown-mode))
+    (setq company-minimum-prefix-length 1)
+    (add-hook 'after-init-hook 'global-company-mode))
+
+  ;; (global-set-key (kbd "M-/") 'company-complete-common)
+
+  (add-to-map "<SPC> [?\\t]" 'company-complete-common)
 
   (setq ispell-program-name "C:/Users/jwmosty/AppData/Roaming/hunspell-bin/bin/hunspell.exe")
 
