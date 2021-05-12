@@ -101,8 +101,10 @@
   export LANG=en_US.UTF-8
 
   # Preferred editor for local and remote sessions
-  # alias em='/Applications/Emacs.app/Contents/MacOS/bin/emacsclient -n -c'
-  # alias et='/Applications/Emacs.app/Contents/MacOS/bin/emacsclient -t'
+   alias em='/Applications/Emacs.app/Contents/MacOS/bin/emacsclient -n -c'
+   alias et='/Applications/Emacs.app/Contents/MacOS/bin/emacsclient -t'
+   alias emacs='/Applications/Emacs.app/Contents/MacOS/bin/emacsclient -t'
+   alias e='/Applications/Emacs.app/Contents/MacOS/bin/emacsclient -t'
 
   if [[ -n $SSH_CONNECTION ]]; then
       export EDITOR='vim'
