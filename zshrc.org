@@ -107,9 +107,9 @@
    alias e='/Applications/Emacs.app/Contents/MacOS/bin/emacsclient -t'
 
   if [[ -n $SSH_CONNECTION ]]; then
-      export EDITOR='vim'
+      export EDITOR='e'
   else
-      export EDITOR='vim'
+      export EDITOR='e'
   fi
 
   # Compilation flags
