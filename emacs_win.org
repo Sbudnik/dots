@@ -54,6 +54,7 @@
 
   (good-scroll-mode 1)
 
+  (rainbow-mode 1)
 #+end_src
 * Basic setup
 ** Font setup
@@ -703,7 +704,7 @@ for delimiting clearing everything after '=' sign if it is here."
 
   (use-package company
     :config
-    (setq company-idle-delay 0.1)
+    (setq company-idle-delay 0.3)
     (setq company-minimum-prefix-length 1)
     (add-hook 'after-init-hook 'global-company-mode))
 
