@@ -87,7 +87,7 @@
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
   (use-package rainbow-mode
-      :diminish)
+    :diminish)
 
   (setq user-full-name "John Mosty"
         user-mail-address "jwmosty@ascension.org"
@@ -115,7 +115,8 @@
   (setq indent-tabs-mode nil)
   (setq tab-width 4)
 
-
+  (use-package eldoc
+    :diminish)
 #+end_src
 ** UI arrange
 #+begin_src emacs-lisp
@@ -419,6 +420,10 @@
          (defun jwm/org-mode-setup ()
            (org-indent-mode)
            (visual-line-mode 1))
+
+        (diminish 'visual-line-mode)
+
+        (diminish 'org-indent-mode)
 
          (defun jwm/org-font-setup ()
            ;; Replace list hyphen with dot
@@ -753,16 +758,17 @@ for delimiting clearing everything after '=' sign if it is here."
 #+begin_src emacs-lisp
   (defun my/dashboard-banner ()
     """Set a dashboard banner including information on package initialization
-         time and garbage collections."""
+           time and garbage collections."""
     (setq dashboard-banner-logo-title
           (format "Emacs ready in %.2f seconds with %d garbage collections."
                   (float-time (time-subtract after-init-time before-init-time)) gcs-done)))
 
   (use-package dashboard
     :ensure t
-   ;; :init
-   ;; (add-hook 'after-init-hook 'dashboard-refresh-buffer)
+    ;; :init
+    ;; (add-hook 'after-init-hook 'dashboard-refresh-buffer)
     ;;    (add-hook 'dashboard-mode-hook 'my/dashboard-banner)
+    :diminish
     :config
     (dashboard-setup-startup-hook)
     (setq dashboard-center-content t)
@@ -775,10 +781,10 @@ for delimiting clearing everything after '=' sign if it is here."
                             (bookmarks . 5)
                             (agenda . 10)
                             (registers . 5))))
-    ;;:hook
-    ;;((dashboard-mode . my/dashboard-banner)))
+  ;;:hook
+  ;;((dashboard-mode . my/dashboard-banner)))
 
-    (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+  (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
 
 #+end_src
 * Macros and registers
