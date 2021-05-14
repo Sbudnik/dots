@@ -8,35 +8,38 @@
 - Need to M-x package-install use-package-ensure, org-bullets, for cold installs
 
 #+begin_src emacs-lisp
-    ;; begin file s
+  ;; begin file s
 
-    (require 'package)
-    (require 'org)
+  (require 'package)
+  (require 'org)
 
-    (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
-    (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-    (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
-    (add-to-list 'package-archives '("elpa" . "https://elpa.gnu.org/packages/"))
+  (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
+  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+  (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
+  (add-to-list 'package-archives '("elpa" . "https://elpa.gnu.org/packages/"))
 
-    (setq package-enable-at-startup nil)
-    (package-initialize)
+  (setq package-enable-at-startup nil)
+  (package-initialize)
 
-    (require 'use-package-ensure)
-    (setq use-package-always-ensure t)
+  (require 'use-package-ensure)
+  (setq use-package-always-ensure t)
 
-    (use-package auto-compile
-      :config (auto-compile-on-load-mode))
 
-    (setq load-prefer-newer t)
+  (use-package diminish)
+  (use-package auto-compile
+    :diminish
+    :config (auto-compile-on-load-mode))
 
-    (load-file "~/.emacs.d/sensible-defaults.el")
-    (sensible-defaults/use-all-settings)
-    (sensible-defaults/use-all-keybindings)
+  (setq load-prefer-newer t)
 
-    (use-package all-the-icons)
-    (use-package no-littering)
-    ;;(add-to-list 'exec-path "/usr/local/bin/")
-    (use-package exec-path-from-shell)
+  (load-file "~/.emacs.d/sensible-defaults.el")
+  (sensible-defaults/use-all-settings)
+  (sensible-defaults/use-all-keybindings)
+
+  (use-package all-the-icons)
+  (use-package no-littering)
+  ;;(add-to-list 'exec-path "/usr/local/bin/")
+  (use-package exec-path-from-shell)
 
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize))
@@ -61,7 +64,6 @@
 #+begin_src emacs-lisp
       ;; Make ESC quit prompts
       (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-      (use-package diminish)
 
       (setq user-full-name "John Mosty"
             user-mail-address "dubs.mosty@gmail.com"
@@ -112,6 +114,8 @@
   (dolist (command '(recenter-top-bottom other-window ace-window my-scroll-down-half my-scroll-up-half))
     (advice-add command :after #'my-pulse-line))
 
+  (use-package eldoc
+    :diminish)
 #+end_src
 ** Backups
 #+begin_src emacs-lisp
@@ -121,17 +125,17 @@
 ** Dashboard
 #+begin_src emacs-lisp
 
-(use-package dashboard
-  :ensure t
-  :config
-  (dashboard-setup-startup-hook))
+  (use-package dashboard
+    :ensure t
+    :diminish
+    :config
+    (dashboard-setup-startup-hook)
+    (setq dashboard-banner-logo-title "Welcome to the Mac")
+    (setq dashboard-center-content t)
+    (setq dashboard-set-heading-icons t)
+    (setq dashboard-set-file-icons t))
 
-(setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
-(setq dashboard-banner-logo-title "Welcome to the Mac")
-(setq dashboard-center-content t)
-(setq dashboard-set-heading-icons t)
-(setq dashboard-set-file-icons t)
-
+  (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
 #+end_src
 * Evil mode
 #+begin_src emacs-lisp
@@ -156,6 +160,7 @@
 
   (use-package evil-org
     :after org
+    :diminish
     :config
     (add-hook 'org-mode-hook 'evil-org-mode)
     (add-hook 'evil-org-mode-hook
@@ -163,47 +168,48 @@
     (require 'evil-org-agenda)
     (evil-org-agenda-set-keys))
 
-    (defun add-to-map(keys func)
-      "Add a keybinding in evil mode from keys to func."
-      (define-key evil-normal-state-map (kbd keys) func)
-      (define-key evil-motion-state-map (kbd keys) func))
+  (defun add-to-map(keys func)
+    "Add a keybinding in evil mode from keys to func."
+    (define-key evil-normal-state-map (kbd keys) func)
+    (define-key evil-motion-state-map (kbd keys) func))
 
-    (add-to-map "<SPC>" nil)
+  (add-to-map "<SPC>" nil)
 
-    (add-to-map "<SPC> f" 'find-file)
-    (add-to-map "<SPC> s" 'save-buffer)
-    (add-to-map "<SPC> b" 'switch-to-buffer)
+  (add-to-map "<SPC> f" 'find-file)
+  (add-to-map "<SPC> s" 'save-buffer)
+  (add-to-map "<SPC> b" 'switch-to-buffer)
 
 
-    (defun jwm/kill-current-buffer ()
-      "Kill the current buffer without prompting."
-      (interactive)
-      (kill-buffer (current-buffer)))
+  (defun jwm/kill-current-buffer ()
+    "Kill the current buffer without prompting."
+    (interactive)
+    (kill-buffer (current-buffer)))
 
-    (global-set-key (kbd "C-x k") 'jwm/kill-current-buffer)
-    (add-to-map "<SPC> k" 'jwm/kill-current-buffer)
+  (global-set-key (kbd "C-x k") 'jwm/kill-current-buffer)
+  (add-to-map "<SPC> k" 'jwm/kill-current-buffer)
 #+end_src
 * Theme config
 #+begin_src emacs-lisp
 
-  (use-package doom-modeline
-    :init (doom-modeline-mode 1)
-    :custom ((doom-modeline-height 18)))
+  ;;  (use-package doom-modeline
+  ;;    :init (doom-modeline-mode 1)
+  ;;    :custom ((doom-modeline-height 18)))
 
   (use-package modus-themes
     :ensure                         ; omit this to use the built-in themes
     :init
     ;; Add all your customizations prior to loading the themes
-      (setq modus-themes-slanted-constructs t
-            modus-themes-bold-constructs t
-            modus-themes-intense-hl-line t
-            modus-themes-subtle-line-numbers t
-            modus-themes-links 'faint-neutral-underline
-            modus-themes-syntax 'faint
-            modus-themes-completions 'opinionated
-            modus-themes-org-habit 'simplified
-            modus-themes-lang-checkers 'subtle-foreground-straight-underline
-            modus-themes-prompts 'subtle-accented)
+    (setq modus-themes-slanted-constructs t
+          modus-themes-bold-constructs t
+          modus-themes-intense-hl-line t
+          modus-themes-subtle-line-numbers t
+          modus-themes-links 'faint-neutral-underline
+          modus-themes-syntax 'faint
+          modus-themes-completions 'opinionated
+          modus-themes-mode-line 'moody
+          modus-themes-org-habit 'simplified
+          modus-themes-lang-checkers 'subtle-foreground-straight-underline
+          modus-themes-prompts 'subtle-accented)
 
 
     ;; Load the theme files before enabling a theme (else you get an error).
@@ -213,31 +219,30 @@
     (modus-themes-load-operandi);; OR (modus-themes-load-vivendi)
     :bind ("<f12>" . modus-themes-toggle))
 
-   (use-package doom-themes
-     :config
-  ;;   ;; Global settings (defaults)
-  ;;   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-  ;;         doom-themes-enable-italic t) ; if nil, italics is universally disabled
-  ;;   ;; Enable flashing mode-line on errors
-     (doom-themes-visual-bell-config))
+  (use-package doom-themes
+    :config
+    ;;   ;; Global settings (defaults)
+    ;;   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+    ;;         doom-themes-enable-italic t) ; if nil, italics is universally disabled
+    ;;   ;; Enable flashing mode-line on errors
+    (doom-themes-visual-bell-config))
 
-  ;; (defun transparency (value)
-  ;;   "Sets the transparency of the frame window. 0=transparent/100=opaque."
-  ;;   (interactive "nTransparency Value 0 - 100 opaque:")
-  ;;   (set-frame-parameter (selected-frame) 'alpha value))
+  (defun transparency (value)
+    "Sets the transparency of the frame window. 0=transparent/100=opaque."
+    (interactive "nTransparency Value 0 - 100 opaque:")
+    (set-frame-parameter (selected-frame) 'alpha value))
 
-  ;; (defun hrs/apply-theme-drk ()
-  ;;   "Apply my chosen theme and make frames just slightly transparent."
-  ;;   (interactive)
-  ;;   (load-theme 'doom-one t)
-  ;;   (transparency 100))
+  (defun hrs/apply-theme-drk ()
+    "Apply my chosen theme and make frames just slightly transparent."
+    (interactive)
+    (modus-themes-load-operandi)
+    (transparency 95))
 
-  ;; (if (daemonp)
-  ;;     (add-hook 'after-make-frame-functions
-  ;;               (lambda (frame)
-  ;;               (setq doom-modeline-icon t)
-  ;;                 (with-selected-frame frame (hrs/apply-theme-drk))))
-  ;;   (hrs/apply-theme-drk))
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions
+                (lambda (frame)
+                  (with-selected-frame frame (hrs/apply-theme-drk))))
+    (hrs/apply-theme-drk))
 
   ;; (setq jwm/themes '(doom-one doom-one-light doom-dark+ doom-challenger-deep doom-acario-light doom-tomorrow-day doom-peacock doom-zenburn doom-gruvbox))
   ;; (setq jwm/themes-index 0)
@@ -299,6 +304,7 @@
 
   (use-package ivy-hydra
     :defer t
+    :diminish
     :after hydra)
 
   (use-package ivy
@@ -307,6 +313,7 @@
     (ivy-mode 1))
 
   (use-package counsel
+    :diminish
     :bind
     (("M-y" . counsel-yank-pop)
      :map ivy-minibuffer-map
@@ -335,8 +342,8 @@
   (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
 
   (use-package ivy-rich
-   :init
-   (ivy-rich-mode 1))
+    :init
+    (ivy-rich-mode 1))
 
   (use-package avy
     :diminish
@@ -351,11 +358,11 @@
 
   (use-package prescient)
   (use-package ivy-prescient
-      :config
-      (ivy-prescient-mode 1))
+    :config
+    (ivy-prescient-mode 1))
   (use-package company-prescient
-      :config
-      (company-prescient-mode 1))
+    :config
+    (company-prescient-mode 1))
 
 #+end_src
 * Helpful
@@ -401,13 +408,14 @@
 ** Main Org-mode
 #+begin_src emacs-lisp
 
-    (defun jwm/org-mode-setup ()
-      (org-indent-mode)
-      (variable-pitch-mode 1)
-      (visual-line-mode 1))
+  (defun jwm/org-mode-setup ()
+    (org-indent-mode)
+    (visual-line-mode 1)
+    (diminish 'visual-line-mode)
+    (diminish 'org-indent-mode))
 
-    (defun jwm/org-font-setup ()
-      ;; Set faces for heading levels
+  (defun jwm/org-font-setup ()
+    ;; Set faces for heading levels
     (dolist (face '((org-level-1 . 1.2)
                     (org-level-2 . 1.1)
                     (org-level-3 . 1.05)
@@ -427,77 +435,78 @@
     (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
     (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
 
-    (use-package org
-      :hook (org-mode . jwm/org-mode-setup)
-      :config
-      (setq org-ellipsis " ▾")
-      (jwm/org-font-setup))
+  (use-package org
+    :hook (org-mode . jwm/org-mode-setup)
+    :config
+    (setq org-ellipsis " ▾")
+    (jwm/org-font-setup))
 
-    (require 'org-bullets)
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+  (require 'org-bullets)
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
-    (defun jwm/org-mode-visual-fill ()
-      (setq visual-fill-column-width 100
-            visual-fill-column-center-text t)
-      (visual-fill-column-mode 1))
+  (defun jwm/org-mode-visual-fill ()
+    (setq visual-fill-column-width 100
+          visual-fill-column-center-text t)
+    (visual-fill-column-mode 1))
 
-    (use-package visual-fill-column
-      :hook (org-mode . jwm/org-mode-visual-fill))
+  (use-package visual-fill-column
+    :diminish
+    :hook (org-mode . jwm/org-mode-visual-fill))
 
-    (setq org-default-notes-file (concat org-directory "/notes.org"))
+  (setq org-default-notes-file (concat org-directory "/notes.org"))
 
-     (require 'org-habit)
-      (add-to-list 'org-modules 'org-habit)
-      (setq org-habit-graph-column 60)
+  (require 'org-habit)
+  (add-to-list 'org-modules 'org-habit)
+  (setq org-habit-graph-column 60)
 
-    (defun air-org-skip-subtree-if-habit ()
-      "Skip an agenda entry if it has a STYLE property equal to \"habit\"."
-      (let ((subtree-end (save-excursion (org-end-of-subtree t))))
-        (if (string= (org-entry-get nil "STYLE") "habit")
-            subtree-end
-          nil)))
+  (defun air-org-skip-subtree-if-habit ()
+    "Skip an agenda entry if it has a STYLE property equal to \"habit\"."
+    (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+      (if (string= (org-entry-get nil "STYLE") "habit")
+          subtree-end
+        nil)))
 
-    (defun air-org-skip-subtree-if-priority (priority)
-      "Skip an agenda subtree if it has a priority of PRIORITY.
+  (defun air-org-skip-subtree-if-priority (priority)
+    "Skip an agenda subtree if it has a priority of PRIORITY.
 
-    PRIORITY may be one of the characters ?A, ?B, or ?C."
-      (let ((subtree-end (save-excursion (org-end-of-subtree t)))
-            (pri-value (* 1000 (- org-lowest-priority priority)))
-            (pri-current (org-get-priority (thing-at-point 'line t))))
-        (if (= pri-value pri-current)
-            subtree-end
-          nil)))
+      PRIORITY may be one of the characters ?A, ?B, or ?C."
+    (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+          (pri-value (* 1000 (- org-lowest-priority priority)))
+          (pri-current (org-get-priority (thing-at-point 'line t))))
+      (if (= pri-value pri-current)
+          subtree-end
+        nil)))
 
-    (setq org-agenda-custom-commands
-          '(("d" "Daily agenda and all TODOs"
-             ((tags "PRIORITY=\"A\""
-                    ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                     (org-agenda-overriding-header "High-priority unfinished tasks:")))
-              (agenda "" ((org-agenda-ndays 1)))
-              (alltodo ""
-                       ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
-                                                       (air-org-skip-subtree-if-priority ?A)
-                                                       (org-agenda-skip-if nil '(scheduled deadline))))
-                        (org-agenda-overriding-header "ALL normal priority tasks:"))))
-             ((org-agenda-compact-blocks t)))))
+  (setq org-agenda-custom-commands
+        '(("d" "Daily agenda and all TODOs"
+           ((tags "PRIORITY=\"A\""
+                  ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                   (org-agenda-overriding-header "High-priority unfinished tasks:")))
+            (agenda "" ((org-agenda-ndays 1)))
+            (alltodo ""
+                     ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
+                                                     (air-org-skip-subtree-if-priority ?A)
+                                                     (org-agenda-skip-if nil '(scheduled deadline))))
+                      (org-agenda-overriding-header "ALL normal priority tasks:"))))
+           ((org-agenda-compact-blocks t)))))
 
-    (global-set-key (kbd "C-c a") 'org-agenda)
-    (global-set-key "\C-cl" 'org-store-link)
-    (define-key global-map "\C-cL" 'org-occur-link-in-agenda-files)
-    (global-set-key (kbd "<home>") 'beginning-of-buffer)
-    (global-set-key (kbd "M-o") 'other-window)
+  (global-set-key (kbd "C-c a") 'org-agenda)
+  (global-set-key "\C-cl" 'org-store-link)
+  (define-key global-map "\C-cL" 'org-occur-link-in-agenda-files)
+  (global-set-key (kbd "<home>") 'beginning-of-buffer)
+  (global-set-key (kbd "M-o") 'other-window)
 
-    (setq org-capture-templates
-          '(("j" "Journal entry" plain (function org-journal-find-location)
-             "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
-             :jump-to-captured t :immediate-finish t)
-            ("t" "Tasks" entry (file+headline "" "Tasks")
-             "*** TODO %?\n%U\n %a %i" :prepend t)
-            ("T" "Tasks with ClipBoard" entry (file+headline "" "Tasks")
-             "*** TODO %?\n%U\n   %^C" :prepend t)))
+  (setq org-capture-templates
+        '(("j" "Journal entry" plain (function org-journal-find-location)
+           "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
+           :jump-to-captured t :immediate-finish t)
+          ("t" "Tasks" entry (file+headline "" "Tasks")
+           "*** TODO %?\n%U\n %a %i" :prepend t)
+          ("T" "Tasks with ClipBoard" entry (file+headline "" "Tasks")
+           "*** TODO %?\n%U\n   %^C" :prepend t)))
 
-    (use-package org-autolist)
-    (add-hook 'org-mode-hook (lambda () (org-autolist-mode)))
+  (use-package org-autolist)
+  (add-hook 'org-mode-hook (lambda () (org-autolist-mode)))
 
   (setq org-agenda-files '("~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org"))
 
@@ -557,12 +566,48 @@
   (require 'ox-extra)
   (ox-extras-activate '(ignore-headlines))
 #+end_src
+
+* Calculator
+#+begin_src emacs-lisp
+(defun my-calc-line (arg)
+  "Evaluate calc expression in the current line and display the
+result in the echo area by skipping everything after the final
+'=' sign.
+
+With prefix ARG non-nil or repeating command interactively,
+insert the result at the end of line & add a space if necessary
+for delimiting clearing everything after '=' sign if it is here."
+  (interactive "P")
+  (require 'calc)
+  (save-excursion
+    (let (beg end expr result)
+      (beginning-of-line)
+      (setq beg (point))
+      (end-of-line)
+      (search-backward "=" beg t)
+      (setq end (point))
+      (setq expr (buffer-substring-no-properties beg end))
+      (setq result (calc-eval expr))
+      (if (and (null arg) (not (eq 'my-calc-line last-command)))
+          (message "%s = %s" expr result)
+        (end-of-line)
+        (setq end (point))
+        (when (search-backward "=" beg t)
+          (forward-char 1)
+          (delete-region (point) end))
+        (unless (eq (char-before) ?\ )
+          (insert ?\ ))
+        (insert result)))))
+
+    (add-to-map "<SPC> =" 'my-calc-line)
+#+end_src
 * Spell
 #+begin_src emacs-lisp
 
   (use-package company
+    :diminish
     :config
-    (setq company-idle-delay 0.1)
+    (setq company-idle-delay 0.5)
     (setq company-minimum-prefix-length 1)
     (add-hook 'after-init-hook 'global-company-mode))
 
@@ -575,9 +620,12 @@
   (global-set-key (kbd "<f8>") 'ispell-word)
   (global-set-key (kbd "C-<f8>") 'flyspell-mode)
 
-  (use-package flyspell :demand t
+  (use-package flyspell
+    :demand t
+    :diminish
     :config
-    (use-package flyspell-correct-ivy)
+    (use-package flyspell-correct-ivy
+      :diminish)
     (defun flyspellCompletion()
       (flyspell-mode 1)
       (set (make-local-variable 'company-backends)
@@ -623,58 +671,67 @@
 #+end_src
 * Macros
 #+begin_src emacs-lisp
-(evil-set-register ?d [?i ?* ?  ?\C-c ?. return escape])
-(evil-set-register ?t [?i ?\C-u ?\C-c ?. return escape])
-(evil-set-register ?b [?$ ?0 ?i ?+ escape ?A ?+ S-right escape])
+  (evil-set-register ?d [?i ?* ?  ?\C-c ?. return escape])
+  (evil-set-register ?t [?i ?\C-u ?\C-c ?. return escape])
+  (evil-set-register ?b [?$ ?0 ?i ?+ escape ?A ?+ S-right escape])
+
+  (add-to-map "Y" 'append-to-register)
+  (add-to-map "P" 'insert-register)
+
+  (setq register-separator ?+)
+  (set-register register-separator "\n\n")
 #+end_src
 * eshell
 #+begin_src emacs-lisp
-(defun jwm/configure-eshell ()
-  ;; Save command history when commands are entered
-  (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+  (defun jwm/configure-eshell ()
+    ;; Save command history when commands are entered
+    (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
 
-  ;; Truncate buffer for performance
-  (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+    ;; Truncate buffer for performance
+    (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
 
-  ;; Bind some useful keys for evil-mode
-  (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'counsel-esh-history)
-  (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
-  (evil-normalize-keymaps)
+    ;; Bind some useful keys for evil-mode
+    (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'counsel-esh-history)
+    (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
+    (evil-normalize-keymaps)
 
-  (setq eshell-history-size         10000
-        eshell-buffer-maximum-lines 10000
-        eshell-hist-ignoredups t
-        eshell-scroll-to-bottom-on-input t))
+    (setq eshell-history-size         10000
+          eshell-buffer-maximum-lines 10000
+          eshell-hist-ignoredups t
+          eshell-scroll-to-bottom-on-input t))
 
-(use-package eshell-git-prompt)
+  (use-package eshell-git-prompt)
 
-(use-package eshell
-  :hook (eshell-first-time-mode . jwm/configure-eshell)
-  :config
+  (use-package eshell
+    :hook (eshell-first-time-mode . jwm/configure-eshell)
+    :config
 
-  (with-eval-after-load 'esh-opt
-    (setq eshell-destroy-buffer-when-process-dies t)
-    (setq eshell-visual-commands '("htop" "zsh" "vim")))
+    (with-eval-after-load 'esh-opt
+      (setq eshell-destroy-buffer-when-process-dies t)
+      (setq eshell-visual-commands '("htop" "zsh" "vim")))
 
-  (eshell-git-prompt-use-theme 'git-radar))
+        (eshell-git-prompt-use-theme 'robbyrussell))
 
-(use-package symon)
-(add-hook 'after-init-hook 'symon-mode)
+  (use-package symon)
+  (add-hook 'after-init-hook 'symon-mode)
 
-(defun buffcop (buffer)
-  (with-current-buffer buffer
-    (buffer-string)))
+  (defun buffcop (buffer)
+    (with-current-buffer buffer
+      (buffer-string)))
 
-  (defun eshell/emacs (file)
-      (find-file file))
+    (defun eshell/emacs (file)
+        (find-file file))
 
-  (defun eshell/ffo (file)
-      (find-file-other-frame file))
+    (defun eshell/ffo (file)
+        (find-file-other-frame file))
+
+  (global-set-key (kbd "<C-return>") 'eshell)
 #+end_src
 * Popper
 #+begin_src emacs-lisp
   (use-package popper
     :ensure t
+    :diminish
     :bind (("C-`"   . popper-toggle-latest)
            ("M-`"   . popper-cycle)
            ("C-M-`" . popper-toggle-type)
