@@ -469,7 +469,7 @@
   (defun air-org-skip-subtree-if-priority (priority)
     "Skip an agenda subtree if it has a priority of PRIORITY.
 
-      PRIORITY may be one of the characters ?A, ?B, or ?C."
+        PRIORITY may be one of the characters ?A, ?B, or ?C."
     (let ((subtree-end (save-excursion (org-end-of-subtree t)))
           (pri-value (* 1000 (- org-lowest-priority priority)))
           (pri-current (org-get-priority (thing-at-point 'line t))))
@@ -505,8 +505,9 @@
           ("T" "Tasks with ClipBoard" entry (file+headline "" "Tasks")
            "*** TODO %?\n%U\n   %^C" :prepend t)))
 
-  (use-package org-autolist)
-  (add-hook 'org-mode-hook (lambda () (org-autolist-mode)))
+  (use-package org-autolist
+    :diminish)
+  (add-hook 'org-mode-hook (lambda () (org-autolist-mode))
 
   (setq org-agenda-files '("~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org"))
 
