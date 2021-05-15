@@ -155,8 +155,9 @@
     (setq evil-want-abbrev-expand-on-insert-exit nil
           evil-want-keybinding nil)
     :config
-    (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-    (evil-mode 1))
+    (define-key evil-emacs-state-map (kbd "<escape>") 'evil-normal-state)
+    (evil-mode 1)
+    (defalias 'evil-insert-state 'evil-emacs-state))
 
   (use-package evil-collection
     :after evil
@@ -452,8 +453,9 @@
   (use-package org
     :hook (org-mode . jwm/org-mode-setup)
     :config
-    (setq org-ellipsis "..."))
-  ;; (jwm/org-font-setup))
+    (setq org-ellipsis " ▾")
+    ;;(jwm/org-font-setup)
+    (setq org-adapt-indentation nil))
 
   (add-hook 'before-save-hook 'time-stamp)
 
