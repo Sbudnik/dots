@@ -146,49 +146,51 @@
     (setq evil-want-abbrev-expand-on-insert-exit nil
           evil-want-keybinding nil)
     :config
-    (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-    (evil-mode 1))
+    (define-key evil-emacs-state-map (kbd "C-g") 'evil-normal-state)
+    (define-key evil-emacs-state-map (kbd "<escape>") 'evil-normal-state)
+    (evil-mode 1)
+    (defalias 'evil-insert-state 'evil-emacs-state))
 
-  (use-package evil-collection
-    :after evil
-    :config
-    (setq evil-collection-mode-list
-          '(ag dired magit mu4e which-key))
-    (evil-collection-init))
+    (use-package evil-collection
+      :after evil
+      :config
+      (setq evil-collection-mode-list
+            '(ag dired magit mu4e which-key))
+      (evil-collection-init))
 
-  (use-package evil-surround
-    :config
-    (global-evil-surround-mode 1))
+    (use-package evil-surround
+      :config
+      (global-evil-surround-mode 1))
 
-  (use-package evil-org
-    :after org
-    :diminish
-    :config
-    (add-hook 'org-mode-hook 'evil-org-mode)
-    (add-hook 'evil-org-mode-hook
-              (lambda () (evil-org-set-key-theme)))
-    (require 'evil-org-agenda)
-    (evil-org-agenda-set-keys))
+    (use-package evil-org
+      :after org
+      :diminish
+      :config
+      (add-hook 'org-mode-hook 'evil-org-mode)
+      (add-hook 'evil-org-mode-hook
+                (lambda () (evil-org-set-key-theme)))
+      (require 'evil-org-agenda)
+      (evil-org-agenda-set-keys))
 
-  (defun add-to-map(keys func)
-    "Add a keybinding in evil mode from keys to func."
-    (define-key evil-normal-state-map (kbd keys) func)
-    (define-key evil-motion-state-map (kbd keys) func))
+    (defun add-to-map(keys func)
+      "Add a keybinding in evil mode from keys to func."
+      (define-key evil-normal-state-map (kbd keys) func)
+      (define-key evil-motion-state-map (kbd keys) func))
 
-  (add-to-map "<SPC>" nil)
+    (add-to-map "<SPC>" nil)
 
-  (add-to-map "<SPC> f" 'find-file)
-  (add-to-map "<SPC> s" 'save-buffer)
-  (add-to-map "<SPC> b" 'switch-to-buffer)
+    (add-to-map "<SPC> f" 'find-file)
+    (add-to-map "<SPC> s" 'save-buffer)
+    (add-to-map "<SPC> b" 'switch-to-buffer)
 
 
-  (defun jwm/kill-current-buffer ()
-    "Kill the current buffer without prompting."
-    (interactive)
-    (kill-buffer (current-buffer)))
+    (defun jwm/kill-current-buffer ()
+      "Kill the current buffer without prompting."
+      (interactive)
+      (kill-buffer (current-buffer)))
 
-  (global-set-key (kbd "C-x k") 'jwm/kill-current-buffer)
-  (add-to-map "<SPC> k" 'jwm/kill-current-buffer)
+    (global-set-key (kbd "C-x k") 'jwm/kill-current-buffer)
+    (add-to-map "<SPC> k" 'jwm/kill-current-buffer)
 #+end_src
 * Theme config
 #+begin_src emacs-lisp
