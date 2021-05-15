@@ -146,7 +146,6 @@
     (setq evil-want-abbrev-expand-on-insert-exit nil
           evil-want-keybinding nil)
     :config
-    (define-key evil-emacs-state-map (kbd "C-g") 'evil-normal-state)
     (define-key evil-emacs-state-map (kbd "<escape>") 'evil-normal-state)
     (evil-mode 1)
     (defalias 'evil-insert-state 'evil-emacs-state))
@@ -443,7 +442,8 @@
     :hook (org-mode . jwm/org-mode-setup)
     :config
     (setq org-ellipsis " ▾")
-    (jwm/org-font-setup))
+    (jwm/org-font-setup)
+    (setq org-adapt-indentation nil))
 
   (require 'org-bullets)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
@@ -473,7 +473,7 @@
   (defun air-org-skip-subtree-if-priority (priority)
     "Skip an agenda subtree if it has a priority of PRIORITY.
 
-        PRIORITY may be one of the characters ?A, ?B, or ?C."
+          PRIORITY may be one of the characters ?A, ?B, or ?C."
     (let ((subtree-end (save-excursion (org-end-of-subtree t)))
           (pri-value (* 1000 (- org-lowest-priority priority)))
           (pri-current (org-get-priority (thing-at-point 'line t))))
@@ -513,9 +513,9 @@
     :diminish)
   (add-hook 'org-mode-hook (lambda () (org-autolist-mode))
 
-  (setq org-agenda-files '("~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org"))
+            (setq org-agenda-files '("~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org"))
 
-  (set-face-attribute 'org-headline-done nil :strike-through t)
+            (set-face-attribute 'org-headline-done nil :strike-through t)
 
 #+end_src
 ** Babel and Structure templates
