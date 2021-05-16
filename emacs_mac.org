@@ -116,6 +116,13 @@
 
   (use-package eldoc
     :diminish)
+
+    (defun jwm/kill-current-buffer ()
+      "Kill the current buffer without prompting."
+      (interactive)
+      (kill-buffer (current-buffer)))
+
+    (global-set-key (kbd "C-x k") 'jwm/kill-current-buffer)
 #+end_src
 ** Backups
 #+begin_src emacs-lisp
@@ -138,58 +145,6 @@
   (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
 
   (diminish 'page-break-lines-mode)
-#+end_src
-* Evil mode
-#+begin_src emacs-lisp
-  (use-package evil
-    :init
-    (setq evil-want-abbrev-expand-on-insert-exit nil
-          evil-want-keybinding nil)
-    :config
-    (define-key evil-emacs-state-map (kbd "<escape>") 'evil-normal-state)
-    (evil-mode 1)
-    (defalias 'evil-insert-state 'evil-emacs-state))
-
-    (use-package evil-collection
-      :after evil
-      :config
-      (setq evil-collection-mode-list
-            '(ag dired magit mu4e which-key))
-      (evil-collection-init))
-
-    (use-package evil-surround
-      :config
-      (global-evil-surround-mode 1))
-
-    (use-package evil-org
-      :after org
-      :diminish
-      :config
-      (add-hook 'org-mode-hook 'evil-org-mode)
-      (add-hook 'evil-org-mode-hook
-                (lambda () (evil-org-set-key-theme)))
-      (require 'evil-org-agenda)
-      (evil-org-agenda-set-keys))
-
-    (defun add-to-map(keys func)
-      "Add a keybinding in evil mode from keys to func."
-      (define-key evil-normal-state-map (kbd keys) func)
-      (define-key evil-motion-state-map (kbd keys) func))
-
-    (add-to-map "<SPC>" nil)
-
-    (add-to-map "<SPC> f" 'find-file)
-    (add-to-map "<SPC> s" 'save-buffer)
-    (add-to-map "<SPC> b" 'switch-to-buffer)
-
-
-    (defun jwm/kill-current-buffer ()
-      "Kill the current buffer without prompting."
-      (interactive)
-      (kill-buffer (current-buffer)))
-
-    (global-set-key (kbd "C-x k") 'jwm/kill-current-buffer)
-    (add-to-map "<SPC> k" 'jwm/kill-current-buffer)
 #+end_src
 * Theme config
 #+begin_src emacs-lisp
@@ -271,11 +226,11 @@
          :ensure nil
          :commands (dired dired-jump)
          :bind (("C-x C-j" . dired-jump))
-         :custom ((dired-listing-switches "-lAht"))
-         :config
-         (evil-collection-define-key 'normal 'dired-mode-map
-           "h" 'dired-single-up-directory
-           "l" 'dired-single-buffer))
+         :custom ((dired-listing-switches "-lAht")))
+        ;; :config
+        ;; (evil-collection-define-key 'normal 'dired-mode-map
+        ;;   "h" 'dired-single-up-directory
+        ;;   "l" 'dired-single-buffer))
 
     ;; ;;   (add-hook 'dired-mode-hook
     ;; ;;         (lambda ()
@@ -283,9 +238,9 @@
 
       (use-package dired-single)
 
-    (add-to-map "<SPC> d" 'dired)
+;;    (add-to-map "<SPC> d" 'dired)
 
-    (add-to-map "<SPC> j" 'dired-jump)
+;;    (add-to-map "<SPC> j" 'dired-jump)
     ;; ;; (use-package all-the-icons-dired)
        (add-hook 'dired-mode-hook 'treemacs-icons-dired-mode)
 
@@ -349,9 +304,9 @@
     (ivy-rich-mode 1))
 
   (use-package avy
+    :ensure t
     :diminish
-    :bind*
-    ("C-;" . evil-avy-goto-char-2))
+    :bind (("M-s" . avy-goto-word-1)))
 
   (use-package which-key
     :init (which-key-mode)
@@ -381,31 +336,14 @@
   ([remap describe-key] . helpful-key))
 
 #+end_src
-* Projectile
-#+begin_src emacs-lisp
-(use-package projectile
-  :diminish projectile-mode
-  :config (projectile-mode)
-  :custom ((projectile-completion-system 'ivy))
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
-  :init
-  ;; NOTE: Set this to the folder where you keep your Git repos!
-  (when (file-directory-p "c:/users/jwmosty/AppData/Roaming/GAS_Asc")
-    (setq projectile-project-search-path '("c:/users/jwmosty/AppData/Roaming/GAS_Asc")))
-  (setq projectile-switch-project-action #'projectile-dired))
-
-(use-package counsel-projectile
-  :config (counsel-projectile-mode))
-
-#+end_src
 * Magit
 #+begin_src emacs-lisp
-    (use-package magit
-      :custom
-      (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+     (use-package magit
+       :custom
+       (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
-  (add-to-map "<SPC> m" 'magit-status)
+(global-set-key (kbd "C-c g") 'magit-status)
+  ;; (add-to-map "<SPC> m" 'magit-status)
 #+end_src
 * Org Mode
 ** Main Org-mode
@@ -511,7 +449,7 @@
 
   (use-package org-autolist
     :diminish)
-  (add-hook 'org-mode-hook (lambda () (org-autolist-mode))
+  (add-hook 'org-mode-hook (lambda () (org-autolist-mode)))
 
             (setq org-agenda-files '("~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org"))
 
@@ -554,8 +492,8 @@
   (setq org-crypt-key '("0774531735284E3FBFAB276884494577248B47A6"))
   ;;(setq org-crypt-key nil)
   (setq auto-save-default nil)
-
-  (add-to-map "<SPC> u" 'org-decrypt-entry)
+(global-set-key (kbd "C-c e") 'org-decrypt-entry)
+;;  (add-to-map "<SPC> u" 'org-decrypt-entry)
 #+end_src
 * LaTeX
 #+begin_src emacs-lisp
@@ -572,40 +510,6 @@
   (ox-extras-activate '(ignore-headlines))
 #+end_src
 
-* Calculator
-#+begin_src emacs-lisp
-(defun my-calc-line (arg)
-  "Evaluate calc expression in the current line and display the
-result in the echo area by skipping everything after the final
-'=' sign.
-
-With prefix ARG non-nil or repeating command interactively,
-insert the result at the end of line & add a space if necessary
-for delimiting clearing everything after '=' sign if it is here."
-  (interactive "P")
-  (require 'calc)
-  (save-excursion
-    (let (beg end expr result)
-      (beginning-of-line)
-      (setq beg (point))
-      (end-of-line)
-      (search-backward "=" beg t)
-      (setq end (point))
-      (setq expr (buffer-substring-no-properties beg end))
-      (setq result (calc-eval expr))
-      (if (and (null arg) (not (eq 'my-calc-line last-command)))
-          (message "%s = %s" expr result)
-        (end-of-line)
-        (setq end (point))
-        (when (search-backward "=" beg t)
-          (forward-char 1)
-          (delete-region (point) end))
-        (unless (eq (char-before) ?\ )
-          (insert ?\ ))
-        (insert result)))))
-
-    (add-to-map "<SPC> =" 'my-calc-line)
-#+end_src
 * Spell
 #+begin_src emacs-lisp
 
@@ -647,28 +551,6 @@ for delimiting clearing everything after '=' sign if it is here."
                 ("C-." . flyspell-correct-wrapper)))
 
 #+end_src
-* Language
-#+begin_src emacs-lisp
-
-  (use-package lsp-mode
-  :init
-  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-  (setq lsp-keymap-prefix "C-l")
-  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-          (python-mode . lsp)
-          ;; if you want which-key integration
-          (lsp-mode . lsp-enable-which-key-integration))
-  :commands lsp)
-
-  (use-package lsp-ui
-      :hook (lsp-mode . lsp-ui-mode)
-      :custom
-      (lsp-ui-doc-position 'bottom))
-  (use-package lsp-ivy)
-  (use-package lsp-treemacs
-      :after lsp)
-
-#+end_src
 * Python
 #+begin_src emacs-lisp
 (setq python-shell-interpreter "/usr/local/bin/python3")
@@ -676,12 +558,12 @@ for delimiting clearing everything after '=' sign if it is here."
 #+end_src
 * Macros
 #+begin_src emacs-lisp
-  (evil-set-register ?d [?i ?* ?  ?\C-c ?. return escape])
-  (evil-set-register ?t [?i ?\C-u ?\C-c ?. return escape])
-  (evil-set-register ?b [?$ ?0 ?i ?+ escape ?A ?+ S-right escape])
+;;  (evil-set-register ?d [?i ?* ?  ?\C-c ?. return escape])
+;;  (evil-set-register ?t [?i ?\C-u ?\C-c ?. return escape])
+;;  (evil-set-register ?b [?$ ?0 ?i ?+ escape ?A ?+ S-right escape])
 
-  (add-to-map "Y" 'append-to-register)
-  (add-to-map "P" 'insert-register)
+;;  (add-to-map "Y" 'append-to-register)
+;;  (add-to-map "P" 'insert-register)
 
   (setq register-separator ?+)
   (set-register register-separator "\n\n")
@@ -694,11 +576,6 @@ for delimiting clearing everything after '=' sign if it is here."
 
     ;; Truncate buffer for performance
     (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
-
-    ;; Bind some useful keys for evil-mode
-    (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'counsel-esh-history)
-    (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
-    (evil-normalize-keymaps)
 
     (setq eshell-history-size         10000
           eshell-buffer-maximum-lines 10000
@@ -730,7 +607,7 @@ for delimiting clearing everything after '=' sign if it is here."
     (defun eshell/ffo (file)
         (find-file-other-frame file))
 
-  (global-set-key (kbd "<C-return>") 'eshell)
+  (global-set-key (kbd "C-c !") 'eshell)
 #+end_src
 * Popper
 #+begin_src emacs-lisp
@@ -769,7 +646,6 @@ for delimiting clearing everything after '=' sign if it is here."
         :init
         (setq ledger-clear-whole-transactions 1)
         :config
-        (add-to-list 'evil-emacs-state-modes 'ledger-report-mode)
         :mode "\\.dat//'")
 
       (add-hook 'ledger-mode-hook
