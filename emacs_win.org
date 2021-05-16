@@ -115,8 +115,86 @@
   (setq indent-tabs-mode nil)
   (setq tab-width 4)
 
+  (defun jwm/kill-current-buffer ()
+    "Kill the current buffer without prompting."
+    (interactive)
+    (kill-buffer (current-buffer)))
+
+  (global-set-key (kbd "C-x k") 'jwm/kill-current-buffer)
   (use-package eldoc
     :diminish)
+#+end_src
+** change functions
+#+begin_src emacs-lisp
+; Re-create ci" ca"...
+(defun seek-backward-to-char (chr)
+  "Seek backwards to a character"
+  (interactive "cSeek back to char: ")
+  (while (not (= (char-after) chr))
+    (forward-char -1)))
+
+(setq char-pairs
+      '(( ?\" . ?\" )
+        ( ?\' . ?\' )
+        ( ?\( . ?\) )
+        ( ?\[ . ?\] )
+        ( ?\{ . ?\} )
+        ( ?<  . ?>  )))
+
+(defun get-char-pair (chr)
+  (let ((result ()))
+    (dolist (x char-pairs)
+      (setq start (car x))
+      (setq end (cdr x))
+      (when (or (= chr start) (= chr end))
+        (setq result x)))
+      result))
+
+(defun get-start-char (chr)
+  (car (get-char-pair chr)))
+(defun get-end-char (chr)
+  (cdr (get-char-pair chr)))
+
+(defun seek-to-matching-char (start end count)
+  (while (> count 0)
+    (if (= (following-char) end)
+        (setq count (- count 1))
+      (if (= (following-char) start)
+          (setq count (+ count 1))))
+    (forward-char 1)))
+
+(defun seek-backward-to-matching-char (start end count)
+  (if (= (following-char) end)
+      (forward-char -1))
+  (while (> count 0)
+    (if (= (following-char) start)
+        (setq count (- count 1))
+      (if (= (following-char) end)
+          (setq count (+ count 1))))
+    (if (> count 0)
+        (forward-char -1))))
+
+(defun delete-between-pair (char)
+  "Delete in between the given pair"
+  (interactive "cDelete between char: ")
+  (seek-backward-to-matching-char (get-start-char char) (get-end-char char) 1)
+  (forward-char 1)
+  (setq mark (point))
+  (seek-to-matching-char (get-start-char char) (get-end-char char) 1)
+  (forward-char -1)
+  (kill-region mark (point)))
+
+(defun delete-all-pair (char)
+  "Delete in between the given pair and the characters"
+  (interactive "cDelete all char: ")
+  (seek-backward-to-matching-char (get-start-char char) (get-end-char char) 1)
+  (setq mark (point))
+  (forward-char 1)
+  (seek-to-matching-char (get-start-char char) (get-end-char char) 1)
+  (kill-region mark (point)))
+
+(global-set-key (kbd "C-c i") 'delete-between-pair)
+(global-set-key (kbd "C-c A") 'delete-all-pair)
 #+end_src
 ** UI arrange
 #+begin_src emacs-lisp
@@ -148,60 +226,6 @@
 #+begin_src emacs-lisp
 (setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
 #+end_src
-* Evil mode
-#+begin_src emacs-lisp
-  (use-package evil
-    :init
-    (setq evil-want-abbrev-expand-on-insert-exit nil
-          evil-want-keybinding nil)
-    :config
-    (define-key evil-emacs-state-map (kbd "<escape>") 'evil-normal-state)
-    (evil-mode 1)
-    (defalias 'evil-insert-state 'evil-emacs-state))
-
-  (use-package evil-collection
-    :after evil
-    :config
-    (setq evil-collection-mode-list
-          '(ag dired magit mu4e which-key))
-    (evil-collection-init)
-    :custom
-    (evil-collection-setup-minibuffer t))
-
-  (use-package evil-surround
-    :config
-    (global-evil-surround-mode 1))
-
-  (use-package evil-org
-    :after org
-    :diminish
-    :config
-    (add-hook 'org-mode-hook 'evil-org-mode)
-    (add-hook 'evil-org-mode-hook
-              (lambda () (evil-org-set-key-theme)))
-    (require 'evil-org-agenda)
-    (evil-org-agenda-set-keys))
-
-  (defun add-to-map(keys func)
-    "Add a keybinding in evil mode from keys to func."
-    (define-key evil-normal-state-map (kbd keys) func)
-    (define-key evil-motion-state-map (kbd keys) func))
-
-  (add-to-map "<SPC>" nil)
-
-  (add-to-map "<SPC> f" 'find-file)
-  (add-to-map "<SPC> s" 'save-buffer)
-  (add-to-map "<SPC> b" 'switch-to-buffer)
-
-  (defun jwm/kill-current-buffer ()
-    "Kill the current buffer without prompting."
-    (interactive)
-    (kill-buffer (current-buffer)))
-
-  (add-to-map "<SPC> k" 'jwm/kill-current-buffer)
-
-  (global-set-key (kbd "C-x k") 'jwm/kill-current-buffer)
-#+end_src
 * Dired
 #+begin_src emacs-lisp
   (use-package dired
@@ -210,9 +234,8 @@
     :bind (("C-x C-j" . dired-jump))
     :custom ((dired-listing-switches "-Aht"))
     :config
-    (evil-collection-define-key 'normal 'dired-mode-map
-      "h" 'dired-single-up-directory
-      "l" 'dired-single-buffer))
+    (define-key dired-mode-map (kbd "<s-up>") 'dired-single-up-directory)
+    (define-key dired-mode-map (kbd "<s-down>") 'dired-single-buffer))
 
    ;; (add-hook 'dired-mode-hook
         ;; (lambda ()
@@ -222,9 +245,7 @@
 
   (use-package dired-single)
 
-  (add-to-map "<SPC> d" 'dired)
 
-  (add-to-map "<SPC> j" 'dired-jump)
   ;;(use-package dired-open
   ;;  :config
     ;; Doesn't work as expected!
@@ -358,10 +379,10 @@
      :init
      (ivy-rich-mode 1))
 
-    (use-package avy
-      :diminish
-      :bind*
-      ("C-;" . evil-avy-goto-char-2))
+  (use-package avy
+    :ensure t
+    :diminish
+    :bind ("M-s" . avy-goto-word-1))
 
     (use-package which-key
       :init (which-key-mode)
@@ -414,7 +435,7 @@
     (setq  magit-default-tracking-name-function 'magit-default-tracking-name-branch-only
            magit-push-always-verify nil))
 
-  (add-to-map "<SPC> m" 'magit-status)
+(global-set-key (kbd "C-c g") 'magit-status)
 
 #+end_src
 * Org Mode
@@ -531,8 +552,7 @@
         (when (derived-mode-p 'org-agenda-mode)
           (org-agenda-maybe-redo))))
     )
-
-  (add-to-map "<SPC> r" 'renewOrgBuffer)
+(global-set-key (kbd "C-c r") 'renewOrgBuffer)
 
   ;;   (run-with-idle-timer 3 1000 #'renewOrgBuffer)
 
@@ -636,7 +656,6 @@
   ;;(setq org-crypt-key nil)
   (setq auto-save-default nil)
 
-  (add-to-map "<SPC> u" 'org-decrypt-entry)
   (global-set-key (kbd "C-c e") 'org-decrypt-entry)
 #+end_src
 * Calculator
@@ -671,7 +690,7 @@ for delimiting clearing everything after '=' sign if it is here."
           (insert ?\ ))
         (insert result)))))
 
-    (add-to-map "<SPC> =" 'my-calc-line)
+    (global-set-key (kbd "C-M-=") 'my-calc-line)
 #+end_src
 * Presentation
 #+begin_src emacs-lisp
@@ -793,12 +812,12 @@ for delimiting clearing everything after '=' sign if it is here."
 #+end_src
 * Macros and registers
 #+begin_src emacs-lisp
-  (evil-set-register ?d [?i ?* ?  ?\C-c ?. return escape])
-  (evil-set-register ?t [?i ?\C-u ?\C-c ?. return escape])
-  (evil-set-register ?b [?$ ?0 ?i ?+ escape ?A ?+ S-right escape])
+;;  (evil-set-register ?d [?i ?* ?  ?\C-c ?. return escape])
+;;  (evil-set-register ?t [?i ?\C-u ?\C-c ?. return escape])
+;;  (evil-set-register ?b [?$ ?0 ?i ?+ escape ?A ?+ S-right escape])
 
-  (add-to-map "Y" 'append-to-register)
-  (add-to-map "P" 'insert-register)
+;;  (add-to-map "Y" 'append-to-register)
+;;  (add-to-map "P" 'insert-register)
 
   (setq register-separator ?+)
   (set-register register-separator "\n\n")
@@ -844,11 +863,6 @@ for delimiting clearing everything after '=' sign if it is here."
       ;; Truncate buffer for performance
       (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
 
-      ;; Bind some useful keys for evil-mode
-      (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'counsel-esh-history)
-      (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
-      (evil-normalize-keymaps)
-
       (setq eshell-history-size         10000
             eshell-buffer-maximum-lines 10000
             eshell-hist-ignoredups t
@@ -879,7 +893,7 @@ for delimiting clearing everything after '=' sign if it is here."
     (defun eshell/ffo (file)
         (find-file-other-frame file))
 
-  (global-set-key (kbd "<C-return>") 'eshell)
+  (global-set-key (kbd "C-!") 'eshell)
 
 #+end_src
 * Popper
@@ -915,7 +929,6 @@ for delimiting clearing everything after '=' sign if it is here."
       :init
       (setq ledger-clear-whole-transactions 1)
       :config
-      (add-to-list 'evil-emacs-state-modes 'ledger-report-mode)
       :mode "\\.dat//'")
 
     (add-hook 'ledger-mode-hook
