@@ -626,18 +626,18 @@
 #+end_src
 ** Encryption
 #+begin_src emacs-lisp
+  (require 'org-crypt)
+  (org-crypt-use-before-save-magic)
+  (setq org-tags-exclude-from-inheritance '("crypt"))
 
-    (require 'org-crypt)
-    (org-crypt-use-before-save-magic)
-    (setq org-tags-exclude-from-inheritance '("crypt"))
+  ;; GPG key to use for encryption
+  ;; Either the Key ID or set to nil to use symmetric encryption.
+  (setq org-crypt-key '("0F5CDB0D40E4D8AF93DE2C70D5E19C8A72EAD74F"))
+  ;;(setq org-crypt-key nil)
+  (setq auto-save-default nil)
 
-    ;; GPG key to use for encryption
-    ;; Either the Key ID or set to nil to use symmetric encryption.
-    (setq org-crypt-key '("0F5CDB0D40E4D8AF93DE2C70D5E19C8A72EAD74F"))
-    ;;(setq org-crypt-key nil)
-    (setq auto-save-default nil)
-
-    (add-to-map "<SPC> u" 'org-decrypt-entry)
+  (add-to-map "<SPC> u" 'org-decrypt-entry)
+  (global-set-key (kbd "C-c e") 'org-decrypt-entry)
 #+end_src
 * Calculator
 #+begin_src emacs-lisp
