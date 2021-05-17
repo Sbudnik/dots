@@ -775,42 +775,51 @@ for delimiting clearing everything after '=' sign if it is here."
 * Spell
 #+begin_src emacs-lisp
 
-    (use-package company
-      :diminish
-      :config
-      (setq company-idle-delay 0.5)
-      (setq company-minimum-prefix-length 1)
-      (add-hook 'after-init-hook 'global-company-mode))
+  (use-package company
+    :diminish
+    :config
+    (setq company-idle-delay 0.5)
+    (setq company-minimum-prefix-length 1)
+    (add-hook 'after-init-hook 'global-company-mode))
 
-    (global-set-key (kbd "M-/") 'company-complete-common-or-cycle)
+  (global-set-key (kbd "M-/") 'company-complete-common-or-cycle)
 
-    (setq ispell-program-name "C:/Users/jwmosty/AppData/Roaming/hunspell-bin/bin/hunspell.exe")
+  (setq ispell-program-name "C:/Users/jwmosty/AppData/Roaming/hunspell-bin/bin/hunspell.exe")
 
-    (require 'ispell)
+  (require 'ispell)
 
-    (global-set-key (kbd "<f8>") 'ispell-word)
-    (global-set-key (kbd "C-<f8>") 'flyspell-mode)
-
-    (use-package flyspell
-      :demand t
-      :diminish
-      :config
-      (use-package flyspell-correct-ivy
-        :diminish)
-      (defun flyspellCompletion()
-        (flyspell-mode 1)
-        (set (make-local-variable 'company-backends)
-             (copy-tree company-backends))
-        (add-to-list 'company-backends 'company-ispell))
-      (defun flyspell-most-modes()
-        (add-hook 'text-mode-hook 'flyspellCompletion)
-        (add-hook 'prog-mode-hook 'flyspellCompletion)
-        (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
-          (add-hook hook (lambda ()
-                           (flyspell-mode -1)))))
-      (flyspell-most-modes)
-      :bind (:map flyspell-mode-map
-                  ("C-." . flyspell-correct-wrapper)))
+  (use-package flyspell
+    :demand t
+    :diminish
+    :config
+    (use-package flyspell-correct-ivy
+      :diminish)
+    (defun flyspellCompletion()
+      (flyspell-mode 1)
+      (set (make-local-variable 'company-backends)
+           (copy-tree company-backends))
+      (add-to-list 'company-backends 'company-ispell))
+    (defun flyspell-most-modes()
+      (add-hook 'text-mode-hook 'flyspellCompletion)
+      (add-hook 'prog-mode-hook 'flyspellCompletion)
+      (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
+        (add-hook hook (lambda ()
+                         (flyspell-mode -1)))))
+    (flyspell-most-modes)
+    :bind (:map flyspell-mode-map
+                ("C-." . flyspell-correct-wrapper)))
+  ;; easy spell check
+  (global-set-key (kbd "<f8>") 'ispell-word)
+  (global-set-key (kbd "C-S-<f8>") 'flyspell-mode)
+  (global-set-key (kbd "C-M-<f8>") 'flyspell-buffer)
+  (global-set-key (kbd "C-<f8>") 'flyspell-check-previous-highlighted-word)
+  (defun flyspell-check-next-highlighted-word ()
+    "Custom function to spell check next highlighted word"
+    (interactive)
+    (flyspell-goto-next-error)
+    (ispell-word)
+    )
+  (global-set-key (kbd "M-<f8>") 'flyspell-check-next-highlighted-word)
 
 #+end_src
 * Dashboard
