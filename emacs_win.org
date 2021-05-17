@@ -246,37 +246,37 @@
 #+end_src
 * Dired
 #+begin_src emacs-lisp
-  (use-package dired
-    :ensure nil
-    :commands (dired dired-jump)
-    :bind (("M-SPC d" . dired-jump))
-    :custom ((dired-listing-switches "-Aht")))
+    (use-package dired
+      :ensure nil
+      :commands (dired dired-jump)
+      :bind (("C-x C-j" . dired-jump))
+      :custom ((dired-listing-switches "-Aht")))
 
-;;    :config
-;;    (define-key dired-mode-map (kbd "C-p") 'dired-single-up-directory)
-;;    (define-key dired-mode-map (kbd "C-n") 'dired-single-buffer))
+  ;;    :config
+  ;;    (define-key dired-mode-map (kbd "C-p") 'dired-single-up-directory)
+  ;;    (define-key dired-mode-map (kbd "C-n") 'dired-single-buffer))
 
-   ;; (add-hook 'dired-mode-hook
-        ;; (lambda ()
-          ;; (dired-hide-details-mode)))
+     ;; (add-hook 'dired-mode-hook
+          ;; (lambda ()
+            ;; (dired-hide-details-mode)))
 
-  (add-hook 'dired-mode-hook 'treemacs-icons-dired-mode)
+    (add-hook 'dired-mode-hook 'treemacs-icons-dired-mode)
 
-  (use-package dired-single)
+    (use-package dired-single)
 
 
-  ;;(use-package dired-open
-  ;;  :config
-    ;; Doesn't work as expected!
-    ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
-  ;;  (setq dired-open-extensions '(("png" . "feh")
-  ;;                                ("mkv" . "mpv"))))
+    ;;(use-package dired-open
+    ;;  :config
+      ;; Doesn't work as expected!
+      ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
+    ;;  (setq dired-open-extensions '(("png" . "feh")
+    ;;                                ("mkv" . "mpv"))))
 
-  ;; (use-package dired-hide-dotfiles
-    ;; :hook (dired-mode . dired-hide-dotfiles-mode)
-    ;; :config
-    ;; (evil-collection-define-key 'normal 'dired-mode-map
-      ;; "H" 'dired-hide-dotfiles-mode))
+    ;; (use-package dired-hide-dotfiles
+      ;; :hook (dired-mode . dired-hide-dotfiles-mode)
+      ;; :config
+      ;; (evil-collection-define-key 'normal 'dired-mode-map
+        ;; "H" 'dired-hide-dotfiles-mode))
 
 #+end_src
 
@@ -893,6 +893,29 @@ for delimiting clearing everything after '=' sign if it is here."
 #+end_src
 * eshell
 #+begin_src emacs-lisp
+  (require 'em-pred)
+  (add-to-list 'eshell-predicate-alist '(?T . (eshell-org-file-tags)))
+  (defun eshell-org-file-tags ()
+    "Helps the eshell parse the text the point is currently on,
+          looking for parameters surrounded in single quotes. Returns a
+          function that takes a FILE and returns nil if the file given to
+          it doesn't contain the org-mode #+FILETAGS: entry specified."
+
+    ;; Step 1. Parse the eshell buffer for our tag between quotes
+    ;;         Make sure to move point to the end of the match:
+    (if (looking-at "'\\([^)']+\\)'")
+        (let* ((tag (match-string 1))
+               (reg (concat "^#\\+FILETAGS:.*\\b" tag "\\b")))
+          (goto-char (match-end 0))
+
+          ;; Step 2. Return the predicate function:
+          ;;         Careful when accessing the `reg' variable.
+          `(lambda (file)
+             (with-temp-buffer
+               (insert-file-contents file)
+               (re-search-forward ,reg nil t 1))))
+      (error "The `T' predicate takes an org-mode tag value in single quotes.")))
+
   (defun jwm/configure-eshell ()
     ;; Save command history when commands are entered
     (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
@@ -932,8 +955,8 @@ for delimiting clearing everything after '=' sign if it is here."
 
   (defun eshell-here ()
     "Opens up a new shell in the directory associated with the
-         current buffer's file. The eshell is renamed to match that
-         directory to make multiple eshell windows easier."
+                  current buffer's file. The eshell is renamed to match that
+                  directory to make multiple eshell windows easier."
     (interactive)
     (let* ((parent (if (buffer-file-name)
                        (file-name-directory (buffer-file-name))
