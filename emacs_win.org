@@ -7,6 +7,12 @@
 #+begin_src emacs-lisp
   ;; begin file here
   (set-language-environment "UTF-8")
+  (prefer-coding-system       'utf-8)
+  (set-default-coding-systems 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+  (setq default-buffer-file-coding-system 'utf-8)
+
   (require 'package)
   (require 'org)
 
@@ -62,22 +68,28 @@
 ** Font setup
 - fonts for Windows 10
 #+begin_src emacs-lisp
-;; May need to adjust this font size for the system
-(defvar jwm/default-font-size 125)
-(defun jwm/set-font-faces ()
-   (message "Setting faces")
-   (set-face-attribute 'default nil :font "Inconsolata" :height jwm/default-font-size)
-   ;; Set the fixed pitch face
-   (set-face-attribute 'fixed-pitch nil :font "Inconsolata" :height jwm/default-font-size)
-   ;; Set the variable pitch face
-   (set-face-attribute 'variable-pitch nil :font "Arial Light" :height jwm/default-font-size :weight 'regular))
+  ;; May need to adjust this font size for the system
+  (when (member "Symbola" (font-family-list))
+    (set-fontset-font "fontset-default" nil
+                      (font-spec :size 20 :name "Symbola")))
+  (when (member "Symbola" (font-family-list))
+    (set-fontset-font t 'unicode "Symbola" nil 'prepend))
 
-(if (daemonp)
-        (add-hook 'after-make-frame-functions
-                         (lambda (frame)
-                           (with-selected-frame frame
-                              (jwm/set-font-faces))))
-        (jwm/set-font-faces))
+  (defvar jwm/default-font-size 125)
+  (defun jwm/set-font-faces ()
+    (message "Setting faces")
+    (set-face-attribute 'default nil :font "Inconsolata" :height jwm/default-font-size)
+    ;; Set the fixed pitch face
+    (set-face-attribute 'fixed-pitch nil :font "Inconsolata" :height jwm/default-font-size)
+    ;; Set the variable pitch face
+    (set-face-attribute 'variable-pitch nil :font "Arial Light" :height jwm/default-font-size :weight 'regular))
+
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions
+                (lambda (frame)
+                  (with-selected-frame frame
+                    (jwm/set-font-faces))))
+    (jwm/set-font-faces))
 
 #+end_src
 ** Basic UI config
@@ -452,7 +464,25 @@
     (org-indent-mode)
     (visual-line-mode 1)
     (diminish 'visual-line-mode)
-    (diminish 'org-indent-mode))
+    (diminish 'org-indent-mode)
+    (setq org-hide-emphasis-markers t
+          org-fontify-done-headline t
+          org-hide-leading-stars t
+          org-pretty-entities t)
+    (setq org-list-demote-modify-bullet
+          (quote (("+" . "-")
+                  ("-" . "+")
+                  ("*" . "-")
+                  ("1." . "-")
+                  ("1)" . "-")
+                  ("A)" . "-")
+                  ("B)" . "-")
+                  ("a)" . "-")
+                  ("b)" . "-")
+                  ("A." . "-")
+                  ("B." . "-")
+                  ("a." . "-")
+                  ("b." . "-")))))
 
   (defun jwm/org-font-setup ()
     ;; Replace list hyphen with dot
@@ -520,7 +550,7 @@
   (defun air-org-skip-subtree-if-priority (priority)
     "Skip an agenda subtree if it has a priority of PRIORITY.
 
-           PRIORITY may be one of the characters ?A, ?B, or ?C."
+             PRIORITY may be one of the characters ?A, ?B, or ?C."
     (let ((subtree-end (save-excursion (org-end-of-subtree t)))
           (pri-value (* 1000 (- org-lowest-priority priority)))
           (pri-current (org-get-priority (thing-at-point 'line t))))
@@ -559,7 +589,7 @@
         (when (derived-mode-p 'org-agenda-mode)
           (org-agenda-maybe-redo))))
     )
-(global-set-key (kbd "C-c r") 'renewOrgBuffer)
+  (global-set-key (kbd "C-c r") 'renewOrgBuffer)
 
   ;;   (run-with-idle-timer 3 1000 #'renewOrgBuffer)
 
