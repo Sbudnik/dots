@@ -83,51 +83,52 @@
 ** Basic UI config
 #+begin_src emacs-lisp
 
-    ;; Make ESC quit prompts
-    (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+  ;; Make ESC quit prompts
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
-    (use-package rainbow-mode
-      :diminish)
+  (use-package rainbow-mode
+    :diminish)
 
-    (setq user-full-name "John Mosty"
-          user-mail-address "jwmosty@ascension.org"
-          calendar-latitude 30.32
-          calendar-longitude -97.71
-          calendar-location-name "Austin, TX")
+  (setq user-full-name "John Mosty"
+	user-mail-address "jwmosty@ascension.org"
+	calendar-latitude 30.32
+	calendar-longitude -97.71
+	calendar-location-name "Austin, TX")
 
-    (column-number-mode)
-    (global-display-line-numbers-mode 1)
-    (setq display-line-numbers-type 'visual)
-    ;; Disable line numbers for some modes
-    (dolist (mode '(term-mode-hook
-                    shell-mode-hook
-                    eshell-mode-hook))
-      (add-hook mode (lambda () (display-line-numbers-mode 0))))
+  (column-number-mode)
+  (global-display-line-numbers-mode 1)
+  (setq display-line-numbers-type 'visual)
+  ;; Disable line numbers for some modes
+  (dolist (mode '(term-mode-hook
+		  shell-mode-hook
+		  eshell-mode-hook))
+    (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-    (global-set-key (kbd "<f5>") 'org-capture)
-    (global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
-    (global-hl-line-mode t)
-    (global-set-key (kbd "C-c j") 'org-journal-new-entry)
-    (winner-mode)
+  (global-set-key (kbd "<f5>") 'org-capture)
+  (global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
+  (global-hl-line-mode t)
+  (global-set-key (kbd "C-c j") 'org-journal-new-entry)
+  (winner-mode)
 
-    (setq default-major-mode 'org-mode)
+  (setq default-major-mode 'org-mode)
 
-    (setq indent-tabs-mode nil)
-    (setq tab-width 4)
+  (setq indent-tabs-mode nil)
+  (setq tab-width 4)
 
-    (defun jwm/kill-current-buffer ()
-      "Kill the current buffer without prompting."
-      (interactive)
-      (kill-buffer (current-buffer)))
+  (defun jwm/kill-current-buffer ()
+    "Kill the current buffer without prompting."
+    (interactive)
+    (kill-buffer (current-buffer)))
 
-    (global-set-key (kbd "C-x k") 'jwm/kill-current-buffer)
-    (global-set-key (kbd "M-SPC b") 'switch-to-buffer)
+  (global-set-key (kbd "C-x k") 'jwm/kill-current-buffer)
 
-    (use-package eldoc
-      :diminish)
+
+  (use-package eldoc
+    :diminish)
 
   (define-prefix-command 'keymap-meta-space)
   (global-set-key (kbd "M-SPC") 'keymap-meta-space)
+  (global-set-key (kbd "M-SPC b") 'switch-to-buffer)
 #+end_src
 ** change functions
 #+begin_src emacs-lisp
