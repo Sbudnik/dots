@@ -862,44 +862,68 @@ for delimiting clearing everything after '=' sign if it is here."
 #+end_src
 * eshell
 #+begin_src emacs-lisp
-    (defun jwm/configure-eshell ()
-      ;; Save command history when commands are entered
-      (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+  (defun jwm/configure-eshell ()
+    ;; Save command history when commands are entered
+    (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
 
-      ;; Truncate buffer for performance
-      (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+    ;; Truncate buffer for performance
+    (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
 
-      (setq eshell-history-size         10000
-            eshell-buffer-maximum-lines 10000
-            eshell-hist-ignoredups t
-            eshell-scroll-to-bottom-on-input t))
+    (setq eshell-history-size         10000
+          eshell-buffer-maximum-lines 10000
+          eshell-hist-ignoredups t
+          eshell-scroll-to-bottom-on-input t))
 
-    (use-package eshell-git-prompt)
+  (use-package eshell-git-prompt)
 
-    (use-package eshell
-      :hook (eshell-first-time-mode . jwm/configure-eshell)
-      :config
+  (use-package eshell
+    :hook (eshell-first-time-mode . jwm/configure-eshell)
+    :config
 
-      (with-eval-after-load 'esh-opt
-        (setq eshell-destroy-buffer-when-process-dies t)
-        (setq eshell-visual-commands '("htop" "zsh" "vim")))
+    (with-eval-after-load 'esh-opt
+      (setq eshell-destroy-buffer-when-process-dies t)
+      (setq eshell-visual-commands '("htop" "zsh" "vim")))
 
-      (eshell-git-prompt-use-theme 'robbyrussell))
+    (eshell-git-prompt-use-theme 'robbyrussell))
 
-    (use-package symon)
-    (add-hook 'after-init-hook 'symon-mode)
+  (use-package symon)
+  (add-hook 'after-init-hook 'symon-mode)
 
-    (defun buffcop (buffer)
-      (with-current-buffer buffer
-        (buffer-string)))
+  (defun buffcop (buffer)
+    (with-current-buffer buffer
+      (buffer-string)))
 
-    (defun eshell/emacs (file)
-        (find-file file))
+  (defun eshell/emacs (file)
+    (find-file file))
 
-    (defun eshell/ffo (file)
-        (find-file-other-frame file))
+  (defun eshell/ffo (file)
+    (find-file-other-frame file))
 
-  (global-set-key (kbd "C-!") 'eshell)
+  (defun eshell-here ()
+    "Opens up a new shell in the directory associated with the
+         current buffer's file. The eshell is renamed to match that
+         directory to make multiple eshell windows easier."
+    (interactive)
+    (let* ((parent (if (buffer-file-name)
+                       (file-name-directory (buffer-file-name))
+                     default-directory))
+           (height (/ (window-total-height) 3))
+           (name   (car (last (split-string parent "/" t)))))
+      (split-window-vertically (- height))
+      (other-window 1)
+      (eshell "new")
+      (rename-buffer (concat "*eshell: " name "*"))
+
+      (insert (concat "ls"))
+      (eshell-send-input)))
+
+  (defun eshell/x ()
+    (insert "exit")
+    (eshell-send-input)
+    (delete-window))
+
+  (global-set-key (kbd "C-!") 'eshell-here)
+  (global-set-key (kbd "C-c !") 'eshell)
 
 #+end_src
 * Popper
