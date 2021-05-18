@@ -91,7 +91,7 @@
   (setq default-major-mode 'org-mode)
   (setq indent-tabs-mode nil)
   (setq tab-width 4)
-  (setq cursor-type '(bar . 1))
+  (setq cursor-type 'bar)
   (blink-cursor-mode 1)
   (setq blink-cursor-blinks 0)
   (defun jwm/kill-current-buffer ()
