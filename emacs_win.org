@@ -91,9 +91,6 @@
   (setq default-major-mode 'org-mode)
   (setq indent-tabs-mode nil)
   (setq tab-width 4)
-  (setq cursor-type 'bar)
-  (blink-cursor-mode 1)
-  (setq blink-cursor-blinks 0)
   (defun jwm/kill-current-buffer ()
     "Kill the current buffer without prompting."
     (interactive)
@@ -210,42 +207,51 @@
 #+end_src
 * Theme config
 #+begin_src emacs-lisp
-      (use-package modus-themes
-        :ensure                         ; omit this to use the built-in themes
-        :init
-        ;; Add all your customizations prior to loading the themes
-        (setq modus-themes-slanted-constructs t
-              modus-themes-bold-constructs t
-              modus-themes-intense-hl-line t
-              modus-themes-subtle-line-numbers t
-              modus-themes-links 'faint-neutral-underline
-              modus-themes-syntax 'faint
-              modus-themes-mode-line 'moody
-              modus-themes-completions 'opinionated
-              modus-themes-org-habit 'simplified)
-        ;; Load the theme files before enabling a theme (else you get an error).
-        (modus-themes-load-themes)
-        :config
-        ;; Load the theme of your choice:
-        (modus-themes-load-operandi);; OR (modus-themes-load-vivendi)
-        :bind ("<f12>" . modus-themes-toggle))
-      (use-package doom-themes
-         :config
-         (doom-themes-visual-bell-config))
-       (defun transparency (value)
-         "Sets the transparency of the frame window. 0=transparent/100=opaque."
-         (interactive "nTransparency Value 0 - 100 opaque:")
-         (set-frame-parameter (selected-frame) 'alpha value))
-     (defun jwm/apply-theme-drk ()
-       "Apply my chosen theme and make frames just slightly transparent."
-       (interactive)
-       (modus-themes-load-operandi)
-       (transparency 95))
-     (if (daemonp)
-         (add-hook 'after-make-frame-functions
-                   (lambda (frame)
-                     (with-selected-frame frame (jwm/apply-theme-drk))))
-       (jwm/apply-theme-drk))
+  (use-package moody
+    :config
+    (setq x-underline-at-descent-line t)
+    (moody-replace-mode-line-buffer-identification)
+    (moody-replace-vc-mode))
+  (use-package modus-themes
+    :ensure                         ; omit this to use the built-in themes
+    :init
+    ;; Add all your customizations prior to loading the themes
+    (setq modus-themes-slanted-constructs t
+          modus-themes-bold-constructs t
+          modus-themes-hl-line 'underline-only-neutral
+          modus-themes-subtle-line-numbers t
+          modus-themes-links 'faint-neutral-underline
+          modus-themes-syntax 'faint
+          modus-themes-mode-line 'accented-moody
+          modus-themes-completions 'opinionated
+          modus-themes-org-habit 'simplified
+          modus-themes-prompts 'subtle-accented)
+    (setq cursor-type 'bar)
+    (blink-cursor-mode 1)
+    (setq blink-cursor-blinks 0)
+    ;; Load the theme files before enabling a theme (else you get an error).
+    (modus-themes-load-themes)
+    :config
+    ;; Load the theme of your choice:
+    (modus-themes-load-operandi);; OR (modus-themes-load-vivendi)
+    :bind ("<f12>" . modus-themes-toggle))
+  (use-package doom-themes
+    :config
+    (doom-themes-visual-bell-config))
+  (defun transparency (value)
+    "Sets the transparency of the frame window. 0=transparent/100=opaque."
+    (interactive "nTransparency Value 0 - 100 opaque:")
+    (set-frame-parameter (selected-frame) 'alpha value))
+  (defun jwm/apply-theme-drk ()
+    "Apply my chosen theme and make frames just slightly transparent."
+    (interactive)
+    (modus-themes-load-operandi)
+    (transparency 95))
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions
+                (lambda (frame)
+                  (with-selected-frame frame (jwm/apply-theme-drk))))
+    (jwm/apply-theme-drk))
 #+end_src
 * Ivy hydra Prescient
 #+begin_src emacs-lisp
