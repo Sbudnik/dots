@@ -208,6 +208,7 @@
 #+end_src
 * Theme config
 #+begin_src emacs-lisp
+  (setq x-underline-at-descent-line t)
   (use-package moody
     :config
     (setq x-underline-at-descent-line t)
@@ -226,14 +227,13 @@
           modus-themes-mode-line 'accented-moody
           modus-themes-completions 'opinionated
           modus-themes-org-habit 'simplified
-          modus-themes-prompts 'subtle-accented
-          cursor-type 'bar
-          blink-cursor-blinks 0)
-  (setq modus-themes-headings
-      '((1 . rainbow-section)
-        (2 . rainbow-section)
-        (3 . rainbow-section)
-        (t . rainbow-line)))
+          modus-themes-prompts 'subtle-accented)
+    (setq-default cursor-type 'bar)
+    (setq modus-themes-headings
+          '((1 . rainbow-highlight)
+            (2 . rainbow-highlight)
+            (3 . rainbow-highlight)
+            (t . rainbow-highlight)))
     ;; Load the theme files before enabling a theme (else you get an error).
     (modus-themes-load-themes)
     :config
@@ -798,7 +798,7 @@ for delimiting clearing everything after '=' sign if it is here."
     '(org-todo-state-tags-triggers nil)
     '(org-use-fast-todo-selection 'auto)
     '(package-selected-packages
-      '(doom-themes-visual-bell-config doom-themes phi-search-dired helpful which-key-posframe all-the-icons-ivy-rich ivy-rich which-key avy diminish ivy dashboard org-bullets use-package evil-visual-mark-mode))
+      '(doom-themes-visual-bell-config doom-themes phi-search-dired helpful which-key-posframe all-the-icons-ivy-rich ivy-rich which-key avy diminish ivy dashboard use-package))
     '(pdf-view-midnight-colors (cons "#f8f8f2" "#282a36"))
     '(rustic-ansi-faces
       ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "#8CD0D3" "#DC8CC3" "#93E0E3" "#DCDCDC"])
