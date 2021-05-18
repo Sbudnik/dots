@@ -1,3 +1,4 @@
+
 #+title EMACS Config
 #+SETUPFILE: C:\Users\jwmosty\AppData\Roaming\org\org-html-theme\org-themes\src\simple_inline\simple_inline.theme
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el
@@ -225,10 +226,14 @@
           modus-themes-mode-line 'accented-moody
           modus-themes-completions 'opinionated
           modus-themes-org-habit 'simplified
-          modus-themes-prompts 'subtle-accented)
-    (setq cursor-type 'bar)
-    (blink-cursor-mode 1)
-    (setq blink-cursor-blinks 0)
+          modus-themes-prompts 'subtle-accented
+          cursor-type 'bar
+          blink-cursor-blinks 0)
+  (setq modus-themes-headings
+      '((1 . rainbow-section)
+        (2 . rainbow-section)
+        (3 . rainbow-section)
+        (t . rainbow-line)))
     ;; Load the theme files before enabling a theme (else you get an error).
     (modus-themes-load-themes)
     :config
