@@ -9,38 +9,34 @@ n#+TITLE EMACS Mac Config
 
 #+begin_src emacs-lisp
   ;; begin file s
-
+  (set-language-environment "UTF-8")
+  (prefer-coding-system       'utf-8)
+  (set-default-coding-systems 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+  (setq default-buffer-file-coding-system 'utf-8)
   (require 'package)
   (require 'org)
-
   (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
   (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
   (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
   (add-to-list 'package-archives '("elpa" . "https://elpa.gnu.org/packages/"))
-
   (setq package-enable-at-startup nil)
   (package-initialize)
-
   (require 'use-package-ensure)
   (setq use-package-always-ensure t)
-
-
   (use-package diminish)
   (use-package auto-compile
     :diminish
     :config (auto-compile-on-load-mode))
-
   (setq load-prefer-newer t)
-
   (load-file "~/.emacs.d/sensible-defaults.el")
   (sensible-defaults/use-all-settings)
   (sensible-defaults/use-all-keybindings)
-
   (use-package all-the-icons)
   (use-package no-littering)
   ;;(add-to-list 'exec-path "/usr/local/bin/")
   (use-package exec-path-from-shell)
-
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize))
 
@@ -64,13 +60,13 @@ n#+TITLE EMACS Mac Config
 #+begin_src emacs-lisp
   ;; Make ESC quit prompts
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-
   (setq user-full-name "John Mosty"
         user-mail-address "dubs.mosty@gmail.com"
         calendar-latitude 30.32
         calendar-longitude -97.71
         calendar-location-name "Austin, TX")
-
+  (use-package rainbow-mode
+    :diminish)
   (column-number-mode)
   (global-display-line-numbers-mode 1)
   (setq display-line-numbers-type 'visual)
@@ -228,10 +224,11 @@ n#+TITLE EMACS Mac Config
 #+end_src
 * Theme config
 #+begin_src emacs-lisp
-
-  ;;  (use-package doom-modeline
-  ;;    :init (doom-modeline-mode 1)
-  ;;    :custom ((doom-modeline-height 18)))
+  (use-package moody
+    :config
+    (setq x-underline-at-descent-line t)
+    (moody-replace-mode-line-buffer-identification)
+    (moody-replace-vc-mode))
 
   (use-package modus-themes
     :ensure                         ; omit this to use the built-in themes
@@ -239,66 +236,43 @@ n#+TITLE EMACS Mac Config
     ;; Add all your customizations prior to loading the themes
     (setq modus-themes-slanted-constructs t
           modus-themes-bold-constructs t
-          modus-themes-intense-hl-line t
+          modus-themes-hl-line 'underline-only-neutral
           modus-themes-subtle-line-numbers t
           modus-themes-links 'faint-neutral-underline
           modus-themes-syntax 'faint
+          modus-themes-mode-line 'accented-moody
           modus-themes-completions 'opinionated
-          modus-themes-mode-line 'moody
           modus-themes-org-habit 'simplified
-          modus-themes-lang-checkers 'subtle-foreground-straight-underline
           modus-themes-prompts 'subtle-accented)
-
-
+    (setq-default cursor-type 'bar)
+    (setq modus-themes-headings
+          '((1 . rainbow-highlight)
+            (2 . rainbow-highlight)
+            (3 . rainbow-highlight)
+            (t . rainbow-highlight)))
     ;; Load the theme files before enabling a theme (else you get an error).
     (modus-themes-load-themes)
     :config
     ;; Load the theme of your choice:
     (modus-themes-load-operandi);; OR (modus-themes-load-vivendi)
     :bind ("<f12>" . modus-themes-toggle))
-
   (use-package doom-themes
     :config
-    ;;   ;; Global settings (defaults)
-    ;;   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-    ;;         doom-themes-enable-italic t) ; if nil, italics is universally disabled
-    ;;   ;; Enable flashing mode-line on errors
     (doom-themes-visual-bell-config))
-
   (defun transparency (value)
     "Sets the transparency of the frame window. 0=transparent/100=opaque."
     (interactive "nTransparency Value 0 - 100 opaque:")
     (set-frame-parameter (selected-frame) 'alpha value))
-
-  (defun hrs/apply-theme-drk ()
+  (defun jwm/apply-theme-drk ()
     "Apply my chosen theme and make frames just slightly transparent."
     (interactive)
     (modus-themes-load-operandi)
     (transparency 95))
-
   (if (daemonp)
       (add-hook 'after-make-frame-functions
                 (lambda (frame)
-                  (with-selected-frame frame (hrs/apply-theme-drk))))
-    (hrs/apply-theme-drk))
-
-  ;; (setq jwm/themes '(doom-one doom-one-light doom-dark+ doom-challenger-deep doom-acario-light doom-tomorrow-day doom-peacock doom-zenburn doom-gruvbox))
-  ;; (setq jwm/themes-index 0)
-
-  ;; (defun jwm/cycle-theme ()
-  ;;   (interactive)
-  ;;   (setq jwm/themes-index (% (1+ jwm/themes-index) (length jwm/themes)))
-  ;;   (jwm/load-indexed-theme))
-
-  ;; (defun jwm/load-indexed-theme ()
-  ;;   (jwm/try-load-theme (nth jwm/themes-index jwm/themes)))
-
-  ;; (defun jwm/try-load-theme (theme)
-  ;;   (if (ignore-errors (load-theme theme :no-confirm))
-  ;;       (mapcar #'disable-theme (remove theme custom-enabled-themes))
-  ;;     (message "Unable to find theme file for '%s'" theme)))
-  ;; (global-set-key (kbd "<f12>") 'jwm/cycle-theme)
-
+                  (with-selected-frame frame (jwm/apply-theme-drk))))
+    (jwm/apply-theme-drk))
 #+end_src
 * Dired
 #+begin_src emacs-lisp
@@ -306,39 +280,18 @@ n#+TITLE EMACS Mac Config
     :ensure nil
     :commands (dired dired-jump)
     :bind (("C-x C-j" . dired-jump))
-    :custom ((dired-listing-switches "-lAht"))
-    :config
-    (define-key dired-mode-map (kbd "<s-up>") 'dired-single-up-directory)
-    (define-key dired-mode-map (kbd "<s-down>") 'dired-single-buffer))
-    ;; (evil-collection-define-key 'normal 'dired-mode-map
-    ;;   "h" 'dired-single-up-directory
-    ;;   "l" 'dired-single-buffer))
+    :custom
+    (dired-listing-switches "-Agho")
+    (dired-recursive-copies 'always)
+    (dired-recursive-deletes 'always)
+    (delete-by-moving-to-trash t))
 
-    ;; ;;   (add-hook 'dired-mode-hook
-    ;; ;;         (lambda ()
-    ;; ;;           (dired-hide-details-mode)))
 
-    (use-package dired-single)
+  (use-package dired-single)
 
-    ;;    (add-to-map "<SPC> d" 'dired)
+  (add-hook 'dired-mode-hook 'treemacs-icons-dired-mode)
 
-    ;;    (add-to-map "<SPC> j" 'dired-jump)
-    ;; ;; (use-package all-the-icons-dired)
-    (add-hook 'dired-mode-hook 'treemacs-icons-dired-mode)
-
-    ;;   ;;(use-package dired-open
-    ;;  :config
-    ;; Doesn't work as expected!
-    ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
-    ;;  (setq dired-open-extensions '(("png" . "feh")
-    ;;                                ("mkv" . "mpv"))))
-
-    ;; (use-package dired-hide-dotfiles
-    ;;   :hook (dired-mode . dired-hide-dotfiles-mode)
-    ;;   :config
-    ;;   (evil-collection-define-key 'normal 'dired-mode-map
-    ;;     "H" 'dired-hide-dotfiles-mode))
-#+end_src
+  #+end_src
 * Ivy hydra Prescient
 #+begin_src emacs-lisp
 
@@ -431,11 +384,29 @@ n#+TITLE EMACS Mac Config
 ** Main Org-mode
 #+begin_src emacs-lisp
 
-  (defun jwm/org-mode-setup ()
+   (defun jwm/org-mode-setup ()
     (org-indent-mode)
     (visual-line-mode 1)
     (diminish 'visual-line-mode)
-    (diminish 'org-indent-mode))
+    (diminish 'org-indent-mode)
+    (setq org-hide-emphasis-markers t
+          org-fontify-done-headline t
+          org-hide-leading-stars t
+          org-pretty-entities t)
+    (setq org-list-demote-modify-bullet
+          (quote (("+" . "-")
+                  ("-" . "+")
+                  ("*" . "-")
+                  ("1." . "-")
+                  ("1)" . "-")
+                  ("A)" . "-")
+                  ("B)" . "-")
+                  ("a)" . "-")
+                  ("b)" . "-")
+                  ("A." . "-")
+                  ("B." . "-")
+                  ("a." . "-")
+                  ("b." . "-")))))
 
   (defun jwm/org-font-setup ()
     ;; Set faces for heading levels
@@ -465,8 +436,8 @@ n#+TITLE EMACS Mac Config
     (jwm/org-font-setup)
     (setq org-adapt-indentation nil))
 
-  (require 'org-bullets)
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+  (require 'org-superstar)
+  (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
 
   (defun jwm/org-mode-visual-fill ()
     (setq visual-fill-column-width 100
@@ -564,6 +535,10 @@ n#+TITLE EMACS Mac Config
 ** Encryption
 #+begin_src emacs-lisp
 
+  (require 'epa-file)
+  (custom-set-variables '(epg-gpg-program  "/usr/local/bin/gpg"))
+  (epa-file-enable)
+
   (require 'org-crypt)
   (org-crypt-use-before-save-magic)
   (setq org-tags-exclude-from-inheritance '("crypt"))
@@ -574,8 +549,8 @@ n#+TITLE EMACS Mac Config
   (setq org-crypt-key '("0774531735284E3FBFAB276884494577248B47A6"))
   ;;(setq org-crypt-key nil)
   (setq auto-save-default nil)
-(global-set-key (kbd "C-c e") 'org-decrypt-entry)
-;;  (add-to-map "<SPC> u" 'org-decrypt-entry)
+  (global-set-key (kbd "C-c e") 'org-decrypt-entry)
+  ;;  (add-to-map "<SPC> u" 'org-decrypt-entry)
 #+end_src
 * LaTeX
 #+begin_src emacs-lisp
@@ -631,7 +606,17 @@ n#+TITLE EMACS Mac Config
     (flyspell-most-modes)
     :bind (:map flyspell-mode-map
                 ("C-." . flyspell-correct-wrapper)))
-
+ ;; easy spell check
+  (global-set-key (kbd "<f8>") 'ispell-word)
+  (global-set-key (kbd "C-S-<f8>") 'flyspell-mode)
+  (global-set-key (kbd "C-M-<f8>") 'flyspell-buffer)
+  (global-set-key (kbd "C-<f8>") 'flyspell-check-previous-highlighted-word)
+  (defun flyspell-check-next-highlighted-word ()
+    "Custom function to spell check next highlighted word"
+    (interactive)
+    (flyspell-goto-next-error)
+    (ispell-word))
+  (global-set-key (kbd "M-<f8>") 'flyspell-check-next-highlighted-word)
 #+end_src
 * Python
 #+begin_src emacs-lisp
@@ -652,44 +637,75 @@ n#+TITLE EMACS Mac Config
 #+end_src
 * eshell
 #+begin_src emacs-lisp
-  (defun jwm/configure-eshell ()
-    ;; Save command history when commands are entered
-    (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
-
-    ;; Truncate buffer for performance
-    (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
-
-    (setq eshell-history-size         10000
-          eshell-buffer-maximum-lines 10000
-          eshell-hist-ignoredups t
-          eshell-scroll-to-bottom-on-input t))
-
-  (use-package eshell-git-prompt)
-
-  (use-package eshell
-    :hook (eshell-first-time-mode . jwm/configure-eshell)
-    :config
-
-    (with-eval-after-load 'esh-opt
-      (setq eshell-destroy-buffer-when-process-dies t)
-      (setq eshell-visual-commands '("htop" "zsh" "vim")))
-
-        (eshell-git-prompt-use-theme 'robbyrussell))
-
-  (use-package symon)
-  (add-hook 'after-init-hook 'symon-mode)
-
-  (defun buffcop (buffer)
-    (with-current-buffer buffer
-      (buffer-string)))
-
+     (require 'em-pred)
+    (add-to-list 'eshell-predicate-alist '(?T . (eshell-org-file-tags)))
+    (defun eshell-org-file-tags ()
+      "Helps the eshell parse the text the point is currently on,
+            looking for parameters surrounded in single quotes. Returns a
+            function that takes a FILE and returns nil if the file given to
+            it doesn't contain the org-mode #+FILETAGS: entry specified."
+      ;; Step 1. Parse the eshell buffer for our tag between quotes
+      ;;         Make sure to move point to the end of the match:
+      (if (looking-at "'\\([^)']+\\)'")
+          (let* ((tag (match-string 1))
+                 (reg (concat "^#\\+FILETAGS:.*\\b" tag "\\b")))
+            (goto-char (match-end 0))
+            ;; Step 2. Return the predicate function:
+            ;;         Careful when accessing the `reg' variable.
+            `(lambda (file)
+               (with-temp-buffer
+                 (insert-file-contents file)
+                 (re-search-forward ,reg nil t 1))))
+        (error "The `T' predicate takes an org-mode tag value in single quotes.")))
+    (defun jwm/configure-eshell ()
+      ;; Save command history when commands are entered
+      (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+      ;; Truncate buffer for performance
+      (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+      (setq eshell-history-size         10000
+            eshell-buffer-maximum-lines 10000
+            eshell-hist-ignoredups t
+            eshell-scroll-to-bottom-on-input t))
+    (use-package eshell-git-prompt)
+    (use-package eshell
+      :hook (eshell-first-time-mode . jwm/configure-eshell)
+      :config
+      (with-eval-after-load 'esh-opt
+        (setq eshell-destroy-buffer-when-process-dies t)
+        (setq eshell-visual-commands '("htop" "zsh" "vim")))
+      (eshell-git-prompt-use-theme 'robbyrussell))
+    (use-package symon)
+    (add-hook 'after-init-hook 'symon-mode)
+    (defun buffcop (buffer)
+      (with-current-buffer buffer
+        (buffer-string)))
     (defun eshell/emacs (file)
-        (find-file file))
-
+      (find-file file))
     (defun eshell/ffo (file)
-        (find-file-other-frame file))
+      (find-file-other-frame file))
+    (defun eshell-here ()
+      "Opens up a new shell in the directory associated with the
+                    current buffer's file. The eshell is renamed to match that
+                    directory to make multiple eshell windows easier."
+      (interactive)
+      (let* ((parent (if (buffer-file-name)
+                         (file-name-directory (buffer-file-name))
+                       default-directory))
+             (height (/ (window-total-height) 3))
+             (name   (car (last (split-string parent "/" t)))))
+        (split-window-vertically (- height))
+        (other-window 1)
+        (eshell "new")
+        (rename-buffer (concat "*eshell: " name "*"))
+        (insert (concat "la"))
+        (eshell-send-input)))
+    (defun eshell/x ()
+      (insert "exit")
+      (eshell-send-input)
+      (delete-window))
 
-  (global-set-key (kbd "C-c !") 'eshell)
+    (global-set-key (kbd "<f1>") 'eshell-here)
+    (global-set-key (kbd "C-c <f1>") 'eshell)
 #+end_src
 * Popper
 #+begin_src emacs-lisp
