@@ -79,7 +79,8 @@ n#+TITLE EMACS Mac Config
 
   (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
   (winner-mode)
-  (server-start)
+  (load "server")
+  (unless (server-running-p) (server-start))
   (global-set-key (kbd "<f5>") 'org-capture)
   (global-set-key (kbd "C-c j") 'org-journal-new-entry)
 
