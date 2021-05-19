@@ -1,9 +1,9 @@
 
 #+title EMACS Config
-#+SETUPFILE: C:\Users\jwmosty\AppData\Roaming\org\org-html-theme\org-themes\src\simple_inline\simple_inline.theme
+
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el
 * Packages
-- Need to M-x package-install use-package-ensure, org-bullets, for cold installs
+- Need to M-x package-install use-package-ensure, for cold installs
 #+begin_src emacs-lisp
   ;; begin file here
   (set-language-environment "UTF-8")
@@ -12,6 +12,14 @@
   (set-terminal-coding-system 'utf-8)
   (set-keyboard-coding-system 'utf-8)
   (setq default-buffer-file-coding-system 'utf-8)
+  ;; Use a hook so the message doesn't get clobbered by other messages.
+  (add-hook 'emacs-startup-hook
+            (lambda ()
+              (message "Emacs ready in %s with %d garbage collections."
+                       (format "%.2f seconds"
+                               (float-time
+                                (time-subtract after-init-time before-init-time)))
+                       gcs-done)))
   (require 'package)
   (require 'org)
   (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
@@ -39,6 +47,7 @@
     (add-hook 'after-init-hook 'benchmark-init/deactivate))
   (server-start)
   (good-scroll-mode 1)
+  (add-to-list 'mode-line-misc-info '("@" system-name) t)
 #+end_src
 * Basic setup
 ** Font setup
@@ -67,6 +76,8 @@
 #+end_src
 ** Basic UI config
 #+begin_src emacs-lisp
+  (setq display-time-mode t)
+  (setq display-time-24hr-format t)
   ;; Make ESC quit prompts
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
   (use-package rainbow-mode
@@ -364,6 +375,7 @@
   (use-package org
     :hook (org-mode . jwm/org-mode-setup)
     :config
+    (set-face-attribute 'org-headline-done nil :strike-through t)
     (setq org-ellipsis " ▾")
     ;;(jwm/org-font-setup)
     (setq org-adapt-indentation nil))
@@ -375,6 +387,7 @@
     (setq visual-fill-column-width 100
           visual-fill-column-center-text t)
     (visual-fill-column-mode 1))
+  (diminish 'org-num-mode)
   (use-package visual-fill-column
     :diminish
     :hook (org-mode . jwm/org-mode-visual-fill))
@@ -390,7 +403,7 @@
         nil)))
   (defun air-org-skip-subtree-if-priority (priority)
     "Skip an agenda subtree if it has a priority of PRIORITY.
-             PRIORITY may be one of the characters ?A, ?B, or ?C."
+                 PRIORITY may be one of the characters ?A, ?B, or ?C."
     (let ((subtree-end (save-excursion (org-end-of-subtree t)))
           (pri-value (* 1000 (- org-lowest-priority priority)))
           (pri-current (org-get-priority (thing-at-point 'line t))))
@@ -464,7 +477,7 @@
   (use-package org-autolist
     :diminish)
   (add-hook 'org-mode-hook (lambda () (org-autolist-mode)))
-  (set-face-attribute 'org-headline-done nil :strike-through t)
+
 
 #+end_src
 ** Babel and Structure templates
@@ -661,75 +674,86 @@ for delimiting clearing everything after '=' sign if it is here."
 #+end_src
 * eshell
 #+begin_src emacs-lisp
-  (require 'em-pred)
-  (add-to-list 'eshell-predicate-alist '(?T . (eshell-org-file-tags)))
-  (defun eshell-org-file-tags ()
-    "Helps the eshell parse the text the point is currently on,
-          looking for parameters surrounded in single quotes. Returns a
-          function that takes a FILE and returns nil if the file given to
-          it doesn't contain the org-mode #+FILETAGS: entry specified."
-    ;; Step 1. Parse the eshell buffer for our tag between quotes
-    ;;         Make sure to move point to the end of the match:
-    (if (looking-at "'\\([^)']+\\)'")
-        (let* ((tag (match-string 1))
-               (reg (concat "^#\\+FILETAGS:.*\\b" tag "\\b")))
-          (goto-char (match-end 0))
-          ;; Step 2. Return the predicate function:
-          ;;         Careful when accessing the `reg' variable.
-          `(lambda (file)
-             (with-temp-buffer
-               (insert-file-contents file)
-               (re-search-forward ,reg nil t 1))))
-      (error "The `T' predicate takes an org-mode tag value in single quotes.")))
-  (defun jwm/configure-eshell ()
-    ;; Save command history when commands are entered
-    (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
-    ;; Truncate buffer for performance
-    (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
-    (setq eshell-history-size         10000
-          eshell-buffer-maximum-lines 10000
-          eshell-hist-ignoredups t
-          eshell-scroll-to-bottom-on-input t))
-  (use-package eshell-git-prompt)
-  (use-package eshell
-    :hook (eshell-first-time-mode . jwm/configure-eshell)
-    :config
-    (with-eval-after-load 'esh-opt
-      (setq eshell-destroy-buffer-when-process-dies t)
-      (setq eshell-visual-commands '("htop" "zsh" "vim")))
-    (eshell-git-prompt-use-theme 'robbyrussell))
-  (use-package symon)
-  (add-hook 'after-init-hook 'symon-mode)
-  (defun buffcop (buffer)
-    (with-current-buffer buffer
-      (buffer-string)))
-  (defun eshell/emacs (file)
-    (find-file file))
-  (defun eshell/ffo (file)
-    (find-file-other-frame file))
-  (defun eshell-here ()
-    "Opens up a new shell in the directory associated with the
-                  current buffer's file. The eshell is renamed to match that
-                  directory to make multiple eshell windows easier."
-    (interactive)
-    (let* ((parent (if (buffer-file-name)
-                       (file-name-directory (buffer-file-name))
-                     default-directory))
-           (height (/ (window-total-height) 3))
-           (name   (car (last (split-string parent "/" t)))))
-      (split-window-vertically (- height))
-      (other-window 1)
-      (eshell "new")
-      (rename-buffer (concat "*eshell: " name "*"))
-      (insert (concat "la"))
-      (eshell-send-input)))
-  (defun eshell/x ()
-    (insert "exit")
-    (eshell-send-input)
-    (delete-window))
+    (load-file "~/.emacs.d/mosty-lisp/jwm-eshell.el")
+    (require 'esh-mode)
+    (require 'esh-module)
+    (require 'em-pred)
+    (require 'em-cmpl)
+    (require 'em-dirs)
+    (setq eshell-cd-on-directory t)
 
-  (global-set-key (kbd "<f1>") 'eshell-here)
-  (global-set-key (kbd "C-c <f1>") 'eshell)
+    (add-to-list 'eshell-predicate-alist '(?T . (eshell-org-file-tags)))
+    (defun eshell-org-file-tags ()
+      "Helps the eshell parse the text the point is currently on,
+              looking for parameters surrounded in single quotes. Returns a
+              function that takes a FILE and returns nil if the file given to
+              it doesn't contain the org-mode #+FILETAGS: entry specified."
+      ;; Step 1. Parse the eshell buffer for our tag between quotes
+      ;;         Make sure to move point to the end of the match:
+      (if (looking-at "'\\([^)']+\\)'")
+          (let* ((tag (match-string 1))
+                 (reg (concat "^#\\+FILETAGS:.*\\b" tag "\\b")))
+            (goto-char (match-end 0))
+            ;; Step 2. Return the predicate function:
+            ;;         Careful when accessing the `reg' variable.
+            `(lambda (file)
+               (with-temp-buffer
+                 (insert-file-contents file)
+                 (re-search-forward ,reg nil t 1))))
+        (error "The `T' predicate takes an org-mode tag value in single quotes.")))
+    (defun jwm/configure-eshell ()
+      ;; Save command history when commands are entered
+      (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+      ;; Truncate buffer for performance
+      (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+      (setq eshell-history-size         10000
+            eshell-buffer-maximum-lines 10000
+            eshell-hist-ignoredups t
+            eshell-scroll-to-bottom-on-input t))
+    (use-package eshell-git-prompt)
+    (use-package eshell
+      :hook
+      (eshell-first-time-mode . jwm/configure-eshell)
+      :config
+      (with-eval-after-load 'esh-opt
+        (setq eshell-destroy-buffer-when-process-dies t)
+        (setq eshell-visual-commands '("htop" "zsh" "vim")))
+      (eshell-git-prompt-use-theme 'robbyrussell))
+    (use-package symon)
+    (add-hook 'after-init-hook 'symon-mode)
+    (defun buffcop (buffer)
+      (with-current-buffer buffer
+        (buffer-string)))
+    (defun eshell/emacs (file)
+      (find-file file))
+    (defun eshell/ffo (file)
+      (find-file-other-frame file))
+    (defun eshell-here ()
+      "Opens up a new shell in the directory associated with the
+                      current buffer's file. The eshell is renamed to match that
+                      directory to make multiple eshell windows easier."
+      (interactive)
+      (let* ((parent (if (buffer-file-name)
+                         (file-name-directory (buffer-file-name))
+                       default-directory))
+             (height (/ (window-total-height) 3))
+             (name   (car (last (split-string parent "/" t)))))
+        (split-window-vertically (- height))
+        (other-window 1)
+        (eshell "new")
+        (rename-buffer (concat "*eshell: " name "*"))
+        (insert (concat "la"))
+        (eshell-send-input)))
+    (defun eshell/x ()
+      (insert "exit")
+      (eshell-send-input)
+      (delete-window))
+
+    (global-set-key (kbd "<f1>") 'eshell-here)
+    (global-set-key (kbd "C-c <f1>") 'eshell)
+
+
+
 #+end_src
 * Popper
 #+begin_src emacs-lisp
@@ -754,6 +778,14 @@ for delimiting clearing everything after '=' sign if it is here."
             occur-mode))
     (setq popper-display-function #'popper-select-popup-at-bottom)
     (popper-mode +1))
+#+end_src
+* Calfw
+#+begin_src emacs-lisp
+;;  (use-package calfw
+;;    :diminish)
+;;(require 'calfw-ical)
+;;(cfw:open-ical-calendar "https://calendar.google.com/calendar/ical/jwmosty%40ascension.org/public/basic.ics")
+
 #+end_src
 * Ledger
 #+begin_src emacs-lisp
