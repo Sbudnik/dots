@@ -789,6 +789,7 @@ for delimiting clearing everything after '=' sign if it is here."
             "^Output\\*"
             "^\\Calc:"
             "^\\Warnings\\*"
+            "*Synonyms*"
             help-mode
             Helpful-mode
             compilation-mode
