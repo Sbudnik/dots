@@ -38,6 +38,7 @@
   (load-file "~/.emacs.d/sensible-defaults.el")
   (sensible-defaults/use-all-settings)
   (sensible-defaults/use-all-keybindings)
+  (add-to-list 'load-path "~/.emacs.d/data/")
   (use-package all-the-icons)
   (use-package no-littering)
   (use-package benchmark-init
@@ -492,6 +493,13 @@
 
 
 #+end_src
+** Org alerts
+#+begin_src emacs-lisp
+  (require 'alert-toast)
+
+  (require 'org-alert)
+  (setq alert-default-style 'toast)
+#+end_src
 ** Babel and Structure templates
 #+begin_src emacs-lisp
   (org-babel-do-load-languages
@@ -510,6 +518,7 @@
   (add-to-list 'org-structure-template-alist '("js" . "src js"))
   (add-to-list 'org-structure-template-alist '("py" . "src python"))
   (add-to-list 'org-structure-template-alist '("ko" . "src kotlin"))
+  (add-to-list 'org-structure-template-alist '("ht" . "src html"))
   (add-to-list 'org-structure-template-alist '("le" . "src ledger"))
 #+end_src
 ** LaTeX
@@ -607,7 +616,6 @@ for delimiting clearing everything after '=' sign if it is here."
 #+end_src
 * Spell
 #+begin_src emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/data/")
   (use-package synonyms
       :ensure nil
       :init ;; executed before loading package
