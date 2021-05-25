@@ -39,6 +39,7 @@
   (sensible-defaults/use-all-settings)
   (sensible-defaults/use-all-keybindings)
   (add-to-list 'load-path "~/.emacs.d/data/")
+  (load-file "~/.emacs.d/.ercrc.el")
   (use-package all-the-icons)
   (use-package no-littering)
   (use-package benchmark-init
@@ -495,8 +496,8 @@
 #+end_src
 ** Org alerts
 #+begin_src emacs-lisp
+  (require 'alert)
   (require 'alert-toast)
-
   (require 'org-alert)
   (setq alert-default-style 'toast)
 #+end_src
