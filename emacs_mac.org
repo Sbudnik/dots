@@ -1,5 +1,4 @@
-n#+TITLE EMACS Mac Config
-#+SETUPFILE: ~/org/org-html-themes/org-themes/src/simple_inline/simple_inline.theme
+#+TITLE EMACS Mac Config
 #+AUTHOR JWM
 #+EMAIL dubs.m@mac.com
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs
@@ -41,6 +40,8 @@ n#+TITLE EMACS Mac Config
   (load-file "~/.emacs.d/sensible-defaults.el")
   (sensible-defaults/use-all-settings)
   (sensible-defaults/use-all-keybindings)
+  (add-to-list 'load-path "~/.emacs.d/data/")
+  (load-file "~/.emacs.d/.ercrc.el")
   (use-package all-the-icons)
   (use-package no-littering)
   ;;(add-to-list 'exec-path "/usr/local/bin/")
@@ -307,7 +308,7 @@ n#+TITLE EMACS Mac Config
 
   (use-package dired-single)
 
-  (add-hook 'dired-mode-hook 'treemacs-icons-dired-mode)
+;;  (add-hook 'dired-mode-hook 'treemacs-icons-dired-mode)
 
   #+end_src
 * Ivy hydra Prescient
@@ -586,11 +587,22 @@ n#+TITLE EMACS Mac Config
 
 * Spell
 #+begin_src emacs-lisp
-
+  (use-package synonyms
+      :ensure nil
+      :init ;; executed before loading package
+      (setq synonyms-file        "~/.emacs.d/data/mthesaur.txt")
+      (setq synonyms-cache-file  "~/.emacs.d/data/mycachefile")
+      :config
+      (defun my-synonym-current-word ()
+        "Lookup synonyms for current word."
+        (interactive)
+        (synonyms-lookup (thing-at-point 'word) nil nil))
+      :bind
+      ("<f9>" . my-synonym-current-word))
   (use-package company
     :diminish
     :config
-    (setq company-idle-delay 0.5)
+    (setq company-idle-delay 2)
     (setq company-minimum-prefix-length 1)
     (add-hook 'after-init-hook 'global-company-mode))
 
@@ -721,7 +733,7 @@ n#+TITLE EMACS Mac Config
     (eshell-send-input)
     (delete-window))
 
-  (global-set-key (kbd "<f1>") 'eshell-here)
+  (global-set-keqy (kbd "<f1>") 'eshell-here)
   (global-set-key (kbd "C-c <f1>") 'eshell)
 #+end_src
 * Popper
@@ -740,6 +752,7 @@ n#+TITLE EMACS Mac Config
           '("^\\*Messages\\*"
             "^Output\\*"
             "^\\Calc:"
+            "*Synonyms*"
             "^\\Warnings\\*"
             "^\\*helpful\\*"
             help-mode
