@@ -21,7 +21,6 @@
                                 (time-subtract after-init-time before-init-time)))
                        gcs-done)))
   (require 'package)
-  (require 'org)
   (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
   (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
   (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
@@ -78,43 +77,44 @@
 #+end_src
 ** Basic UI config
 #+begin_src emacs-lisp
-  (setq-default display-time-mode t)
-  (setq-default display-time-24hr-format t)
-(add-hook 'after-init-hook (lambda () (display-time)))
-  ;; Make ESC quit prompts
-  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-  (use-package rainbow-mode
-    :diminish)
-  (setq user-full-name "John Mosty"
-        user-mail-address "jwmosty@ascension.org"
-        calendar-latitude 30.32
-        calendar-longitude -97.71
-        calendar-location-name "Austin, TX")
-  (column-number-mode)
-  (global-display-line-numbers-mode 1)
-  (setq display-line-numbers-type 'visual)
-  ;; Disable line numbers for some modes
-  (dolist (mode '(term-mode-hook
-                  shell-mode-hook
-                  eshell-mode-hook))
-    (add-hook mode (lambda () (display-line-numbers-mode 0))))
-  (global-set-key (kbd "<f5>") 'org-capture)
-  (global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
-  (global-hl-line-mode t)
-  (global-set-key (kbd "C-c j") 'org-journal-new-entry)
-  (winner-mode)
-  (setq indent-tabs-mode nil)
-  (setq tab-width 4)
-  (defun jwm/kill-current-buffer ()
-    "Kill the current buffer without prompting."
-    (interactive)
-    (kill-buffer (current-buffer)))
-  (global-set-key (kbd "C-x k") 'jwm/kill-current-buffer)
-  (use-package eldoc
-    :diminish)
-  (define-prefix-command 'keymap-meta-space)
-  (global-set-key (kbd "M-SPC") 'keymap-meta-space)
-  (global-set-key (kbd "M-SPC b") 'switch-to-buffer)
+    (setq-default display-time-mode t)
+    (setq-default display-time-24hr-format t)
+  (add-hook 'after-init-hook (lambda () (display-time)))
+    ;; Make ESC quit prompts
+    (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+    (use-package rainbow-mode
+      :diminish)
+    (setq user-full-name "John Mosty"
+          user-mail-address "jwmosty@ascension.org"
+          calendar-latitude 30.32
+          calendar-longitude -97.71
+          calendar-location-name "Austin, TX")
+    (column-number-mode)
+    (global-display-line-numbers-mode 1)
+    (setq display-line-numbers-type 'visual)
+    ;; Disable line numbers for some modes
+    (dolist (mode '(term-mode-hook
+                    shell-mode-hook
+                    eshell-mode-hook
+                    org-mode-hook))
+      (add-hook mode (lambda () (display-line-numbers-mode 0))))
+    (global-set-key (kbd "<f5>") 'org-capture)
+    (global-set-key (kbd "<f4>") 'cfw:open-org-calendar)
+    (global-hl-line-mode t)
+    (global-set-key (kbd "C-c j") 'org-journal-new-entry)
+    (winner-mode)
+    (setq indent-tabs-mode nil)
+    (setq tab-width 4)
+    (defun jwm/kill-current-buffer ()
+      "Kill the current buffer without prompting."
+      (interactive)
+      (kill-buffer (current-buffer)))
+    (global-set-key (kbd "C-x k") 'jwm/kill-current-buffer)
+    (use-package eldoc
+      :diminish)
+    (define-prefix-command 'keymap-meta-space)
+    (global-set-key (kbd "M-SPC") 'keymap-meta-space)
+    (global-set-key (kbd "M-SPC b") 'switch-to-buffer)
 #+end_src
 ** change functions
 #+begin_src emacs-lisp
@@ -212,11 +212,11 @@
     :commands (dired dired-jump)
     :bind (("C-x C-j" . dired-jump))
     :custom
-    (dired-listing-switches "AFXhlv --group-directories-first")
+    (dired-listing-switches "-AFhltu")
     (dired-recursive-copies 'always)
     (dired-recursive-deletes 'always)
     (delete-by-moving-to-trash t))
-  (add-hook 'dired-mode-hook 'treemacs-icons-dired-mode)
+;;  (add-hook 'dired-mode-hook 'treemacs-icons-dired-mode)
   (use-package dired-single)
 #+end_src
 * Theme config
@@ -363,11 +363,13 @@
 * Org Mode
 ** Main Org-mode
 #+begin_src emacs-lisp
+  (use-package org-superstar)
   (defun jwm/org-mode-setup ()
     (org-indent-mode)
     (visual-line-mode 1)
     (diminish 'visual-line-mode)
     (diminish 'org-indent-mode)
+    (set-face-attribute 'org-headline-done nil :strike-through t)
     (setq org-hide-emphasis-markers t
           org-fontify-done-headline t
           org-hide-leading-stars t
@@ -389,12 +391,10 @@
   (use-package org
     :hook (org-mode . jwm/org-mode-setup)
     :config
-    (set-face-attribute 'org-headline-done nil :strike-through t)
     (setq org-ellipsis " ▾")
     ;;(jwm/org-font-setup)
     (setq org-adapt-indentation nil))
   (add-hook 'before-save-hook 'time-stamp)
-  (require 'org-superstar)
   (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
   (setq inhibit-compacting-font-caches t)
   (defun jwm/org-mode-visual-fill ()
@@ -417,7 +417,7 @@
         nil)))
   (defun air-org-skip-subtree-if-priority (priority)
     "Skip an agenda subtree if it has a priority of PRIORITY.
-                 PRIORITY may be one of the characters ?A, ?B, or ?C."
+                     PRIORITY may be one of the characters ?A, ?B, or ?C."
     (let ((subtree-end (save-excursion (org-end-of-subtree t)))
           (pri-value (* 1000 (- org-lowest-priority priority)))
           (pri-current (org-get-priority (thing-at-point 'line t))))
@@ -671,7 +671,7 @@ for delimiting clearing everything after '=' sign if it is here."
     :config
     (dashboard-setup-startup-hook)
     (setq dashboard-center-content t)
-    (setq dashboard-startup-banner 6)
+    (setq dashboard-startup-banner 7)
     (setq dashboard-banner-logo-title "Welcome to the Work computer")
     (setq dashboard-set-heading-icons t)
     (setq dashboard-set-file-icons t)
