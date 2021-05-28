@@ -273,71 +273,70 @@
 #+end_src
 * Ivy hydra Prescient
 #+begin_src emacs-lisp
-      (use-package hydra)
-      (use-package company
-        :diminish
-        :config
-        (setq company-idle-delay 2)
-        (setq company-minimum-prefix-length 1)
-        (setq company-show-numbers t)
-        (add-hook 'after-init-hook 'global-company-mode))
+  (use-package hydra)
+  (use-package company
+    :diminish
+    :config
+    (setq company-idle-delay 2)
+    (setq company-minimum-prefix-length 1)
+    (setq company-show-numbers t)
+    (add-hook 'after-init-hook 'global-company-mode))
 
 
-      (global-set-key (kbd "M-/") 'company-complete-common-or-cycle)
-      (use-package ivy-hydra
-        :defer t
-        :after hydra)
-      (use-package ivy
-        :diminish
-        :config
-        (ivy-mode 1))
-      (use-package counsel
-        :bind
-        (("M-y" . counsel-yank-pop)
-         :map ivy-minibuffer-map
-         ("M-y" . ivy-next-line)))
-      (use-package swiper)
-      (setq ivy-use-virtual-buffers t)
-      (setq enable-recursive-minibuffers t)
-      ;; enable this if you want `swiper' to use it
-      ;; (setq search-default-mode #'char-fold-to-regexp)
-      (global-set-key "\C-s" 'swiper)
-      (global-set-key (kbd "C-c C-r") 'ivy-resume)
-      (global-set-key (kbd "<f6>") 'ivy-resume)
-      (global-set-key (kbd "M-x") 'counsel-M-x)
-      (global-set-key (kbd "C-x C-f") 'counsel-find-file)
-      (global-set-key (kbd "<f1> f") 'counsel-describe-function)
-      (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-      (global-set-key (kbd "<f1> o") 'counsel-describe-symbol)
-      (global-set-key (kbd "<f1> l") 'counsel-find-library)
-      (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
-      (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
-      (global-set-key (kbd "C-c k") 'counsel-ag)
-      (global-set-key (kbd "C-x l") 'counsel-locate)
-      (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
-      (global-set-key (kbd "C-M-j") 'counsel-switch-buffer)
-      (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
-      (use-package ivy-rich
-        :init
-        (ivy-rich-mode 1))
-      (use-package avy
-        :ensure t
-        :diminish
-        :bind
-        ("M-s" . avy-goto-word-1)
-        ("M-g M-g" . avy-goto-line))
-      (use-package which-key
-        :init (which-key-mode)
-        :diminish which-key-mode
-        :config
-        (setq which-key-idle-delay 0.3))
-      (use-package prescient)
-      (use-package ivy-prescient
-        :config
-        (ivy-prescient-mode 1))
-      (use-package company-prescient
-        :config
-        (company-prescient-mode 1))
+  (global-set-key (kbd "M-/") 'company-complete-common-or-cycle)
+  (use-package ivy-hydra
+    :defer t
+    :after hydra)
+  (use-package ivy
+    :diminish
+    :config
+    (ivy-mode 1))
+  (use-package counsel
+    :bind
+    (("M-y" . counsel-yank-pop)
+     :map ivy-minibuffer-map
+     ("M-y" . ivy-next-line)))
+  (use-package swiper)
+  (setq ivy-use-virtual-buffers t)
+  (setq enable-recursive-minibuffers t)
+  ;; enable this if you want `swiper' to use it
+  ;; (setq search-default-mode #'char-fold-to-regexp)
+  (global-set-key "\C-s" 'swiper-isearch)
+  (global-set-key (kbd "C-c C-r") 'ivy-resume)
+  (global-set-key (kbd "<f6>") 'ivy-resume)
+  (global-set-key (kbd "M-x") 'counsel-M-x)
+  (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+  (global-set-key (kbd "<f2> f") 'counsel-describe-function)
+  (global-set-key (kbd "<f2> v") 'counsel-describe-variable)
+  (global-set-key (kbd "<f2> o") 'counsel-describe-symbol)
+  (global-set-key (kbd "<f2> l") 'counsel-find-library)
+  (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+  (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+  (global-set-key (kbd "C-M-j") 'counsel-switch-buffer)
+  (global-set-key (kbd "C-c b") 'counsel-bookmark)
+  (global-set-key (kbd "C-c d") 'counsel-descbinds)
+  (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
+  (use-package ivy-rich
+    :init
+    (ivy-rich-mode 1))
+  (use-package avy
+    :ensure t
+    :diminish
+    :bind
+    ("M-s" . avy-goto-word-1)
+    ("M-g M-g" . avy-goto-line))
+  (use-package which-key
+    :init (which-key-mode)
+    :diminish which-key-mode
+    :config
+    (setq which-key-idle-delay 0.3))
+  (use-package prescient)
+  (use-package ivy-prescient
+    :config
+    (ivy-prescient-mode 1))
+  (use-package company-prescient
+    :config
+    (company-prescient-mode 1))
 #+end_src
 * Helpful
 #+begin_src emacs-lisp
@@ -629,8 +628,8 @@ for delimiting clearing everything after '=' sign if it is here."
         (synonyms-lookup (thing-at-point 'word) nil nil))
       :bind
       ("<f9>" . my-synonym-current-word))
+      (use-package ispell)
       (setq ispell-program-name "C:/Users/jwmosty/AppData/Roaming/hunspell-bin/bin/hunspell.exe")
-      (require 'ispell)
       (use-package flyspell
         :demand t
         :diminish
