@@ -49,6 +49,7 @@
   (server-start)
   (good-scroll-mode 1)
   (add-to-list 'mode-line-misc-info '("@" system-name) t)
+  (setq auth-sources '("~/.authinfo.gpg" "~/.authinfo" "~/.netrc"))
 #+end_src
 * Basic setup
 ** Font setup
@@ -830,49 +831,51 @@ for delimiting clearing everything after '=' sign if it is here."
 #+end_src
 * Custom variable
 #+begin_src emacs-lisp
-   (custom-set-variables
-    ;; custom-set-variables was added by Custom.
-    ;; If you edit it by hand, you could mess it up, so be careful.
-    ;; Your init file should contain only one such instance.
-    ;; If there is more than one, they won't work right.
-    '(org-agenda-include-diary t)
-    '(org-agenda-skip-deadline-if-done t)
-    '(org-agenda-skip-scheduled-if-done t)
-    '(org-agenda-skip-timestamp-if-done t)
-    '(org-agenda-start-on-weekday nil)
-    '(org-agenda-sticky t)
-    '(org-agenda-tags-todo-honor-ignore-options nil)
-    '(org-clock-into-drawer "LOGBOOK")
-    '(org-closed-keep-when-no-todo nil)
-    '(org-enforce-todo-checkbox-dependencies t)
-    '(org-enforce-todo-dependencies t)
-    '(org-hide-emphasis-markers t)
-    '(org-log-done 'time)
-    '(org-log-done-with-time t)
-    '(org-log-into-drawer t)
-    '(org-return-follows-link t)
-    '(org-special-ctrl-a/e t)
-    '(org-special-ctrl-k t)
-    '(org-todo-keywords '((type "TODO(t)" "DONE(d!)")))
-    '(org-todo-state-tags-triggers nil)
-    '(org-use-fast-todo-selection 'auto)
-    '(package-selected-packages
-      '(doom-themes-visual-bell-config doom-themes phi-search-dired helpful which-key-posframe all-the-icons-ivy-rich ivy-rich which-key avy diminish ivy dashboard use-package))
-    '(pdf-view-midnight-colors (cons "#f8f8f2" "#282a36"))
-    '(rustic-ansi-faces
-      ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "#8CD0D3" "#DC8CC3" "#93E0E3" "#DCDCDC"])
-    '(safe-local-variable-values
-        '((eval add-hook 'after-save-hook 'org-html-export-to-html t t)
-        (eval add-hook 'after-save-hook #'org-babel-tangle t t)
-        (org-confirm-babel-evaluate)))
-    '(tab-bar-mode t)
-    '(tool-bar-mode nil)
-    '(vc-annotate-background nil)
-    '(vc-annotate-background-mode nil))
-   (custom-set-faces
-    ;; custom-set-faces was added by Custom.
-    ;; If you edit it by hand, you could mess it up, so be careful.
-    ;; Your init file should contain only one such instance.
-    ;; If there is more than one, they won't work right.
-    )
+  (custom-set-variables
+   ;; custom-set-variables was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(org-agenda-include-diary t)
+   '(org-agenda-skip-deadline-if-done t)
+   '(org-agenda-skip-scheduled-if-done t)
+   '(org-agenda-skip-timestamp-if-done t)
+   '(org-agenda-start-on-weekday nil)
+   '(org-agenda-sticky t)
+   '(org-agenda-tags-todo-honor-ignore-options nil)
+   '(org-clock-into-drawer "LOGBOOK")
+   '(org-closed-keep-when-no-todo nil)
+   '(org-enforce-todo-checkbox-dependencies t)
+   '(org-enforce-todo-dependencies t)
+   '(org-hide-emphasis-markers t)
+   '(org-log-done 'time)
+   '(org-log-done-with-time t)
+   '(org-log-into-drawer t)
+   '(org-return-follows-link t)
+   '(org-special-ctrl-a/e t)
+   '(org-special-ctrl-k t)
+   '(org-todo-keywords '((type "TODO(t)" "DONE(d!)")))
+   '(org-todo-state-tags-triggers nil)
+   '(org-use-fast-todo-selection 'auto)
+   '(package-selected-packages
+     '(doom-themes-visual-bell-config doom-themes phi-search-dired helpful which-key-posframe all-the-icons-ivy-rich ivy-rich which-key avy diminish ivy dashboard use-package))
+   '(pdf-view-midnight-colors (cons "#f8f8f2" "#282a36"))
+   '(rustic-ansi-faces
+     ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "#8CD0D3" "#DC8CC3" "#93E0E3" "#DCDCDC"])
+   '(safe-local-variable-values
+     '((eval add-hook 'after-save-hook 'org-html-export-to-html t t)
+       (eval add-hook 'after-save-hook #'org-babel-tangle t t)
+       (org-confirm-babel-evaluate)))
+   '(tab-bar-mode t)
+   '(tool-bar-mode nil)
+   '(vc-annotate-background nil)
+   '(vc-annotate-background-mode nil))
+  (custom-set-faces
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   )
+  (put 'downcase-region 'disabled nil)
+  (put 'upcase-region 'disabled nil)
 #+end_src
