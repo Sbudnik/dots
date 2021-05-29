@@ -23,7 +23,7 @@
                                 (time-subtract after-init-time before-init-time)))
                        gcs-done)))
   (require 'package)
-  (require 'org)
+  (add-to-list 'package-archives '("non-GNU" . "http://elpa.nongnu.org/nongnu/"))
   (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
   (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
   (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
@@ -49,7 +49,9 @@
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize))
   (add-to-list 'mode-line-misc-info '("@" system-name) t)
-
+(setq auth-sources '("~/.authinfo.gpg"
+                     "~/.authinfo"
+                     "~/.netrc"))
 #+end_src
 * Basic setup
 ** Font setup
@@ -68,76 +70,78 @@
 #+end_src
 ** Basic UI config
 #+begin_src emacs-lisp
-  (display-time)
-  (setq display-time-24hr-format t)
-  ;; Make ESC quit prompts
-  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-  (setq user-full-name "John Mosty"
-        user-mail-address "dubs.mosty@gmail.com"
-        calendar-latitude 30.32
-        calendar-longitude -97.71
-        calendar-location-name "Austin, TX")
-  (use-package rainbow-mode
-    :diminish)
-  (column-number-mode)
-  (global-display-line-numbers-mode 1)
-  (setq display-line-numbers-type 'visual)
-  ;; Disable line numbers for some modes
-  (dolist (mode '(term-mode-hook
-                  shell-mode-hook
-                  eshell-mode-hook))
-    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+      (display-time)
+      (setq display-time-24hr-format t)
+      ;; Make ESC quit prompts
+      (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+      (setq user-full-name "John Mosty"
+            user-mail-address "dubs.mosty@gmail.com"
+            calendar-latitude 30.32
+            calendar-longitude -97.71
+            calendar-location-name "Austin, TX")
+      (use-package rainbow-mode
+        :diminish)
+      (column-number-mode)
+      (global-display-line-numbers-mode 1)
+      (setq display-line-numbers-type 'visual)
+      ;; Disable line numbers for some modes
+      (dolist (mode '(term-mode-hook
+                      shell-mode-hook
+                      eshell-mode-hook
+                      erc-mode-hook
+                      org-mode-hook))
+        (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 
-  (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
-  (winner-mode)
-  (load "server")
-  (unless (server-running-p) (server-start))
-  (global-set-key (kbd "<f5>") 'org-capture)
-  (global-set-key (kbd "C-c j") 'org-journal-new-entry)
+      (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
+      (winner-mode)
+      (load "server")
+      (unless (server-running-p) (server-start))
+      (global-set-key (kbd "<f5>") 'org-capture)
+      (global-set-key (kbd "C-c j") 'org-journal-new-entry)
 
-  (set-window-scroll-bars (minibuffer-window) nil nil)
-  (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+      (set-window-scroll-bars (minibuffer-window) nil nil)
+      (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
-  (setq scroll-conservatively 100)
-  (setq kill-whole-line t)
-  (setq kill-read-only-ok t)
-  (setq require-final-newline t)
-  (setq echo-keystrokes 0.1)
-  (setq focus-follows-mouse t)
+      (setq scroll-conservatively 100)
+      (setq kill-whole-line t)
+      (setq kill-read-only-ok t)
+      (setq require-final-newline t)
+      (setq echo-keystrokes 0.1)
+      (setq focus-follows-mouse t)
 
-  (setq split-height-threshold nil)
-  (setq split-width-threshold 0)
-  (setq org-confirm-elisp-link-function nil)
+      (setq split-height-threshold nil)
+      (setq split-width-threshold 0)
+      (setq org-confirm-elisp-link-function nil)
 
-  (setq save-interprogram-paste-before-kill t)
+      (setq save-interprogram-paste-before-kill t)
 
-  (setq initial-frame-alist
-        '((top . 1) (left . 1) (width . 115) (height . 45)))
+      (setq initial-frame-alist
+            '((top . 1) (left . 1) (width . 115) (height . 45)))
 
-  (defun my-pulse-line (&rest _)
-    "Pulse the current line."
-    (pulse-momentary-highlight-one-line (point)))
+      (defun my-pulse-line (&rest _)
+        "Pulse the current line."
+        (pulse-momentary-highlight-one-line (point)))
 
-  (dolist (command '(recenter-top-bottom other-window ace-window my-scroll-down-half my-scroll-up-half))
-    (advice-add command :after #'my-pulse-line))
+      (dolist (command '(recenter-top-bottom other-window ace-window my-scroll-down-half my-scroll-up-half))
+        (advice-add command :after #'my-pulse-line))
 
-  (use-package eldoc
-    :diminish)
+      (use-package eldoc
+        :diminish)
 
-  (defun jwm/kill-current-buffer ()
-    "Kill the current buffer without prompting."
-    (interactive)
-    (kill-buffer (current-buffer)))
+      (defun jwm/kill-current-buffer ()
+        "Kill the current buffer without prompting."
+        (interactive)
+        (kill-buffer (current-buffer)))
 
-  (global-set-key (kbd "C-x k") 'jwm/kill-current-buffer)
+      (global-set-key (kbd "C-x k") 'jwm/kill-current-buffer)
 
-  (use-package expand-region
-    :diminish
-    :bind ("C-M-=" . er/expand-region))
+      (use-package expand-region
+        :diminish
+        :bind ("C-M-=" . er/expand-region))
 
-   (use-package smartparens
-    :diminish)
+       (use-package smartparens
+        :diminish)
 
 #+end_src
 ** change functions
@@ -314,67 +318,68 @@
 * Ivy hydra Prescient
 #+begin_src emacs-lisp
 
-  (use-package ivy-hydra
-    :defer t
-    :diminish
-    :after hydra)
+      (use-package ivy-hydra
+        :defer t
+        :diminish
+        :after hydra)
 
-  (use-package ivy
-    :diminish
-    :config
-    (ivy-mode 1))
+      (use-package ivy
+        :diminish
+        :config
+        (ivy-mode 1))
 
-  (use-package counsel
-    :diminish
-    :bind
-    (("M-y" . counsel-yank-pop)
-     :map ivy-minibuffer-map
-     ("M-y" . ivy-next-line)))
+      (use-package counsel
+        :diminish
+        :bind
+        (("M-y" . counsel-yank-pop)
+         :map ivy-minibuffer-map
+         ("M-y" . ivy-next-line)))
 
-  (use-package swiper)
-  (setq ivy-use-virtual-buffers t)
-  (setq enable-recursive-minibuffers t)
-  ;; enable this if you want `swiper' to use it
-  ;; (setq search-default-mode #'char-fold-to-regexp)
-  (global-set-key "\C-s" 'swiper)
-  (global-set-key (kbd "C-c C-r") 'ivy-resume)
-  (global-set-key (kbd "<f6>") 'ivy-resume)
-  (global-set-key (kbd "M-x") 'counsel-M-x)
-  (global-set-key (kbd "C-x C-f") 'counsel-find-file)
-  (global-set-key (kbd "<f1> f") 'counsel-describe-function)
-  (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-  (global-set-key (kbd "<f1> o") 'counsel-describe-symbol)
-  (global-set-key (kbd "<f1> l") 'counsel-find-library)
-  (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
-  (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
-  (global-set-key (kbd "C-c k") 'counsel-ag)
-  (global-set-key (kbd "C-x l") 'counsel-locate)
-  (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
-  (global-set-key (kbd "C-M-j") 'counsel-switch-buffer)
-  (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
+      (use-package swiper)
+      (setq ivy-use-virtual-buffers t)
+      (setq enable-recursive-minibuffers t)
+      ;; enable this if you want `swiper' to use it
+      ;; (setq search-default-mode #'char-fold-to-regexp)
+      (global-set-key "\C-s" 'swiper-isearch)
+      (global-set-key (kbd "C-c C-r") 'ivy-resume)
+      (global-set-key (kbd "<f6>") 'ivy-resume)
+      (global-set-key (kbd "M-x") 'counsel-M-x)
+      (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+      (global-set-key (kbd "<f2> f") 'counsel-describe-function)
+      (global-set-key (kbd "<f2> v") 'counsel-describe-variable)
+      (global-set-key (kbd "<f2> o") 'counsel-describe-symbol)
+      (global-set-key (kbd "<f2> l") 'counsel-find-library)
+      (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+      (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+      (global-set-key (kbd "C-x l") 'counsel-locate)
+      (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
+      (global-set-key (kbd "C-M-j") 'counsel-switch-buffer)
+      (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
 
-  (use-package ivy-rich
-    :init
-    (ivy-rich-mode 1))
+      (use-package ivy-rich
+        :init
+        (ivy-rich-mode 1))
 
-  (use-package avy
-    :ensure t
-    :diminish
-    :bind (("M-s" . avy-goto-word-1)))
+      (use-package avy
+        :ensure t
+        :diminish
+        :bind
+        ("M-s" . avy-goto-word-1)
+        ("M-g M-g" . avy-goto-line))
 
-  (use-package which-key
-    :init (which-key-mode)
-    :diminish which-key-mode
-    :config
-    (setq which-key-idle-delay 0.3))
+      (use-package which-key
+        :init (which-key-mode)
+        :diminish which-key-mode
+        :config
+        (setq which-key-idle-delay 0.3))
 
-  (use-package prescient)
-  (use-package ivy-prescient
-    :config
-    (ivy-prescient-mode 1))
-  (use-package company-prescient
-    :config
-    (company-prescient-mode 1))
+      (use-package prescient)
+      (use-package ivy-prescient
+        :config
+        (ivy-prescient-mode 1))
+      (use-package company-prescient
+        :config
+        (company-prescient-mode 1))
 
 #+end_src
 * Helpful
@@ -403,11 +408,12 @@
 ** Main Org-mode
 #+begin_src emacs-lisp
 
-   (defun jwm/org-mode-setup ()
+  (defun jwm/org-mode-setup ()
     (org-indent-mode)
     (visual-line-mode 1)
     (diminish 'visual-line-mode)
     (diminish 'org-indent-mode)
+    (set-face-attribute 'org-headline-done nil :strike-through t)
     (setq org-hide-emphasis-markers t
           org-fontify-done-headline t
           org-hide-leading-stars t
@@ -454,8 +460,8 @@
     (setq org-ellipsis " ▾")
     (jwm/org-font-setup)
     (setq org-adapt-indentation nil))
-
-  (require 'org-superstar)
+  (add-hook 'before-save-hook 'time-stamp)
+  (use-package org-superstar)
   (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
 
   (defun jwm/org-mode-visual-fill ()
@@ -483,7 +489,7 @@
   (defun air-org-skip-subtree-if-priority (priority)
     "Skip an agenda subtree if it has a priority of PRIORITY.
 
-          PRIORITY may be one of the characters ?A, ?B, or ?C."
+           PRIORITY may be one of the characters ?A, ?B, or ?C."
     (let ((subtree-end (save-excursion (org-end-of-subtree t)))
           (pri-value (* 1000 (- org-lowest-priority priority)))
           (pri-current (org-get-priority (thing-at-point 'line t))))
@@ -523,9 +529,9 @@
     :diminish)
   (add-hook 'org-mode-hook (lambda () (org-autolist-mode)))
 
-            (setq org-agenda-files '("~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org"))
+  (setq org-agenda-files '("~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org"))
 
-            (set-face-attribute 'org-headline-done nil :strike-through t)
+  (set-face-attribute 'org-headline-done nil :strike-through t)
 
 #+end_src
 ** Babel and Structure templates
@@ -733,7 +739,7 @@
     (eshell-send-input)
     (delete-window))
 
-  (global-set-keqy (kbd "<f1>") 'eshell-here)
+  (global-set-key (kbd "<f1>") 'eshell-here)
   (global-set-key (kbd "C-c <f1>") 'eshell)
 #+end_src
 * Popper
@@ -828,4 +834,6 @@
    ;; Your init file should contain only one such instance.
    ;; If there is more than one, they won't work right.
    )
+  (put 'downcase-region 'disabled nil)
+  (put 'upcase-region 'disabled nil)
 #+end_src
