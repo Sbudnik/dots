@@ -57,14 +57,14 @@
 ** Font setup
 - This is a gnu setup with fonts
 #+begin_src emacs-lisp
-  ;; May need to adjust this font size for the system
-;;  (defvar jwm/default-font-size 125)
+   ;; May need to adjust this font size for the system
+  (defvar jwm/default-font-size 125)
 
-;;  (set-face-attribute 'default nil :font "Fira Code" :height jwm/default-font-size)
+  (set-face-attribute 'default nil :font "Inconsolata" :height jwm/default-font-size)
   ;; Set the fixed pitch face
-;;  (set-face-attribute 'fixed-pitch nil :font "Fira Code" :height jwm/default-font-size)
+  (set-face-attribute 'fixed-pitch nil :font "Inconsolata" :height jwm/default-font-size)
   ;; Set the variable pitch face
-;;  (set-face-attribute 'variable-pitch nil :font "Fira Code" :height jwm/default-font-size :weight 'regular)
+  (set-face-attribute 'variable-pitch nil :font "Inconsolata" :height jwm/default-font-size :weight 'regular)
 
   (global-hl-line-mode t)
 #+end_src
