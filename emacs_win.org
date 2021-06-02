@@ -31,6 +31,12 @@
   (require 'use-package-ensure)
   (setq use-package-always-ensure t)
   (use-package diminish)
+  (use-package auto-package-update
+    :ensure t
+    :config
+    (setq auto-package-update-delete-old-versions t
+          auto-package-update-interval 14)
+    (auto-package-update-maybe))
   (use-package auto-compile
     :diminish
     :config (auto-compile-on-load-mode))
@@ -672,9 +678,9 @@ for delimiting clearing everything after '=' sign if it is here."
     :diminish
     :config
     (dashboard-setup-startup-hook)
-    (setq dashboard-center-content t)
-    (setq dashboard-startup-banner 7)
     (setq dashboard-banner-logo-title "Welcome to the Work computer")
+    (setq dashboard-center-content t)
+    (setq dashboard-startup-banner 'logo)
     (setq dashboard-set-heading-icons t)
     (setq dashboard-set-file-icons t)
     (setq dashboard-set-navigator t)
