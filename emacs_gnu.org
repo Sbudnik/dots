@@ -1,4 +1,4 @@
-#+TITLE EMACS GNU-Linux Config
+#+TITLE EMACS GNU Linux Config
 #+AUTHOR JWM
 #+EMAIL dubs.m@mac.com
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs
@@ -55,9 +55,9 @@
 #+end_src
 * Basic setup
 ** Font setup
-- This is a gnu setup with fonts
+- This is a gnu linux setup with fonts
 #+begin_src emacs-lisp
-   ;; May need to adjust this font size for the system
+  ;; May need to adjust this font size for the system
   (defvar jwm/default-font-size 125)
 
   (set-face-attribute 'default nil :font "Inconsolata" :height jwm/default-font-size)
@@ -614,7 +614,7 @@
 
   (global-set-key (kbd "M-/") 'company-complete-common-or-cycle)
 
-  (setq ispell-program-name "/usr/local/hunspell")
+  (setq ispell-program-name "/usr/bin/hunspell")
 
   (require 'ispell)
 
@@ -788,7 +788,7 @@
                   (setq-local completion-cycle-threshold t)
                   (setq-local ledger-complete-in-steps t)))
 
-    (setq ledger-binary-path "/usr/local/bin/ledger")
+    (setq ledger-binary-path "/usr/bin/ledger")
 #+end_src
 * Custom variable
 #+begin_src emacs-lisp
