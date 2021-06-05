@@ -1,0 +1,13 @@
+alias ex explorer $*
+alias gp git push
+alias gup git pull
+alias gc git commit -v
+alias gaa git add .
+alias gst git status
+alias c clear
+alias la echo "******************************************"; echo -n "Directory contents of: "; pwd; echo "******************************************";  ls -A
+alias up cd ..
+alias ff find-file $1
+alias d dired $1
+alias home cd ~
+alias ffo find-file-other-frame $1
