@@ -43,7 +43,7 @@
   (sensible-defaults/use-all-settings)
   (sensible-defaults/use-all-keybindings)
   (add-to-list 'load-path "~/.emacs.d/data/")
-;;  (load-file "~/.emacs.d/.ercrc.el")
+  (load-file "~/.emacs.d/.ercrc.el")
   (use-package all-the-icons)
   (use-package no-littering)
   (add-to-list 'exec-path "/usr/bin/")
@@ -573,7 +573,8 @@
   ;; Either the Key ID or set to nil to use symmetric encryption.
   ;;(setq org-crypt-key '("0F5CDB0D40E4D8AF93DE2C70D5E19C8A72EAD74F"))
   ;;(setq org-crypt-key '("0774531735284E3FBFAB276884494577248B47A6"))
-  (setq org-crypt-key nil)
+  (setq org-crypt-key '("C2CCDC9497A772D8F72FE253AA98E9E6B5C5104F"))
+  ;;(setq org-crypt-key nil)
   (setq auto-save-default nil)
   (global-set-key (kbd "C-c e") 'org-decrypt-entry)
   ;;  (add-to-map "<SPC> u" 'org-decrypt-entry)
