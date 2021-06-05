@@ -1,7 +1,7 @@
 #+TITLE EMACS GNU Linux Config
 #+AUTHOR JWM
 #+EMAIL dubs.m@mac.com
-#+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs
+#+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el
 
 * Packages
 - Need to M-x package-install use-package-ensure, org-bullets, for cold installs
@@ -41,10 +41,10 @@
   (sensible-defaults/use-all-settings)
   (sensible-defaults/use-all-keybindings)
   (add-to-list 'load-path "~/.emacs.d/data/")
-  (load-file "~/.emacs.d/.ercrc.el")
+;;  (load-file "~/.emacs.d/.ercrc.el")
   (use-package all-the-icons)
   (use-package no-littering)
-  ;;(add-to-list 'exec-path "/usr/local/bin/")
+  (add-to-list 'exec-path "/usr/bin/")
   (use-package exec-path-from-shell)
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize))
@@ -473,7 +473,7 @@
     :diminish
     :hook (org-mode . jwm/org-mode-visual-fill))
 
-  (setq org-default-notes-file (concat org-directory "/notes.org"))
+  (setq org-default-notes-file (concat org-directory "~/org/notes.org"))
 
   (require 'org-habit)
   (add-to-list 'org-modules 'org-habit)
@@ -655,8 +655,8 @@
 #+end_src
 * Python
 #+begin_src emacs-lisp
-;;(setq python-shell-interpreter "/usr/local/bin/python3")
-;;(setq org-babel-python-command "/usr/local/bin/python3")
+(setq python-shell-interpreter "/usr/bin/python3")
+(setq org-babel-python-command "/usr/bin/python3")
 #+end_src
 * Macros
 #+begin_src emacs-lisp
@@ -732,7 +732,7 @@
       (other-window 1)
       (eshell "new")
       (rename-buffer (concat "*eshell: " name "*"))
-      (insert (concat "ls"))
+      (insert (concat "la"))
       (eshell-send-input)))
   (defun eshell/x ()
     (insert "exit")
