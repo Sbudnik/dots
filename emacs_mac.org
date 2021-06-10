@@ -246,11 +246,11 @@
 #+end_src
 * Theme config
 #+begin_src emacs-lisp
-  (use-package moody
-    :config
-    (setq x-underline-at-descent-line t)
-    (moody-replace-mode-line-buffer-identification)
-    (moody-replace-vc-mode))
+ (use-package moody
+   :config
+   (setq x-underline-at-descent-line t)
+   (moody-replace-mode-line-buffer-identification)
+   (moody-replace-vc-mode))
 
   (use-package modus-themes
     :ensure                         ; omit this to use the built-in themes
