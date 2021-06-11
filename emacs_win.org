@@ -628,15 +628,7 @@ for delimiting clearing everything after '=' sign if it is here."
             occur-mode))
     (setq popper-display-function #'popper-select-popup-at-bottom)
     (popper-mode +1))
-#+end_src
-* Calfw
-#+begin_src emacs-lisp
-;;  (use-package calfw
-;;    :diminish)
-;;(require 'calfw-ical)
-;;(cfw:open-ical-calendar "https://calendar.google.com/calendar/ical/jwmosty%40ascension.org/public/basic.ics")
-
-#+end_src
+#+End_src
 * Ledger
 #+begin_src emacs-lisp
   (use-package ledger-mode
