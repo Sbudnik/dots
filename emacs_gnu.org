@@ -233,7 +233,7 @@
     :diminish
     :config
     (dashboard-setup-startup-hook)
-    (setq dashboard-startup-banner "~/.emacs.d/4.txt")
+    (setq dashboard-startup-banner "~/dots/dash.txt")
     (setq dashboard-banner-logo-title "Welcome to the Mac")
     (setq dashboard-center-content t)
     (setq dashboard-set-heading-icons t)
