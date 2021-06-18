@@ -74,78 +74,79 @@
 #+end_src
 ** Basic UI config
 #+begin_src emacs-lisp
-      (display-time)
-      (setq display-time-24hr-format t)
-      ;; Make ESC quit prompts
-      (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-      (setq user-full-name "John Mosty"
-            user-mail-address "dubs.mosty@gmail.com"
-            calendar-latitude 30.32
-            calendar-longitude -97.71
-            calendar-location-name "Austin, TX")
-      (use-package rainbow-mode
-        :diminish)
-      (column-number-mode)
-      (global-display-line-numbers-mode 1)
-      (setq display-line-numbers-type 'visual)
-      ;; Disable line numbers for some modes
-      (dolist (mode '(term-mode-hook
-                      shell-mode-hook
-                      eshell-mode-hook
-                      erc-mode-hook
-                      org-mode-hook))
-        (add-hook mode (lambda () (display-line-numbers-mode 0))))
+  (display-time)
+  (setq display-time-24hr-format t)
+  ;; Make ESC quit prompts
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+  (setq user-full-name "John Mosty"
+        user-mail-address "dubs.mosty@gmail.com"
+        calendar-latitude 30.32
+        calendar-longitude -97.71
+        calendar-location-name "Austin, TX")
+  (use-package rainbow-mode
+    :diminish)
+  (column-number-mode)
+  (global-display-line-numbers-mode 1)
+  (setq display-line-numbers-type 'visual)
+  ;; Disable line numbers for some modes
+  (dolist (mode '(term-mode-hook
+                  shell-mode-hook
+                  eshell-mode-hook
+                  erc-mode-hook
+                  org-mode-hook))
+    (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 
-      (custom-set-variables '(epg-gpg-program "/usr/bin/gpg"))
-      (winner-mode)
-      (load "server")
-      (unless (server-running-p) (server-start))
-      (global-set-key (kbd "<f5>") 'org-capture)
-      (global-set-key (kbd "C-c j") 'org-journal-new-entry)
+  (custom-set-variables '(epg-gpg-program "/usr/bin/gpg"))
+  (winner-mode)
+  (load "server")
+  (unless (server-running-p) (server-start))
+  (add-to-list 'load-path "~/.emacs.d/lisp")
+  (global-set-key (kbd "<f5>") 'org-capture)
+  (global-set-key (kbd "C-c j") 'org-journal-new-entry)
 
-      (set-window-scroll-bars (minibuffer-window) nil nil)
-      (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+  (set-window-scroll-bars (minibuffer-window) nil nil)
+  (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
-      (setq scroll-conservatively 100)
-      (setq kill-whole-line t)
-      (setq kill-read-only-ok t)
-      (setq require-final-newline t)
-      (setq echo-keystrokes 0.1)
-      (setq focus-follows-mouse t)
+  (setq scroll-conservatively 100)
+  (setq kill-whole-line t)
+  (setq kill-read-only-ok t)
+  (setq require-final-newline t)
+  (setq echo-keystrokes 0.1)
+  (setq focus-follows-mouse t)
 
-      (setq split-height-threshold nil)
-      (setq split-width-threshold 0)
-      (setq org-confirm-elisp-link-function nil)
+  (setq split-height-threshold nil)
+  (setq split-width-threshold 0)
+  (setq org-confirm-elisp-link-function nil)
 
-      (setq save-interprogram-paste-before-kill t)
+  (setq save-interprogram-paste-before-kill t)
 
-      (setq initial-frame-alist
-            '((top . 1) (left . 1) (width . 115) (height . 45)))
+  (setq initial-frame-alist
+        '((top . 1) (left . 1) (width . 115) (height . 45)))
 
-      (defun my-pulse-line (&rest _)
-        "Pulse the current line."
-        (pulse-momentary-highlight-one-line (point)))
+  (defun my-pulse-line (&rest _)
+    "Pulse the current line."
+    (pulse-momentary-highlight-one-line (point)))
 
-      (dolist (command '(recenter-top-bottom other-window ace-window my-scroll-down-half my-scroll-up-half))
-        (advice-add command :after #'my-pulse-line))
+  (dolist (command '(recenter-top-bottom other-window ace-window my-scroll-down-half my-scroll-up-half))
+    (advice-add command :after #'my-pulse-line))
 
-      (use-package eldoc
-        :diminish)
+  (use-package eldoc
+    :diminish)
 
-      (defun jwm/kill-current-buffer ()
-        "Kill the current buffer without prompting."
-        (interactive)
-        (kill-buffer (current-buffer)))
+  (defun jwm/kill-current-buffer ()
+    "Kill the current buffer without prompting."
+    (interactive)
+    (kill-buffer (current-buffer)))
 
-      (global-set-key (kbd "C-x k") 'jwm/kill-current-buffer)
+  (global-set-key (kbd "C-x k") 'jwm/kill-current-buffer)
 
-      (use-package expand-region
-        :diminish
-        :bind ("C-M-=" . er/expand-region))
+  (use-package expand-region
+    :diminish
+    :bind ("C-M-=" . er/expand-region))
 
-       (use-package smartparens
-        :diminish)
+  (use-package smartparens
+    :diminish)
 
 #+end_src
 ** change functions
