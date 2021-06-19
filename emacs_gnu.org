@@ -552,7 +552,6 @@
      (kotlin . t)))
 
   (setq org-confirm-babel-evaluate nil)
-  (use-package org-tempo)
 
   (use-package ob-kotlin)
 
