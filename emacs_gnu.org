@@ -300,7 +300,7 @@
     "Apply my chosen theme and make frames just slightly transparent."
     (interactive)
     (modus-themes-load-vivendi)
-    (transparency 95))
+    (transparency 90))
   (if (daemonp)
       (add-hook 'after-make-frame-functions
                 (lambda (frame)
@@ -756,9 +756,11 @@
 * YASnippet
 #+begin_src emacs-lisp
   (use-package yasnippet-snippets
-       :ensure t)
+       :ensure t
+       :diminish)
      (use-package yasnippet
        :ensure t
+       :diminish (yas-minor-mode)
        :config
        (yas-global-mode 1))
 
