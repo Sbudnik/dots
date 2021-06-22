@@ -287,7 +287,7 @@
   (use-package company
     :diminish
     :config
-    (setq company-idle-delay 2)
+    (setq company-idle-delay 10)
     (setq company-minimum-prefix-length 1)
     (setq company-show-numbers t)
     (add-hook 'after-init-hook 'global-company-mode))
