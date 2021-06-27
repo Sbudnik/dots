@@ -37,7 +37,7 @@ NOTE! If there is a private key on your private key ring associated with this pu
 to delete an private key (a key on your private key ring):
 gpg --delete-secret-key "User Name"
 This deletes the secret key from your secret key ring.
-
+n
 To list the keys in your public key ring:
 gpg --list-keys
 
