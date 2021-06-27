@@ -1,5 +1,3 @@
-
-
 #+TITLE EMACS GNU Linux Config
 #+AUTHOR JWM
 #+EMAIL dubs.m@mac.com
@@ -862,6 +860,12 @@
 
 #+end_src
 
+* Reddig
+#+begin_src emacs-lisp
+  (use-package reddigg
+    :ensure t
+    :diminish)
+#+end_src
 * Custom variable
 #+begin_src emacs-lisp
   (custom-set-variables
