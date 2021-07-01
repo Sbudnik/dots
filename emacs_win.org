@@ -72,9 +72,9 @@
   (defvar jwm/default-font-size 120)
   (defun jwm/set-font-faces ()
     (message "Setting faces")
-    (set-face-attribute 'default nil :font "Inconsolata" :height jwm/default-font-size)
+    (set-face-attribute 'default nil :font "mononoki" :height jwm/default-font-size)
     ;; Set the fixed pitch face
-    (set-face-attribute 'fixed-pitch nil :font "Inconsolata" :height jwm/default-font-size)
+    (set-face-attribute 'fixed-pitch nil :font "mononoki" :height jwm/default-font-size)
     ;; Set the variable pitch face
     (set-face-attribute 'variable-pitch nil :font "Verdana" :height jwm/default-font-size :weight 'regular))
   (if (daemonp)
