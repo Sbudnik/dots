@@ -104,6 +104,7 @@
   (global-set-key (kbd "C-c j") 'org-journal-new-entry)
 
   (set-window-scroll-bars nil)
+  (scroll-bar-mode -1)
   (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
   (setq scroll-conservatively 100)
