@@ -494,7 +494,7 @@ for delimiting clearing everything after '=' sign if it is here."
     (dashboard-setup-startup-hook)
     (setq dashboard-banner-logo-title "Welcome to the Work computer")
     (setq dashboard-center-content t)
-    (setq dashboard-startup-banner "c:/msys64/home/jwmosty/.emacs.d/data/dash.txt")
+    (setq dashboard-startup-banner "c:/msys64/home/jwmosty/dots/dash.txt")
     (setq dashboard-set-heading-icons t)
     (setq dashboard-set-file-icons t)
     (setq dashboard-set-navigator t)
